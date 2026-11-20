@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <!-- Christmas present. The game picks the box and ribbon colors per present (classes "box" and "ribbon"). -->
+  <rect class="box" x="4" y="16" width="32" height="22" rx="2" fill="#d8322f"/>
+  <rect class="box" x="2" y="11" width="36" height="7" rx="2" fill="#d8322f"/>
+  <rect x="4" y="18" width="32" height="2" fill="#0002"/>
+  <rect class="ribbon" x="17" y="11" width="6" height="27" fill="#ffd84a"/>
+  <path class="ribbon" d="M20 11 q-9 -10 -12 -4 q-1 4 12 4 q13 0 12 -4 q-3 -6 -12 4z" fill="#ffd84a"/>
+</svg>

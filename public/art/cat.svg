@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 40">
+  <!-- The cat on every tile. See art/README.md for which class names the game recolors. -->
+  <defs>
+    <linearGradient id="rainbow" x1="0" x2="1">
+      <stop offset="0" stop-color="#ef8a2b"/><stop offset=".5" stop-color="#e45c93"/><stop offset="1" stop-color="#6c87ad"/>
+    </linearGradient>
+  </defs>
+  <polygon class="fur" points="6,16 9,1 19,10" fill="#ef8a2b"/>
+  <polygon class="fur" points="38,16 35,1 25,10" fill="#ef8a2b"/>
+  <polygon class="inner" points="9,13 10,5 16,10" fill="#ffd2c2"/>
+  <polygon class="inner" points="35,13 34,5 28,10" fill="#ffd2c2"/>
+  <ellipse class="fur" cx="22" cy="23" rx="17" ry="14" fill="#ef8a2b"/>
+  <ellipse class="eye" cx="15.5" cy="21" rx="2.6" ry="3.4" fill="#2b2420"/>
+  <ellipse class="eye" cx="28.5" cy="21" rx="2.6" ry="3.4" fill="#2b2420"/>
+  <circle cx="16.3" cy="20" r=".9" fill="#fff"/>
+  <circle cx="29.3" cy="20" r=".9" fill="#fff"/>
+  <polygon class="inner" points="20,27 24,27 22,29.5" fill="#ffd2c2"/>
+  <path class="mouth" d="M22 29.5 q-2 2.5 -4 1 M22 29.5 q2 2.5 4 1" stroke="#2b2420" stroke-width=".8" fill="none"/>
+  <path d="M4 25 l9 1 M4 29 l9 -1 M40 25 l-9 1 M40 29 l-9 -1" stroke="#fff9" stroke-width=".7"/>
+  <!-- Halloween wizard hat -->
+  <g class="hat">
+    <polygon class="hat-fill" points="15,10.5 29,10.5 25,1.5 30,0.5 21,0.5" fill="#4b2a7a"/>
+    <polygon points="21.5,3.9 22.1,5.4 23.8,5.6 22.5,6.6 22.9,8.2 21.5,7.4 20.1,8.2 20.5,6.6 19.2,5.6 20.9,5.4" fill="#ffd84a"/>
+    <ellipse class="hat-fill" cx="22" cy="10.8" rx="10.5" ry="2.2" fill="#4b2a7a"/>
+  </g>
+  <!-- Christmas Santa hat -->
+  <g class="santa">
+    <path d="M15.5 10 Q17 2 24 1.5 Q28.5 1.5 30 5 L27.5 6 Q26 4.5 24.5 5 Q27 7.5 28.5 10z" fill="#d8322f"/>
+    <rect x="14" y="8.8" width="16" height="3.4" rx="1.7" fill="#fff"/>
+    <circle cx="29.5" cy="5.6" r="2.2" fill="#fff"/>
+  </g>
+</svg>

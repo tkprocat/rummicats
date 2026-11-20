@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rummicats</title>
+  <link rel="icon" href="art/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1><span id="logo">🐾</span> Rummicats</h1>
+    <div class="headBtns">
+      <button id="notifyBtn" class="small" title="Get a notification when it's your turn and you're tabbed away"></button>
+      <select id="themePick" class="small" title="Theme" aria-label="Theme">
+        <option value="normal">🐾 Normal</option>
+        <option value="halloween">🎃 Halloween</option>
+        <option value="christmas">🎄 Christmas</option>
+      </select>
+    </div>
+  </header>
+
+  <section id="lobby" class="screen">
+    <p class="intro">Rummikub, but every tile is a cat. Make <b>runs</b> (same color, numbers in order) and <b>groups</b> (same number, different colors). First to empty their paws wins.</p>
+    <div class="lobby-cats" aria-hidden="true"></div>
+    <div class="card">
+      <div class="deco deco-card" aria-hidden="true"></div>
+      <input id="name" placeholder="Your name" maxlength="16">
+      <button id="createBtn" class="primary">Create a room</button>
+      <div class="or">or join one</div>
+      <div class="row">
+        <input id="codeInput" placeholder="CODE" maxlength="4">
+        <button id="joinBtn">Join</button>
+      </div>
+      <p id="lobbyErr" class="err"></p>
+    </div>
+    <p class="source">
+      <a href="https://github.com/tkprocat/rummicats" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        Open source on GitHub
+      </a>
+    </p>
+  </section>
+
+  <section id="game" class="screen hidden">
+    <div id="topbar">
+      <div class="roomInfo">Room <b id="roomCode"></b> <button id="copyLink" class="small">copy invite link</button>
+        <details id="rulesBox">
+          <summary class="small">📜 Rules</summary>
+          <div id="rulesBody"></div>
+        </details>
+      </div>
+      <div><span id="timer"></span></div>
+    </div>
+    <div id="players"></div>
+    <p id="spectators" class="hidden"></p>
+
+    <div id="waiting" class="card hidden">
+      <p>Share the code <b class="code"></b> with friends (2 to 4 players), or fill seats with bots.</p>
+      <div class="lobbyBtns">
+        <button id="addBotBtn" class="small">🤖 Add a bot</button>
+        <button id="seatBtn" class="small"></button>
+      </div>
+      <label id="timerPick">Turn timer
+        <select id="timerSel">
+          <option value="0">off</option>
+          <option value="60">1 min</option>
+          <option value="120">2 min</option>
+          <option value="180">3 min</option>
+        </select>
+      </label>
+      <label id="idlePick" title="Moving a cat restarts it. If nobody moves a cat for this long, the turn is skipped.">Idle timer
+        <select id="idleSel">
+          <option value="0">off</option>
+          <option value="30">30 sec</option>
+          <option value="60">1 min</option>
+          <option value="120">2 min</option>
+          <option value="180">3 min</option>
+          <option value="300">5 min</option>
+        </select>
+      </label>
+      <button id="startBtn" class="primary">Start game</button>
+      <p id="waitMsg"></p>
+    </div>
+
+    <div id="status" class="hidden"></div>
+    <div id="tableArea" class="hidden">
+      <div class="deco deco-table" aria-hidden="true"></div>
+      <div id="table"></div>
+      <div id="pile" title="Draw a cat"><div class="heap"></div><div class="pileCount"></div></div>
+    </div>
+
+    <div id="controls" class="hidden">
+      <button id="doneBtn" class="primary">Done ✔</button>
+      <button id="undoMoveBtn" title="Undo your last move (Ctrl+Z)">↶ Undo move</button>
+      <button id="undoBtn">Undo turn</button>
+      <button id="drawBtn">Draw a cat</button>
+      <span id="meldInfo"></span>
+    </div>
+    <p id="gameErr" class="err"></p>
+
+    <div id="handBar" class="hidden">
+      <span>Your paws</span>
+      <button id="sortColor" class="small">sort by color</button>
+      <button id="sortRank" class="small">sort by number</button>
+      <div class="deco deco-rack" aria-hidden="true"></div>
+    </div>
+    <div id="hand" class="hidden"></div>
+
+    <details id="logBox"><summary>Game log</summary><ul id="log"></ul></details>
+
+    <button id="chatTab" title="Open chat" aria-controls="chat" aria-expanded="false">💬 <span>Chat</span><b id="chatBadge" class="hidden"></b></button>
+    <aside id="chat" aria-label="Room chat">
+      <div id="chatResize" role="separator" aria-orientation="vertical" aria-label="Resize chat" tabindex="0"
+        title="Drag to resize · double-click to reset"></div>
+      <div class="chatHead">
+        <b>💬 Chat</b>
+        <button id="chatClose" class="small" title="Hide chat" aria-label="Hide chat">✕</button>
+      </div>
+      <ul id="chatList" aria-live="polite"></ul>
+      <div id="emojiPicker" class="hidden">
+        <div id="emojiTabs"></div>
+        <div id="emojiGrid"></div>
+      </div>
+      <form id="chatForm" autocomplete="off">
+        <button id="emojiBtn" type="button" title="Emoji" aria-label="Emoji" aria-controls="emojiPicker" aria-expanded="false">😺</button>
+        <input id="chatInput" maxlength="1600" placeholder="Say something…" enterkeyhint="send">
+        <button class="primary" type="submit" title="Send" aria-label="Send">➤</button>
+      </form>
+      <p id="chatErr" class="err"></p>
+    </aside>
+  </section>
+
+  <div id="winPop" class="hidden" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+    <canvas id="confetti" aria-hidden="true"></canvas>
+    <div class="winCard">
+      <div class="trophy" aria-hidden="true">🏆</div>
+      <h2 id="winTitle"></h2>
+      <p class="why"></p>
+      <ul class="scores"></ul>
+      <button id="winClose" class="primary">Nice!</button>
+    </div>
+  </div>
+
+  <div class="deco deco-side left" aria-hidden="true"></div>
+  <div class="deco deco-side right" aria-hidden="true"></div>
+  <div class="deco deco-sky" aria-hidden="true"></div>
+  <canvas class="deco deco-snow" aria-hidden="true"></canvas>
+
+  <script src="rules.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

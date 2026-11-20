@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 86">
+  <!-- The sitting kitten in the lobby and the holiday decorations. See art/README.md. -->
+  <path class="fur-line" d="M47 76 q17 -3 11 -22" stroke="#ef8a2b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <ellipse class="fur" cx="32" cy="68" rx="17" ry="15" fill="#ef8a2b"/>
+  <ellipse cx="32" cy="71" rx="8" ry="9" fill="#ffffff26"/>
+  <ellipse class="fur" cx="25" cy="82" rx="5.5" ry="3.2" fill="#ef8a2b"/>
+  <ellipse class="fur" cx="39" cy="82" rx="5.5" ry="3.2" fill="#ef8a2b"/>
+  <polygon class="fur" points="17,42 18,26 29,35" fill="#ef8a2b"/>
+  <polygon class="fur" points="47,42 46,26 35,35" fill="#ef8a2b"/>
+  <ellipse class="fur" cx="32" cy="46" rx="16" ry="13" fill="#ef8a2b"/>
+  <ellipse class="eye" cx="26" cy="45" rx="3" ry="4" fill="#2b2420"/>
+  <ellipse class="eye" cx="38" cy="45" rx="3" ry="4" fill="#2b2420"/>
+  <circle cx="27" cy="43.6" r="1" fill="#fff"/>
+  <circle cx="39" cy="43.6" r="1" fill="#fff"/>
+  <polygon points="30,51 34,51 32,53" fill="#ffb3a7"/>
+  <path d="M14 49 l9 1 M14 53 l9 -1 M50 49 l-9 1 M50 53 l-9 -1" stroke="#fff9" stroke-width=".8"/>
+  <!-- The hat bounces when the kitten is poked. Only one of the two hats is shown. -->
+  <g class="kithat">
+    <g class="wizard">
+      <polygon class="hat-fill" points="19,34 45,34 37,9 47,3 30,6" fill="#4b2a7a"/>
+      <polygon points="30.0,21.6 30.9,23.8 33.2,23.9 31.5,25.5 32.0,27.8 30.0,26.5 28.0,27.8 28.5,25.5 26.8,23.9 29.1,23.8" fill="#ffd84a"/>
+      <polygon points="37.0,13.8 37.6,15.2 39.1,15.3 37.9,16.3 38.3,17.8 37.0,17.0 35.7,17.8 36.1,16.3 34.9,15.3 36.4,15.2" fill="#ffd84a"/>
+      <!-- a little crescent moon: a yellow disc with a hat-colored disc over it -->
+      <circle cx="27" cy="15" r="2.4" fill="#ffd84a"/>
+      <circle class="hat-fill" cx="28.2" cy="14.2" r="2.2" fill="#4b2a7a"/>
+      <ellipse class="hat-fill" cx="32" cy="34" rx="18" ry="4" fill="#4b2a7a"/>
+      <polygon points="46.5,1.5 47.0,2.8 48.4,2.9 47.4,3.8 47.7,5.1 46.5,4.4 45.3,5.1 45.6,3.8 44.6,2.9 46.0,2.8" fill="#ffd84a"/>
+    </g>
+    <g class="santa">
+      <path d="M18 35 Q20 14 34 12 Q44 11 49 20 L45 22 Q42 18 38 19 Q43 26 46 35z" fill="#d8322f"/>
+      <rect x="15" y="31" width="34" height="7" rx="3.5" fill="#fff"/>
+      <circle cx="48" cy="22" r="4" fill="#fff"/>
+    </g>
+  </g>
+</svg>

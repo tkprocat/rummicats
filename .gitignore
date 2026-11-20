@@ -1,0 +1,16 @@
+# Dependencies (there are none today, but in case some are added)
+node_modules/
+
+# Local settings and secrets
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor and OS clutter
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

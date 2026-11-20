@@ -1,0 +1,19 @@
+{
+  "name": "rummicats",
+  "version": "1.0.0",
+  "description": "Rummikub, but every tile is a cat. 2 to 4 players in the browser, with bots, spectators and chat.",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tkprocat/rummicats.git"
+  },
+  "license": "MIT"
+}

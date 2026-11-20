@@ -1,0 +1,3 @@
+# Store every text file with Unix line endings (LF) and check them out that way on every OS,
+# so diffs never show whole files changed just because of line endings.
+* text=auto eol=lf

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="3 0 38 38">
+  <!-- Browser tab icon: the ginger tile cat (cat.svg) without its holiday hats, cropped square.
+       Unlike the other art files this is shown as a plain image, so the page's CSS doesn't reach it. -->
+  <polygon points="6,16 9,1 19,10" fill="#ef8a2b"/>
+  <polygon points="38,16 35,1 25,10" fill="#ef8a2b"/>
+  <polygon points="9,13 10,5 16,10" fill="#ffd2c2"/>
+  <polygon points="35,13 34,5 28,10" fill="#ffd2c2"/>
+  <ellipse cx="22" cy="23" rx="17" ry="14" fill="#ef8a2b"/>
+  <ellipse cx="15.5" cy="21" rx="2.6" ry="3.4" fill="#2b2420"/>
+  <ellipse cx="28.5" cy="21" rx="2.6" ry="3.4" fill="#2b2420"/>
+  <circle cx="16.3" cy="20" r=".9" fill="#fff"/>
+  <circle cx="29.3" cy="20" r=".9" fill="#fff"/>
+  <polygon points="20,27 24,27 22,29.5" fill="#ffd2c2"/>
+  <path d="M22 29.5 q-2 2.5 -4 1 M22 29.5 q2 2.5 4 1" stroke="#2b2420" stroke-width=".8" fill="none"/>
+</svg>

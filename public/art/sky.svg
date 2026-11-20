@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 140">
+  <!-- Halloween night sky: a waning crescent moon (a bright disc with an offset dark disc cut out), a soft glow,
+       twinkling stars (class "twinkle") and two drifting clouds (class "cloud", plus "one" or "two" for their speed). -->
+  <defs>
+    <mask id="crescent"><rect width="180" height="140" fill="#fff"/><circle cx="112" cy="50" r="34" fill="#000"/></mask>
+    <filter id="moonglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="7" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <polygon class="twinkle" points="18.0,19.4 18.7,21.1 20.5,21.2 19.1,22.4 19.5,24.1 18.0,23.2 16.5,24.1 16.9,22.4 15.5,21.2 17.3,21.1" fill="#fff6d6"/>
+  <polygon class="twinkle" points="152.0,14.0 152.5,15.3 153.9,15.4 152.9,16.3 153.2,17.6 152.0,16.9 150.8,17.6 151.1,16.3 150.1,15.4 151.5,15.3" fill="#fff6d6"/>
+  <polygon class="twinkle" points="166.0,95.6 166.6,97.1 168.3,97.3 167.0,98.3 167.4,99.9 166.0,99.1 164.6,99.9 165.0,98.3 163.7,97.3 165.4,97.1" fill="#fff6d6"/>
+  <polygon class="twinkle" points="12.0,110.2 12.5,111.3 13.7,111.4 12.8,112.3 13.1,113.5 12.0,112.8 10.9,113.5 11.2,112.3 10.3,111.4 11.5,111.3" fill="#fff6d6"/>
+  <polygon class="twinkle" points="134.0,126.4 134.4,127.4 135.5,127.5 134.7,128.2 134.9,129.3 134.0,128.7 133.1,129.3 133.3,128.2 132.5,127.5 133.6,127.4" fill="#fff6d6"/>
+  <polygon class="twinkle" points="36.0,72.5 36.4,73.5 37.4,73.5 36.6,74.2 36.9,75.2 36.0,74.7 35.1,75.2 35.4,74.2 34.6,73.5 35.6,73.5" fill="#fff6d6"/>
+  <g filter="url(#moonglow)">
+    <g mask="url(#crescent)">
+      <circle cx="96" cy="60" r="36" fill="#fff1c1"/>
+      <circle cx="70" cy="64" r="4" fill="#ecdca6"/>
+      <circle cx="78" cy="82" r="3" fill="#ecdca6"/>
+      <circle cx="68" cy="46" r="2.5" fill="#ecdca6"/>
+    </g>
+  </g>
+  <g class="cloud two" fill="#5a4d78cc">
+    <ellipse cx="36" cy="42" rx="18" ry="6"/><ellipse cx="50" cy="38" rx="12" ry="7"/><ellipse cx="64" cy="43" rx="15" ry="5"/>
+  </g>
+  <g class="cloud one" fill="#463a63e6">
+    <ellipse cx="50" cy="95" rx="16" ry="6"/><ellipse cx="70" cy="92" rx="26" ry="9"/>
+    <ellipse cx="92" cy="86" rx="20" ry="11"/><ellipse cx="114" cy="93" rx="24" ry="8"/>
+  </g>
+</svg>

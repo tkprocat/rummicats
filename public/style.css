@@ -1,0 +1,382 @@
+:root {
+  --bg: #f6efe4;
+  --felt: #2f6b4f;
+  --felt-dark: #24563f;
+  --ink: #2b2420;
+  --muted: #7a6d62;
+  --ok: #7fe0a6;
+  --bad: #ff7a7a;
+  --ginger: #ef8a2b;
+  --midnight: #2c2c36;
+  --smoky: #6c87ad;
+  --pinky: #e45c93;
+  --rack: #3a302b;
+  --rack-ledge: #221c19;
+  --tile-back: #f1e8d8;
+  --tile: #fffaf2;
+  --tile-edge: #c9b9a3;
+  --surface: #fff;
+  --line: #d8cbbb;
+  --err: #c0392b;
+}
+/* Halloween: a moonlit night, a haunted purple table, bone-white cats in witch hats */
+:root[data-theme="halloween"] {
+  --bg: #1c1526;
+  --felt: #3b2858;
+  --felt-dark: #2c1e44;
+  --ink: #f1e6d6;
+  --muted: #b3a3c4;
+  --rack: #1f1a1d;
+  --rack-ledge: #0d0a0c;
+  --tile-back: #e6dcc6;
+  --tile: #f4ecda;
+  --tile-edge: #a99a80;
+  --surface: #2b2138;
+  --line: #4a3c5c;
+  --err: #ff8a6a;
+}
+/* Christmas: a snowy winter night, a pine-green table, a cranberry rack, cats in Santa hats */
+:root[data-theme="christmas"] {
+  --bg: #142233;
+  --felt: #1f5a3a;
+  --felt-dark: #174a2f;
+  --ink: #f3efe6;
+  --muted: #a9bccb;
+  --rack: #5a1f22;
+  --rack-ledge: #331013;
+  --tile-back: #e9eeec;
+  --tile: #fbfaf6;
+  --tile-edge: #aeb6b2;
+  --surface: #1e3045;
+  --line: #355068;
+  --err: #ff8a7a;
+}
+* { box-sizing: border-box; }
+html { scrollbar-gutter: stable; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji"; background: var(--bg); color: var(--ink); }
+header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; }
+h1 { margin: 0; font-size: 1.5rem; }
+.headBtns { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.screen { padding: 0 16px 24px; max-width: 1100px; margin: 0 auto; }
+.hidden { display: none !important; }
+.intro { max-width: 480px; margin: 8px auto 16px; line-height: 1.5; }
+.card { background: var(--surface); border-radius: 14px; padding: 18px; max-width: 420px; margin: 0 auto 12px; box-shadow: 0 2px 10px #0001; display: flex; flex-direction: column; gap: 10px; }
+.row { display: flex; gap: 8px; }
+.row input { flex: 1; text-transform: uppercase; letter-spacing: .2em; }
+.or { text-align: center; color: var(--muted); font-size: .85rem; }
+input { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+button { font: inherit; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+button:disabled { opacity: .45; cursor: default; }
+button.primary { background: var(--ginger); border-color: var(--ginger); color: #fff; font-weight: 600; }
+button.small { padding: 3px 8px; font-size: .8rem; }
+.err { color: var(--err); min-height: 1.2em; margin: 4px 0; }
+
+#topbar { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+#players { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.player { background: var(--surface); border-radius: 10px; padding: 6px 10px; font-size: .9rem; border: 2px solid transparent; }
+.player.turn { border-color: var(--ginger); }
+.player.off { opacity: .5; }
+.player .n { font-weight: 600; }
+.player { position: relative; }
+.player .kick { position: absolute; top: 3px; right: 3px; padding: 0 5px; font-size: .7rem; line-height: 1.4; }
+.player:has(.kick) { padding-right: 30px; }
+#spectators { margin: -4px 0 10px; color: var(--muted); font-size: .85rem; }
+.lobbyBtns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+#status { font-weight: 600; margin: 6px 0; }
+#tableArea { background: var(--felt); border-radius: 14px; display: flex; align-items: flex-start; }
+#tableArea.watching { background: var(--felt-dark); }
+#table { flex: 1; min-width: 0; padding: 12px; min-height: 260px; display: flex; flex-wrap: wrap; gap: 12px; align-content: flex-start; }
+.set { display: flex; align-items: center; padding: 6px 4px; border-radius: 10px; border: 2px dashed transparent; position: relative; }
+.set.valid { border-color: transparent; }
+.set.invalid { border-color: var(--bad); background: #ff7a7a22; }
+.set .why { position: absolute; bottom: -9px; left: 8px; font-size: .68rem; background: var(--bad); color: #fff; padding: 0 5px; border-radius: 4px; white-space: nowrap; }
+.newset { min-width: 90px; min-height: 92px; border: 2px dashed #ffffff60; border-radius: 10px; color: #ffffffb0; display: flex; align-items: center; justify-content: center; font-size: .85rem; text-align: center; padding: 6px; }
+.gap { width: 6px; align-self: stretch; border-radius: 4px; }
+.picking .gap { width: 16px; background: #ffffff30; cursor: pointer; margin: 0 2px; }
+.picking .gap:hover, .picking .newset:hover { background: #ffffff70; }
+.picking .newset { cursor: pointer; }
+
+#controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 12px 0 0; }
+#meldInfo { color: var(--muted); font-size: .9rem; }
+#handBar { display: flex; gap: 8px; align-items: center; margin-top: 8px; font-weight: 600; }
+/* The rack: dark wood tiers, like a real Rummikub rack */
+#hand { background: var(--rack); border-radius: 12px; padding: 10px 10px 6px; display: flex; flex-direction: column; gap: 8px; margin-top: 6px; box-shadow: inset 0 2px 6px #0007, 0 3px 8px #0003; }
+#hand.returning { outline: 3px dashed var(--ginger); cursor: pointer; }
+.tier { display: flex; gap: 4px; padding-bottom: 4px; border-bottom: 7px solid var(--rack-ledge); box-shadow: 0 2px 0 #ffffff12; }
+.slot { width: 58px; height: 84px; flex: none; border-radius: 8px; }
+.picking .slot:empty { cursor: pointer; }
+.picking .slot:empty:hover, .slot.over { background: #ffffff1c; outline: 2px dashed #ffffff50; outline-offset: -2px; }
+
+/* The draw pile: face-down cats in a heap */
+#pile { flex: none; width: 130px; padding: 10px 8px; display: flex; flex-direction: column; align-items: center; color: #ffffffc0; font-size: .8rem; border-radius: 12px; }
+#pile.can { cursor: pointer; }
+#pile.can:hover { background: #ffffff14; }
+#pile .heap { position: relative; width: 114px; height: 96px; }
+#pile .heap i { position: absolute; width: 20px; height: 28px; background: var(--tile-back); border-radius: 4px; box-shadow: 0 1px 0 var(--tile-edge), 0 2px 3px #0004; }
+.pileCount { margin-top: 4px; font-weight: 600; }
+
+/* Other players' racks, seen from across the table */
+.minirack { display: flex; flex-wrap: wrap; gap: 1px; max-width: 150px; margin-top: 4px; padding: 3px 4px 2px; background: var(--rack); border-bottom: 3px solid var(--rack-ledge); border-radius: 4px 4px 2px 2px; }
+.minirack i { width: 6px; height: 9px; background: var(--tile-back); border-radius: 1.5px; }
+
+.tile { width: 58px; height: 84px; background: var(--tile); border-radius: 8px; box-shadow: 0 2px 0 var(--tile-edge), 0 3px 6px #0003; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px 2px 3px; cursor: pointer; user-select: none; position: relative; flex: none; }
+.tile svg { width: 44px; height: 40px; }
+.tile .rank { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 2px; }
+.tile.selected { transform: translateY(-6px); box-shadow: 0 0 0 3px var(--ginger), 0 6px 10px #0004; }
+.tile.fresh::after { content: ""; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--ginger); }
+.c-ginger .rank { color: var(--ginger); }
+.c-midnight .rank { color: var(--midnight); }
+.c-smoky .rank { color: var(--smoky); }
+.c-pinky .rank { color: var(--pinky); }
+.c-wild .rank { background: linear-gradient(90deg, #ef8a2b, #e45c93, #6c87ad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.mini { transform: scale(.75); transform-origin: left center; margin-right: -14px; }
+
+#logBox { margin-top: 14px; color: var(--muted); font-size: .85rem; }
+#log { padding-left: 18px; }
+#over { text-align: center; }
+
+@media (max-width: 600px) {
+  .tile { width: 48px; height: 72px; }
+  .tile svg { width: 36px; height: 32px; }
+  .tile .rank { font-size: 22px; }
+  .slot { width: 48px; height: 72px; }
+  #tableArea { flex-direction: column-reverse; align-items: stretch; }
+  #pile { width: auto; flex-direction: row; justify-content: center; gap: 10px; padding: 6px; }
+  #pile .heap { width: 90px; height: 56px; }
+  #pile .heap i { width: 14px; height: 20px; }
+}
+
+/* Dragging cats around in your paws */
+#hand .tile { touch-action: none; }
+.tile.placeholder { opacity: .3; }
+.tile.ghost { position: fixed; left: 0; top: 0; z-index: 10; pointer-events: none; box-shadow: 0 0 0 3px var(--ginger), 0 10px 18px #0005; }
+
+/* Turn timer */
+#timerPick { display: flex; gap: 8px; align-items: center; justify-content: center; color: var(--muted); }
+select { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
+select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
+#timer { font-weight: 700; font-variant-numeric: tabular-nums; margin-right: 10px; }
+
+/* Artwork recoloring. The drawings live in public/art/*.svg, drawn as a ginger cat; the game recolors the parts
+   with these class names (see public/art/README.md). Everything else keeps the colors from the SVG file. */
+.c-ginger { --fur: var(--ginger); --hat: #4b2a7a; }
+.c-midnight { --fur: var(--midnight); --hat: #6a3a9a; }
+.c-smoky { --fur: var(--smoky); --hat: #2d3a8c; }
+.c-pinky { --fur: var(--pinky); --hat: #2d3a8c; }
+.c-wild { --hat: #1d1630; }
+.cat .fur, .kitten .fur { fill: var(--fur); }
+.c-wild .cat .fur { fill: url(#rainbow); }
+.kitten .fur-line { stroke: var(--fur); }
+.cat .hat-fill, .kitten .hat-fill { fill: var(--hat); }
+/* Black cats get yellow eyes and a darker inner ear and nose */
+.c-midnight .cat .eye, .kitten.dark .eye { fill: #ffd84a; }
+.c-midnight .cat .mouth { stroke: #ffd84a; }
+.c-midnight .cat .inner { fill: #5a5a6a; }
+.kitten.santa-hat .wizard, .kitten:not(.santa-hat) .santa { display: none; }
+.pumpkin.noface .glow { display: none; }
+.present .box { fill: var(--box); }
+.present .ribbon { fill: var(--ribbon); }
+
+/* Theme switch */
+.tile .hat, .tile .santa { display: none; }
+[data-theme="halloween"] .tile .hat, [data-theme="christmas"] .tile .santa { display: inline; }
+[data-theme] .card, [data-theme] .player { box-shadow: 0 2px 12px #0006; }
+
+/* Holiday decorations: pumpkins, presents and hatted kittens, only in the holiday themes, never in the way of a tap */
+.deco { display: none; pointer-events: none; }
+[data-theme] .deco { display: block; }
+.deco svg { display: block; filter: drop-shadow(0 3px 3px #0006); }
+.deco .glow { animation: flicker 2.6s infinite; }
+@keyframes flicker { 0%, 100% { opacity: 1; } 40% { opacity: .75; } 45% { opacity: .95; } 70% { opacity: .82; } }
+@media (prefers-reduced-motion: reduce) { .deco .glow { animation: none; } }
+
+#tableArea { position: relative; }
+#tableArea > :not(.deco) { position: relative; }
+.deco-table .left, .deco-table .right { position: absolute; bottom: 6px; display: flex; align-items: flex-end; gap: 2px; }
+.deco-table .left { left: 10px; }
+.deco-table .right { right: 10px; }
+
+#handBar { position: relative; }
+.deco-rack { position: absolute; right: 18px; bottom: -14px; }
+[data-theme] .deco-rack { display: flex; align-items: flex-end; gap: 2px; }
+
+.card { position: relative; }
+.deco-card .patch { position: absolute; left: -14px; bottom: -12px; display: flex; align-items: flex-end; }
+
+/* A row of kittens sitting on top of the lobby card; poke them too */
+.lobby-cats { position: relative; z-index: 1; display: flex; justify-content: center; align-items: flex-end; gap: 6px; max-width: 420px; margin: 0 auto -7px; }
+.lobby-cats span { display: block; }
+.lobby-cats .flip { transform: scaleX(-1); }
+.lobby-cats svg { display: block; filter: drop-shadow(0 2px 2px #0003); }
+.lobby-cats .kitten { cursor: pointer; transform-origin: 50% 100%; }
+.lobby-cats .kithat { display: none; }
+[data-theme] .lobby-cats .kithat { display: inline; }
+
+.deco-side { position: fixed; bottom: 12px; z-index: 0; }
+[data-theme] .deco-side { display: flex; align-items: flex-end; gap: 4px; }
+.deco-side.left { left: 14px; }
+.deco-side.right { right: 14px; }
+@media (max-width: 1440px) { [data-theme] .deco-side { display: none; } }
+@media (max-width: 600px) { .deco-rack .kitten { display: none; } .deco-table svg { width: 26px; height: auto; } }
+
+/* Poking a kitten or pumpkin (the table pumpkins stay out of the way of taps) */
+.deco .kitten, .deco .pumpkin, .deco .present, .deco .tree { pointer-events: auto; cursor: pointer; transform-origin: 50% 100%; }
+.deco-table .pumpkin, .deco-table .present { pointer-events: none; cursor: default; }
+.kitten .kithat { transform-box: fill-box; transform-origin: 40% 100%; }
+.kitten.poke { animation: hop .7s ease-out; }
+.kitten.poke .kithat { animation: hatbounce .8s ease-out; }
+.pumpkin.poke, .present.poke, .tree.poke { animation: wobble .7s ease-out; }
+.present, .tree { transform-origin: 50% 100%; }
+/* Tree lights blink on and off like a string of bulbs, each on its own rhythm */
+.tree .lights circle { animation: blink 1.6s infinite; }
+.tree .lights circle:nth-child(2n) { animation-delay: -.8s; }
+.tree .lights circle:nth-child(3n) { animation-duration: 2.2s; animation-delay: -1.3s; }
+.tree .lights circle:nth-child(5n) { animation-duration: 1.1s; animation-delay: -.4s; }
+@keyframes blink { 0%, 44% { opacity: 1; } 50%, 94% { opacity: .12; } 100% { opacity: 1; } }
+.deco .pumpkin.poke .glow { animation: flare .9s ease-out; }
+@keyframes hop {
+  0%, 100% { transform: none; }
+  18% { transform: scale(1.12, .84); }
+  45% { transform: translateY(-20px) scale(.94, 1.08); }
+  72% { transform: translateY(0) scale(1.1, .9); }
+  86% { transform: scale(.97, 1.03); }
+}
+@keyframes hatbounce {
+  0%, 100% { transform: none; }
+  35% { transform: translateY(-7px) rotate(-16deg); }
+  60% { transform: translateY(-3px) rotate(12deg); }
+  80% { transform: rotate(-4deg); }
+}
+@keyframes wobble {
+  0%, 100% { transform: none; }
+  15% { transform: rotate(-12deg) scale(1.06); }
+  35% { transform: rotate(10deg); }
+  55% { transform: rotate(-6deg); }
+  75% { transform: rotate(3deg); }
+}
+@keyframes flare { 0% { fill: #fffbe0; } 30% { fill: #fff3a0; } 100% { fill: #ffcf4a; } }
+
+.bubble, .sparkle { position: fixed; z-index: 20; pointer-events: none; }
+.bubble { transform: translate(-50%, -100%); background: var(--surface); color: var(--ink); border: 1px solid var(--line); padding: 3px 9px; border-radius: 12px; font-size: .8rem; font-weight: 600; white-space: nowrap; box-shadow: 0 3px 8px #0006; animation: bubble 1.5s ease-out forwards; }
+.sparkle { color: #ffd84a; font-size: 13px; transform: translate(-50%, -50%); animation: sparkle .8s ease-out forwards; }
+.sparkle.ember { color: #ff9a3c; }
+.sparkle.flake { color: #fff; }
+@keyframes bubble {
+  0% { opacity: 0; transform: translate(-50%, -80%) scale(.6); }
+  15% { opacity: 1; transform: translate(-50%, -100%) scale(1.05); }
+  75% { opacity: 1; transform: translate(-50%, -115%); }
+  100% { opacity: 0; transform: translate(-50%, -130%); }
+}
+@keyframes sparkle {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(.5); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1) rotate(90deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kitten.poke, .kitten.poke .kithat, .pumpkin.poke, .present.poke, .tree.poke, .tree .lights circle { animation: none; }
+}
+
+/* The night sky: a crescent moon with drifting clouds and a few twinkling stars, behind everything */
+.deco-sky { position: fixed; top: 52px; right: 4%; z-index: -1; }
+.deco-sky svg { filter: none; overflow: visible; }
+.deco-sky .cloud { animation: drift 26s ease-in-out infinite alternate; }
+.deco-sky .cloud.two { animation-duration: 34s; animation-delay: -12s; }
+.deco-sky .twinkle { animation: twinkle 3.2s ease-in-out infinite; }
+.deco-sky .twinkle:nth-of-type(2n) { animation-delay: -1.1s; animation-duration: 4.1s; }
+.deco-sky .twinkle:nth-of-type(3n) { animation-delay: -2.3s; }
+@keyframes drift { from { transform: translateX(-18px); } to { transform: translateX(22px); } }
+@keyframes twinkle { 0%, 100% { opacity: .9; } 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .deco-sky .cloud, .deco-sky .twinkle { animation: none; } }
+@media (max-width: 600px) { [data-theme] .deco-sky { display: none; } }
+
+/* Christmas snow: one canvas behind everything, drawn by js/snow.js */
+.deco-snow, [data-theme] .deco-snow { display: none; }
+[data-theme="christmas"] .deco-snow { display: block; position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; }
+
+/* A wild cat swapped off the table: it has to go back out this turn */
+.tile.borrowed { box-shadow: 0 0 0 3px #a77bff, 0 0 14px #a77bffaa; }
+.tile.borrowed.selected { box-shadow: 0 0 0 3px var(--ginger), 0 0 0 6px #a77bff, 0 6px 14px #0006; }
+
+/* Winner popup with confetti */
+#winPop { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; background: #0007; animation: winFade .25s ease-out; }
+#confetti { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; }
+.winCard { position: relative; background: var(--surface); color: var(--ink); border-radius: 18px; padding: 24px 28px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 10px 40px #0006; animation: winPop .45s cubic-bezier(.2, 1.6, .4, 1); }
+.winCard .trophy { font-size: 3.2rem; line-height: 1; animation: winBob 1.6s ease-in-out infinite; }
+.winCard h2 { margin: 10px 0 4px; font-size: 1.6rem; }
+.winCard .why { margin: 0 0 12px; color: var(--muted); }
+.winCard .scores { list-style: none; margin: 0 0 16px; padding: 0; font-size: .9rem; }
+.winCard .scores li { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--line); }
+.winCard .scores li:first-child { font-weight: 700; }
+@keyframes winFade { from { opacity: 0; } }
+@keyframes winPop { from { transform: scale(.6); opacity: 0; } }
+@keyframes winBob { 50% { transform: translateY(-6px) rotate(-6deg); } }
+@media (prefers-reduced-motion: reduce) { #winPop, .winCard, .winCard .trophy { animation: none; } }
+
+/* Room chat: a panel on the right, collapsed to a tab on the edge. On wide screens the game makes room for it;
+   on narrow ones it slides over the game. */
+:root { --chat-w: 320px; }
+#chatTab { position: fixed; right: 0; top: 40vh; z-index: 30; border-radius: 10px 0 0 10px; border-right: 0; padding: 10px 10px 10px 12px; box-shadow: 0 2px 10px #0003; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+#chatTab.unread { border-color: var(--ginger); animation: chatNudge 2.4s ease-in-out infinite; }
+#chatBadge { background: var(--ginger); color: #fff; border-radius: 999px; min-width: 1.4em; padding: 0 5px; font-size: .75rem; line-height: 1.4em; text-align: center; }
+@keyframes chatNudge { 0%, 80%, 100% { transform: none; } 88% { transform: translateX(-4px); } }
+
+#chat { position: fixed; top: 0; right: 0; bottom: 0; z-index: 40; width: var(--chat-w); max-width: calc(100vw - 32px); display: flex; flex-direction: column; background: var(--surface); border-left: 1px solid var(--line); box-shadow: -4px 0 18px #0002; transform: translateX(100%); visibility: hidden; transition: transform .2s ease-out, visibility .2s; }
+body.chatOpen #chat { transform: none; visibility: visible; }
+body.chatOpen #chatTab { display: none; }
+@media (min-width: 901px) { body.chatOpen:has(#game:not(.hidden)) { padding-right: var(--chat-w); } }
+@media (prefers-reduced-motion: reduce) { #chat { transition: none; } #chatTab.unread { animation: none; } }
+
+.chatHead { display: flex; justify-content: space-between; align-items: center; padding: 12px 12px 10px 14px; border-bottom: 1px solid var(--line); }
+#chatList { flex: 1; overflow-y: auto; margin: 0; padding: 10px 12px; list-style: none; display: flex; flex-direction: column; gap: 3px; overscroll-behavior: contain; }
+.chatEmpty { color: var(--muted); text-align: center; margin: auto 0; font-size: .9rem; }
+.msg { max-width: 85%; align-self: flex-start; }
+.msg.mine { align-self: flex-end; text-align: right; }
+.msg .who { font-size: .72rem; color: var(--muted); margin: 8px 4px 2px; }
+.msg .text { display: inline-block; text-align: left; background: var(--bg); border: 1px solid var(--line); padding: 6px 10px; border-radius: 14px; line-height: 1.35; overflow-wrap: anywhere; white-space: pre-wrap; }
+.msg.mine .text { background: var(--ginger); border-color: var(--ginger); color: #fff; }
+.msg.big .text, .msg.mine.big .text { background: none; border: 0; padding: 0 2px; font-size: 2.2rem; line-height: 1.15; }
+
+#emojiGrid button, #emojiTabs button, #emojiBtn { border: 0; background: none; padding: 4px; font-size: 1.25rem; line-height: 1; border-radius: 8px; }
+#emojiGrid button:hover, #emojiTabs button:hover, #emojiTabs button.on, #emojiBtn:hover, #emojiBtn[aria-expanded="true"] { background: var(--bg); }
+#emojiGrid button:hover { transform: scale(1.18); }
+
+#emojiPicker { margin: 6px 10px 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 0 4px 14px #0003; }
+#emojiTabs { display: flex; gap: 2px; padding: 4px 6px; border-bottom: 1px solid var(--line); }
+#emojiGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); max-height: 176px; overflow-y: auto; padding: 6px; }
+#emojiGrid button { font-size: 1.45rem; padding: 5px 0; }
+
+#chatForm { display: flex; gap: 6px; padding: 8px 10px 0; align-items: center; border-top: 1px solid var(--line); margin-top: 6px; }
+#chatInput { flex: 1; min-width: 0; padding: 8px 10px; }
+#chatForm .primary { padding: 8px 12px; }
+#chatErr { padding: 0 12px; margin: 4px 0 8px; font-size: .8rem; }
+@media (max-width: 600px) { #chatTab span { display: none; } #chatTab { padding: 8px 8px 8px 10px; } }
+
+/* Resizing the chat: a grab strip along its left edge */
+#chatResize { position: absolute; left: -5px; top: 0; bottom: 0; width: 10px; cursor: ew-resize; touch-action: none; z-index: 1; }
+#chatResize::after { content: ""; position: absolute; left: 4px; top: 50%; width: 3px; height: 40px; margin-top: -20px; border-radius: 3px; background: var(--line); transition: background .15s, height .15s; }
+#chatResize:hover::after, #chatResize:focus-visible::after, .chatResizing #chatResize::after { background: var(--ginger); height: 64px; margin-top: -32px; }
+#chatResize:focus-visible { outline: none; }
+body.chatResizing { cursor: ew-resize; user-select: none; }
+body.chatResizing #chat { transition: none; }
+
+/* Idle timer pick in the lobby, and the countdowns in the top bar */
+#idlePick { display: flex; gap: 8px; align-items: center; justify-content: center; color: var(--muted); }
+#timer span + span { margin-left: 12px; }
+#timer .low { color: var(--err); }
+
+/* Room rules: a dropdown next to the invite link, with the timers the host picked */
+.roomInfo { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; position: relative; }
+#rulesBox summary { list-style: none; cursor: pointer; padding: 3px 8px; font-size: .8rem; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+#rulesBox summary::-webkit-details-marker { display: none; }
+#rulesBox[open] summary { border-color: var(--ginger); }
+#rulesBody { position: absolute; left: 0; top: calc(100% + 6px); z-index: 25; width: min(420px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; box-shadow: 0 6px 22px #0004; font-size: .88rem; line-height: 1.45; }
+#rulesBody h3 { margin: 4px 0 6px; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+#rulesBody h3 + ul { margin-top: 0; }
+#rulesBody ul { margin: 0 0 10px; padding-left: 18px; }
+#rulesBody li { margin: 3px 0; }
+#rulesBody .note { color: var(--muted); font-size: .8rem; margin: 0; }
+
+/* Link to the source code, under the lobby card */
+.source { text-align: center; margin: 18px 0 0; font-size: .85rem; position: relative; z-index: 1; }
+.source a { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; padding: 4px 10px; border-radius: 999px; }
+.source a:hover, .source a:focus-visible { color: var(--ink); background: var(--surface); }
