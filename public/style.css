@@ -91,10 +91,13 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 .set.valid { border-color: transparent; }
 .set.invalid { border-color: var(--bad); background: #ff7a7a22; }
 .set .why { position: absolute; bottom: -9px; left: 8px; font-size: .68rem; background: var(--bad); color: #fff; padding: 0 5px; border-radius: 4px; white-space: nowrap; }
-.newset { min-width: 90px; min-height: 92px; border: 2px dashed #ffffff60; border-radius: 10px; color: #ffffffb0; display: flex; align-items: center; justify-content: center; font-size: .85rem; text-align: center; padding: 6px; }
-.gap { width: 6px; align-self: stretch; border-radius: 4px; }
-.picking .gap { width: 16px; background: #ffffff30; cursor: pointer; margin: 0 2px; }
-.picking .gap:hover, .picking .newset:hover { background: #ffffff70; }
+.newset { width: 90px; min-height: 92px; flex: none; border: 2px dashed #ffffff60; border-radius: 10px; color: #ffffffb0; display: flex; align-items: center; justify-content: center; font-size: .85rem; text-align: center; padding: 6px; }
+.gap { width: 6px; flex: none; align-self: stretch; position: relative; }
+/* Expand the hit area over the edges of adjacent cats without changing the set's layout. */
+.picking .gap { cursor: pointer; z-index: 1; }
+.picking .gap::after { content: '+'; position: absolute; inset: 0 -5px; border: 1px dashed #ffffff90; border-radius: 5px; background: var(--felt); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+.picking .gap:hover::after { background: var(--ginger); border-color: #fff; color: #fff; }
+.picking .newset:hover { background: #ffffff70; }
 .picking .newset { cursor: pointer; }
 
 #controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 12px 0 0; }
