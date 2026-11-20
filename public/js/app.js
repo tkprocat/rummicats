@@ -23,6 +23,16 @@ let events = null;
 let clockSkew = 0; // server time minus local time
 let celebrated = null; // room code whose win we have already announced
 
+// Auto-sort: keep the rack in color or number order, so drawn cats land in place instead of at the end.
+// Moving a cat to a slot yourself turns it off, since a sorted rack would undo the move.
+const SORTS = { color: sortByColor, rank: sortByRank };
+let autoSort = SORTS[store.get('autoSort')] ? store.get('autoSort') : 'off';
+function setAutoSort(mode) {
+  autoSort = SORTS[mode] ? mode : 'off';
+  store.set('autoSort', autoSort);
+  $('autoSort').value = autoSort;
+}
+
 function tileEl(id, opts = {}) {
   const t = TILES[id];
   const el = document.createElement('div');
@@ -143,7 +153,11 @@ function moveTo(target) {
       pushDraft();
     }
     // Without a slot, cats go back to the slot they came from (or a free one when the rack is drawn).
-    if (target.slot != null) ids.forEach((id, k) => dropInRack(id, target.slot + k, shownSet()));
+    // With auto-sort on, cats coming back from the table just take their sorted place.
+    if (target.slot != null && !(back.length && SORTS[autoSort])) {
+      if (!back.length) setAutoSort('off');
+      ids.forEach((id, k) => dropInRack(id, target.slot + k, shownSet()));
+    }
     selected = [];
     return render();
   }
@@ -406,6 +420,7 @@ function render() {
   const shown = shownSet();
   const slotW = matchMedia('(max-width: 600px)').matches ? 52 : 62; // tile width + gap
   setCols(Math.max(6, Math.floor((hd.clientWidth - 16) / slotW)));
+  if (SORTS[autoSort]) SORTS[autoSort](shown);
   fitRack(shown);
   hd.innerHTML = '';
   hd.classList.toggle('picking', mine && selected.length > 0);
@@ -529,13 +544,20 @@ $('copyLink').onclick = () => {
   const link = `${location.origin}${location.pathname}?room=${session.code}`;
   navigator.clipboard?.writeText(link).then(() => flash('Invite link copied!'), () => flash(link));
 };
-$('sortColor').onclick = () => { sortByColor(shownSet()); render(); };
-$('sortRank').onclick = () => { sortByRank(shownSet()); render(); };
+// One-off sorts for people who'd rather arrange their own cats afterwards. They turn auto-sort off,
+// so the next draw doesn't re-sort the rack the other way.
+$('sortColor').onclick = () => { setAutoSort('off'); sortByColor(shownSet()); render(); };
+$('sortRank').onclick = () => { setAutoSort('off'); sortByRank(shownSet()); render(); };
+$('autoSort').value = autoSort;
+$('autoSort').onchange = (e) => { setAutoSort(e.target.value); render(); };
 
 // ---- Start up ----
 
 initHandDrag((id, slot) => {
-  if (slot != null) dropInRack(id, slot, shownSet());
+  if (slot != null) {
+    setAutoSort('off');
+    dropInRack(id, slot, shownSet());
+  }
   render();
 }, (id, el, select) => {
   if (!myTurn()) return;
