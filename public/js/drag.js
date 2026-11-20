@@ -5,6 +5,21 @@ let onDrop = () => {};
 let onSelect = () => {};
 let onSelectionEnd = () => {};
 
+// A rack group consists of adjacent occupied slots on one tier; a board group is a set.
+function selectionGroup(el, board) {
+  if (board) return new Set(el.closest('.set').querySelectorAll('.tile'));
+  const slot = el.closest('.slot');
+  const tiles = [el];
+  for (const direction of ['previousElementSibling', 'nextElementSibling']) {
+    for (let neighbor = slot[direction]; neighbor; neighbor = neighbor[direction]) {
+      const tile = neighbor.querySelector('.tile');
+      if (!tile) break;
+      tiles.push(tile);
+    }
+  }
+  return new Set(tiles);
+}
+
 // True while a cat is being dragged; the page shouldn't be redrawn under it.
 export const isDragging = () => !!(drag && (drag.active || drag.selecting));
 
@@ -18,6 +33,7 @@ export function startHandDrag(id, el, e, canSelect) {
       if (drag !== current || current.active) return;
       current.selecting = true;
       current.visited = new Set();
+      current.group = selectionGroup(current.el, false);
       current.select = !current.el.classList.contains('selected');
       selectTile(current.el);
     }, 300);
@@ -33,7 +49,7 @@ export function startBoardSelection(id, el, e, canSelect) {
 }
 
 function selectTile(el) {
-  if (!el || drag.visited.has(el.dataset.id)) return;
+  if (!el || !drag.group.has(el) || drag.visited.has(el.dataset.id)) return;
   drag.visited.add(el.dataset.id);
   onSelect(+el.dataset.id, el, drag.select);
 }
@@ -51,6 +67,7 @@ function move(e) {
     if (drag.board) {
       drag.selecting = true;
       drag.visited = new Set();
+      drag.group = selectionGroup(drag.el, true);
       drag.select = !drag.el.classList.contains('selected');
       selectTile(drag.el);
       const under = document.elementFromPoint(e.clientX, e.clientY);
