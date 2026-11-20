@@ -17,6 +17,16 @@ like `npx localtunnel --port 3000`. Set `PORT` to change the port.
 Start with `KAT_JOKE=1` (PowerShell: `$env:KAT_JOKE=1; node server.js`) and anyone who joins as "Kat" gets a
 very special avatar.
 
+## Docker
+
+Every push to `main` publishes an image to the GitHub Container Registry (see `.github/workflows/build.yml`):
+
+```
+docker run -p 3000:3000 ghcr.io/tkprocat/rummicats
+```
+
+Pass settings with `-e`, e.g. `-e KAT_JOKE=1`. Rooms are kept in memory, so restarting the container ends every game.
+
 ## Bots and spectators
 
 In the lobby, the host can fill empty seats with **🤖 bots** (✕ on a bot's chip removes it). Anyone in the lobby
