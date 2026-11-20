@@ -69,8 +69,14 @@ Smoky and Pinky. Two rainbow **Wild** cats (★) are jokers.
 - First to empty their paws wins.
 
 ## How to play on screen
-
-Your paws are a two-tier rack, like the real game: drag cats into any slot and leave gaps between bunches however you like (sort by color keeps each color together on one tier). Cats you play this turn leave a gap and go back to it if you take them back. Tap cats to pick them up (as many as you like, e.g. a whole run or group; tap one again to put it back, Esc drops them all), then tap a gap in a set, the empty spot (new set), an empty slot on your rack, or the rack itself (only for cats you put down this turn). To swap a wild cat on the table (after your first meld), pick up the cat it stands for and tap the wild cat: they trade places and the wild cat comes to your paws, picked up and ready to play in another set (you must play it that turn before Done). Tap the draw pile to draw. Each player's chip shows their rack as face-down cats. The theme menu at the top right picks normal, 🎃 Halloween (pumpkins and wizard-hat kittens you can poke) or 🎄 Christmas (presents, a lit tree, Santa-hat kittens and falling snow that slowly piles up along the bottom of the screen); remembered per browser. Red sets are not valid yet. Undo move (or Ctrl+Z) steps back one move; Undo turn puts everything back. Other players watch your moves live.
+Your paws are a two-tier rack, like the real game: drag cats into any slot and leave gaps between bunches however you like (sort by color keeps each color together on one tier). Cats you play this turn leave a gap and go back to it if you take them back.
+Tap cats to pick them up (as many as you like, e.g. a whole run or group; tap one again to put it back, Esc drops them all).
+With a mouse, hold the left button and sweep across table cats to select or deselect them together. On your paws, hold briefly before sweeping; move immediately to rearrange a cat instead.
+Then tap a gap in a set, the empty spot (new set), an empty slot on your rack, or the rack itself (only for cats you put down this turn).
+To swap a wild cat on the table (after your first meld), pick up the cat it stands for and tap the wild cat: they trade places and the wild cat comes to your paws, picked up and ready to play in another set (you must play it that turn before Done).
+Tap the draw pile to draw. Each player's chip shows their rack as face-down cats.
+The theme menu at the top right picks normal, 🎃 Halloween (pumpkins and wizard-hat kittens you can poke) or 🎄 Christmas (presents, a lit tree, Santa-hat kittens and falling snow that slowly piles up along the bottom of the screen); remembered per browser.
+Red sets are not valid yet. Undo move (or Ctrl+Z) steps back one move; Undo turn puts everything back. Other players watch your moves live.
 
 ## Tests
 

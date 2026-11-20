@@ -5,7 +5,7 @@ import { session, setSession, savedToken, api } from './api.js';
 import { artReady, catSvg, avatarSvg } from './art.js';
 import { myAvatar, openAvatarEditor, initAvatarEditor } from './avatarEditor.js';
 import { rack, cols, keepOnly, dropInRack, setCols, fitRack, sortByColor, sortByRank } from './rack.js';
-import { isDragging, startHandDrag, initHandDrag } from './drag.js';
+import { isDragging, startHandDrag, startBoardSelection, initHandDrag } from './drag.js';
 import { initTheme } from './theme.js';
 import { showWin, initWin } from './win.js';
 import { initNotify, notifyTurn } from './notify.js';
@@ -379,6 +379,7 @@ function render() {
       el.appendChild(gap(i));
       const t = tileEl(id, { fresh: playedIds.has(id) });
       t.onclick = (e) => onTileClick(id, e);
+      t.onpointerdown = (e) => startBoardSelection(id, t, e, myTurn());
       el.appendChild(t);
     });
     el.appendChild(gap(set.length));
@@ -421,7 +422,7 @@ function render() {
         const t = tileEl(id);
         if (!S.hand.includes(id)) t.classList.add('borrowed'); // a wild cat swapped off the table this turn
         t.onclick = (e) => onTileClick(id, e);
-        t.onpointerdown = (e) => startHandDrag(id, t, e);
+        t.onpointerdown = (e) => startHandDrag(id, t, e, myTurn());
         slot.appendChild(t);
       } else {
         slot.onclick = (e) => { e.stopPropagation(); if (myTurn()) moveTo({ where: 'hand', slot: i }); };
@@ -535,6 +536,13 @@ $('sortRank').onclick = () => { sortByRank(shownSet()); render(); };
 
 initHandDrag((id, slot) => {
   if (slot != null) dropInRack(id, slot, shownSet());
+  render();
+}, (id, el, select) => {
+  if (!myTurn()) return;
+  if (select && !selected.includes(id)) selected.push(id);
+  if (!select) selected = selected.filter((x) => x !== id);
+  el.classList.toggle('selected', select);
+}, () => {
   render();
 });
 initTheme();
