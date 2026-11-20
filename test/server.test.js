@@ -5,7 +5,7 @@ const assert = require('node:assert');
 // Turn timers fire after 50ms instead of minutes. Set up before loading the server, which reads setTimeout then.
 const realSetTimeout = setTimeout;
 global.setTimeout = (fn, ms, ...args) => realSetTimeout(fn, Math.min(ms, 50), ...args);
-const { actions, rooms } = require('../server.js');
+const { actions, rooms, viewFor } = require('../server.js');
 
 function newGame(timer = 0) {
   const { code } = actions.create({ name: 'A' });
@@ -115,5 +115,58 @@ test('only the host picks the timers, only in the lobby, and only from the list'
   actions.start({}, room, host); // start without timers keeps what was picked
   assert.deepStrictEqual([room.turnLimit, room.idleLimit], [120, 300]);
   assert.throws(() => actions.settings({ idle: 60 }, room, host), /already started/);
+  stopTimers(room);
+});
+
+// ---- Glow on the cats played last turn ----
+
+// A turn the current player can always make: their first meld, rigged into their hand.
+function rigMeld(room) {
+  const { TILES, COLORS } = require('../public/rules.js');
+  const want = [11, 12, 13].map((rank) => TILES.find((t) => !t.joker && t.color === COLORS[0] && t.rank === rank).id);
+  for (const p of room.players) p.hand = p.hand.filter((id) => !want.includes(id));
+  room.pool = room.pool.filter((id) => !want.includes(id));
+  current(room).hand.push(...want);
+  return want;
+}
+
+test('the cats a turn played are shown to everyone until the next player changes the table', () => {
+  const room = newGame();
+  const meld = rigMeld(room);
+  actions.commit({ table: [meld] }, room, current(room));
+  assert.deepStrictEqual(room.lastPlayed, meld);
+  assert.deepStrictEqual(viewFor(room, room.spectators[0] || current(room)).lastPlayed, meld);
+  const next = current(room);
+  actions.draft({ table: [meld] }, room, next); // nothing changed yet
+  assert.deepStrictEqual(room.lastPlayed, meld);
+  actions.draft({ table: [[...meld].reverse()] }, room, next);
+  assert.deepStrictEqual(room.lastPlayed, []);
+  stopTimers(room);
+});
+
+test('a turn that only draws leaves nothing glowing', () => {
+  const room = newGame();
+  const meld = rigMeld(room);
+  actions.commit({ table: [meld] }, room, current(room));
+  actions.draw(null, room, current(room));
+  assert.deepStrictEqual(room.lastPlayed, []);
+  stopTimers(room);
+});
+
+test('the host can turn the glow off in the lobby, and then nobody is sent it', () => {
+  const { code } = actions.create({ name: 'A' });
+  actions.join({ code, name: 'B' });
+  const room = rooms.get(code);
+  const [host, guest] = room.players;
+  assert.strictEqual(room.glow, true, 'on by default');
+  assert.throws(() => actions.settings({ glow: false }, room, guest), /Only the host/);
+  actions.settings({ glow: 'yes' }, room, host); // anything but true means off
+  assert.strictEqual(room.glow, false);
+  actions.start({ glow: false }, room, host);
+  const meld = rigMeld(room);
+  actions.commit({ table: [meld] }, room, current(room));
+  assert.deepStrictEqual(viewFor(room, host).lastPlayed, [], 'not sent with the glow off');
+  assert.strictEqual(viewFor(room, guest).glow, false);
+  assert.throws(() => actions.settings({ glow: true }, room, host), /already started/);
   stopTimers(room);
 });
