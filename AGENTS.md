@@ -15,7 +15,6 @@
 - Keep game rules in `public/rules.js` shared between the server and browser. Preserve both loading paths when changing its exports. `public/avatar.js` also serves both environments.
 - Treat the server as the authority for room state and moves. Validate client input on the server, and route bot moves through the same rule checks as player moves.
 - Keep each player's hand private: server views may include the recipient's hand, but must not expose other hands to players or spectators.
-- Rooms live in server memory; a restart ends active games. Account for this behavior when changing room storage or deployment.
 - Preserve the SVG class names and IDs used by the game when editing artwork. See `public/art/README.md` for the artwork contract.
 
 # Validation
@@ -30,9 +29,7 @@
 - Add or update tests for changed game rules, server actions, bot decisions, and other behavior that the Node test runner can exercise. Cover rejected input and boundary cases when relevant.
 - Keep rule changes compatible with the recorded game in `test/replay.test.js`; update its expectations only when the intended rules change.
 - For bot changes, run the existing full-game tests and check that bot moves pass the shared rules.
-- Browser interactions have no automated test suite in this repository. Check affected interactions in a browser and report what you checked.
 
 # Pull requests
 
 - Keep each pull request focused on its intended change. Describe the behavior changed and why, and note any user-visible or deployment impact.
-- Report the validation performed and any remaining limitations in the pull request description.
