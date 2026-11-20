@@ -5,13 +5,22 @@ const path = require('path');
 const crypto = require('crypto');
 const Rules = require('./public/rules.js');
 const Bot = require('./bot.js');
+const Avatar = require('./public/avatar.js');
 
 const PORT = process.env.PORT || 3000;
 const BOT_DELAY = Number(process.env.BOT_DELAY_MS ?? 1500); // pause before a bot plays, so people can follow along
 const PUBLIC = path.join(__dirname, 'public');
+// Joke avatars: KAT_JOKE=1 gives anyone named "Kat" the photo in public/art/kat.jpg instead of their cat. Off by default.
+const config = { katJoke: /^(1|true|on|yes)$/i.test(process.env.KAT_JOKE || '') };
 const rooms = new Map();
 const TURN_LIMITS = [60, 120, 180]; // seconds the host can pick for the turn timer
 const IDLE_LIMITS = [30, 60, 120, 180, 300]; // ...and for the idle timer
+
+// A member's avatar as everyone sees it: cleaned (so a client can never pick a photo itself), plus any joke photo.
+function setAvatar(member, avatar) {
+  member.avatar = Avatar.clean(avatar);
+  if (config.katJoke && member.name.trim().toLowerCase() === 'kat') member.avatar.photo = 'kat';
+}
 
 function shuffle(a) {
   for (let i = a.length - 1; i > 0; i--) {
@@ -82,16 +91,16 @@ function viewFor(room, member) {
     draft: room.draft,
     log: room.log,
     chat: room.chat.map((c) => ({
-      id: c.id, name: c.name, text: c.text, at: c.at, mine: c.from === member, watching: room.spectators.includes(c.from),
+      id: c.id, name: c.name, avatar: c.from.avatar, text: c.text, at: c.at, mine: c.from === member, watching: room.spectators.includes(c.from),
     })),
     you: seat,
     isHost: room.host === member,
     hand: player ? player.hand : [],
     hasMelded: player ? player.melded : false,
     players: room.players.map((p) => ({
-      name: p.name, count: p.hand.length, melded: p.melded, bot: !!p.bot, host: room.host === p, online: !!p.bot || p.clients.size > 0,
+      name: p.name, avatar: p.avatar, count: p.hand.length, melded: p.melded, bot: !!p.bot, host: room.host === p, online: !!p.bot || p.clients.size > 0,
     })),
-    spectators: room.spectators.map((s) => ({ name: s.name, host: room.host === s, online: s.clients.size > 0 })),
+    spectators: room.spectators.map((s) => ({ name: s.name, avatar: s.avatar, host: room.host === s, online: s.clients.size > 0 })),
   };
 }
 
@@ -212,7 +221,7 @@ function finish(room, winner, why) {
   clearTimeout(room.idleClock);
   room.turnEnds = null;
   room.idleEnds = null;
-  room.over = { winner: winner.name, why, scores: room.players.map((p) => ({ name: p.name, penalty: Rules.handPenalty(p.hand) })) };
+  room.over = { winner: winner.name, why, scores: room.players.map((p) => ({ name: p.name, avatar: p.avatar, penalty: Rules.handPenalty(p.hand) })) };
   log(room, `🏆 ${winner.name} wins! ${why}`);
 }
 
@@ -230,12 +239,14 @@ const actions = {
   },
 
   // Take a seat, or watch if all 4 seats are taken (by people or bots).
-  join({ code, name }) {
+  join({ code, name, avatar }) {
     const room = rooms.get(String(code || '').toUpperCase());
     if (!room) throw new Error('No room with that code');
     if (room.started) throw new Error('That game has already started');
     name = String(name || '').trim().slice(0, 16) || `Cat ${members(room).length + 1}`;
+    // No avatar sent (e.g. an older page): a random cat, so nobody looks the same by default.
     const member = { name, token: crypto.randomUUID(), hand: [], melded: false, clients: new Set() };
+    setAvatar(member, avatar && typeof avatar === 'object' ? avatar : Avatar.random());
     const full = room.players.length >= 4;
     (full ? room.spectators : room.players).push(member);
     log(room, full ? `${name} is watching (all seats taken)` : `${name} joined`);
@@ -254,6 +265,11 @@ const actions = {
     member.chatTimes.push(now);
     room.chat.push({ id: ++room.chatId, from: member, name: member.name, text, at: now });
     if (room.chat.length > CHAT_KEEP) room.chat.shift();
+  },
+
+  // Change your avatar, any time. Only values from the curated lists are kept (see public/avatar.js).
+  avatar({ avatar }, room, member) {
+    setAvatar(member, avatar);
   },
 
   // Lobby only: switch between a seat and watching.
@@ -278,7 +294,7 @@ const actions = {
     const taken = new Set(room.players.map((p) => p.name));
     const name = Bot.BOT_NAMES.find((n) => !taken.has(n)) || `Bot ${room.players.length + 1}`;
     // A bot has a token like everyone else, but it's never sent anywhere, so nobody can act as a bot.
-    room.players.push({ name, token: crypto.randomUUID(), hand: [], melded: false, clients: new Set(), bot: true });
+    room.players.push({ name, avatar: Avatar.random(), token: crypto.randomUUID(), hand: [], melded: false, clients: new Set(), bot: true });
     log(room, `🤖 ${name} joined`);
   },
 
@@ -459,4 +475,4 @@ setInterval(() => {
 // Start listening only when run directly (`node server.js`); tests require this file instead.
 if (require.main === module) server.listen(PORT, () => console.log(`🐱 Rummicats running on http://localhost:${PORT}`));
 
-module.exports = { actions, rooms, findMember, server, cleanChat, viewFor };
+module.exports = { actions, rooms, findMember, server, cleanChat, viewFor, config };

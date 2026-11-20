@@ -14,6 +14,8 @@ Open http://localhost:3000, create a room, and send the invite link to friends.
 Friends on the same Wi-Fi can use `http://<your-computer's-IP>:3000`. To play over the
 internet, deploy the folder to any Node host (Render, Railway, Fly.io…) or use a tunnel
 like `npx localtunnel --port 3000`. Set `PORT` to change the port.
+Start with `KAT_JOKE=1` (PowerShell: `$env:KAT_JOKE=1; node server.js`) and anyone who joins as "Kat" gets a
+very special avatar.
 
 ## Bots and spectators
 
@@ -27,6 +29,15 @@ to watch a fast game). They only see their own hand and the table, and their mov
 everyone else's. They pause while nobody has the room open. The strategy is in `bot.js`: best combination of new sets
 from its hand, adding cats to table sets, splitting long runs, and freeing wild cats. It doesn't do big table
 rearrangements yet.
+
+## Your cat
+
+Tap the cat next to your name in the lobby (or your own cat on the player list during a game) to make your avatar:
+ears, eyes, mouth, a coat pattern (tabby, tuxedo, Siamese points, calico, tortoiseshell, spotted, eye patch, split
+face), an extra (bow, flower, glasses, bell collar, crown) and colors from a curated palette. Breed presets fill in a
+look in one tap, and 🎲 picks a random one. Your cat is saved in this browser (localStorage), and it shows on the
+player list and next to your chat messages. Bots get a random cat. The server only accepts values from the lists in
+`public/avatar.js`.
 
 ## Chat
 

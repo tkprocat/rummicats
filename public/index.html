@@ -25,7 +25,10 @@
     <div class="lobby-cats" aria-hidden="true"></div>
     <div class="card">
       <div class="deco deco-card" aria-hidden="true"></div>
-      <input id="name" placeholder="Your name" maxlength="16">
+      <div class="nameRow">
+        <button id="avatarBtn" type="button" title="Customize your cat" aria-label="Customize your cat"></button>
+        <input id="name" placeholder="Your name" maxlength="16">
+      </div>
       <button id="createBtn" class="primary">Create a room</button>
       <div class="or">or join one</div>
       <div class="row">
@@ -86,6 +89,7 @@
     <div id="status" class="hidden"></div>
     <div id="tableArea" class="hidden">
       <div class="deco deco-table" aria-hidden="true"></div>
+      <div id="turnCat" aria-hidden="true"></div>
       <div id="table"></div>
       <div id="pile" title="Draw a cat"><div class="heap"></div><div class="pileCount"></div></div>
     </div>
@@ -142,12 +146,31 @@
     </div>
   </div>
 
+  <dialog id="avatarPop" aria-labelledby="avatarTitle">
+    <div class="avCard">
+      <div class="avHead">
+        <div id="avatarPreview"></div>
+        <div>
+          <h2 id="avatarTitle">Your cat</h2>
+          <p class="avHint">Saved in this browser, so it's ready for your next game.</p>
+          <button id="avatarRandom" type="button" class="small">🎲 Surprise me</button>
+        </div>
+      </div>
+      <div id="avatarRows"></div>
+      <div class="avBtns">
+        <button id="avatarCancel" type="button">Cancel</button>
+        <button id="avatarSave" type="button" class="primary">Save</button>
+      </div>
+    </div>
+  </dialog>
+
   <div class="deco deco-side left" aria-hidden="true"></div>
   <div class="deco deco-side right" aria-hidden="true"></div>
   <div class="deco deco-sky" aria-hidden="true"></div>
   <canvas class="deco deco-snow" aria-hidden="true"></canvas>
 
   <script src="rules.js"></script>
+  <script src="avatar.js"></script>
   <script type="module" src="js/app.js"></script>
 </body>
 </html>

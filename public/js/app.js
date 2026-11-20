@@ -2,7 +2,8 @@
 // Self-contained pieces live in their own modules (artwork, rack layout, dragging, themes, win screen, alerts).
 import { $, store } from './dom.js';
 import { session, setSession, savedToken, api } from './api.js';
-import { artReady, catSvg } from './art.js';
+import { artReady, catSvg, avatarSvg } from './art.js';
+import { myAvatar, openAvatarEditor, initAvatarEditor } from './avatarEditor.js';
 import { rack, cols, keepOnly, dropInRack, setCols, fitRack, sortByColor, sortByRank } from './rack.js';
 import { isDragging, startHandDrag, initHandDrag } from './drag.js';
 import { initTheme } from './theme.js';
@@ -222,6 +223,26 @@ function swapWild(cat, wild) {
 
 // ---- Drawing ----
 
+// Whose turn it is, as a big cat beside the board (shown only when the table is wide enough, see style.css).
+// After the game, the winner sits there instead. Redrawn only when it changes, so the hop plays once per turn.
+function renderTurnCat() {
+  const box = $('turnCat');
+  const i = !S.started ? -1 : S.over ? S.players.findIndex((p) => p.name === S.over.winner) : S.turn;
+  const p = S.players[i];
+  const key = p ? JSON.stringify([i, p.name, p.avatar, !!S.over, p.online]) : '';
+  if (box.dataset.key === key) return;
+  box.dataset.key = key;
+  box.innerHTML = '';
+  if (!p) return;
+  const you = i === S.you;
+  box.className = (S.over ? 'won' : you ? 'mine' : '') + (p.online ? '' : ' off');
+  box.innerHTML = `<div class="tcAv">${avatarSvg(p.avatar, 112)}</div><div class="tcName"></div><div class="tcSub"></div>`;
+  box.querySelector('.tcName').textContent = (p.bot ? '🤖 ' : '') + p.name + (you ? ' (you)' : '');
+  box.querySelector('.tcSub').textContent = S.over ? '🏆 Winner!' : you ? 'Your turn!'
+    : !p.online ? 'Away…' : p.bot ? 'Thinking…' : 'Playing…';
+  box.classList.add('hop');
+}
+
 // The draw pile: a messy heap of face-down cats that shrinks as it's drawn from.
 function renderPile(mine) {
   const heap = document.querySelector('#pile .heap');
@@ -260,10 +281,20 @@ function render() {
   S.players.forEach((p, i) => {
     const d = document.createElement('div');
     d.className = 'player' + (S.started && S.turn === i && !S.over ? ' turn' : '') + (p.online ? '' : ' off');
-    d.innerHTML = `${p.bot ? '🤖 ' : ''}<span class="n"></span>${i === S.you ? ' (you)' : ''}<br>` +
+    d.innerHTML = `<span class="pav">${avatarSvg(p.avatar, 36)}</span><div>` +
+      `${p.bot ? '🤖 ' : ''}<span class="n"></span>${i === S.you ? ' (you)' : ''}<br>` +
       (S.started ? `${p.count} cats${p.melded ? '' : ' · not melded'}` : p.host ? 'host' : p.bot ? 'bot' : '') +
-      (S.started && i !== S.you ? `<div class="minirack">${'<i></i>'.repeat(Math.min(p.count, 30))}</div>` : '');
+      (S.started && i !== S.you ? `<div class="minirack">${'<i></i>'.repeat(Math.min(p.count, 30))}</div>` : '') + '</div>';
     d.querySelector('.n').textContent = p.name;
+    if (i === S.you) { // tap your own cat to change it
+      const pav = d.querySelector('.pav');
+      pav.classList.add('mine');
+      pav.title = 'Change your cat';
+      pav.setAttribute('role', 'button');
+      pav.tabIndex = 0;
+      pav.onclick = openAvatarEditor;
+      pav.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAvatarEditor(); } };
+    }
     if (p.bot && S.isHost && !S.started) {
       const kick = document.createElement('button');
       kick.className = 'small kick';
@@ -275,10 +306,18 @@ function render() {
     pl.appendChild(d);
   });
 
-  // People watching instead of playing (names from other people, so text only)
-  const watchers = S.spectators.map((s) => `${s.name}${s.host ? ' (host)' : ''}`);
-  $('spectators').classList.toggle('hidden', !watchers.length);
-  $('spectators').textContent = `👀 Watching: ${watchers.join(', ')}${S.you < 0 ? ' (you are watching)' : ''}`;
+  // People watching instead of playing, each with their cat (names from other people, so text only)
+  const sp = $('spectators');
+  sp.classList.toggle('hidden', !S.spectators.length);
+  sp.textContent = '👀 Watching: ';
+  S.spectators.forEach((s, k) => {
+    const w = document.createElement('span');
+    w.className = 'watcher';
+    w.innerHTML = avatarSvg(s.avatar, 20);
+    w.append(`${s.name}${s.host ? ' (host)' : ''}${k < S.spectators.length - 1 ? ',' : ''}`);
+    sp.appendChild(w);
+  });
+  if (S.you < 0) sp.append(' (you are watching)');
 
   const seated = S.you >= 0;
   $('waiting').classList.toggle('hidden', S.started);
@@ -317,6 +356,8 @@ function render() {
   } else if (S.started) {
     $('status').textContent = `Watching ${S.players[S.turn].name}'s turn…`;
   }
+
+  renderTurnCat();
 
   // Table
   const tableData = mine ? work.table : S.draft || S.table;
@@ -443,7 +484,7 @@ setInterval(tick, 250);
 // Lobby
 $('createBtn').onclick = async () => {
   try {
-    const r = await api('create', { name: $('name').value });
+    const r = await api('create', { name: $('name').value, avatar: myAvatar() });
     setSession(r.code, r.token);
     connect();
   } catch (e) { $('lobbyErr').textContent = e.message; }
@@ -451,7 +492,7 @@ $('createBtn').onclick = async () => {
 $('joinBtn').onclick = async () => {
   const code = $('codeInput').value.trim().toUpperCase();
   try {
-    const r = await api('join', { code, name: $('name').value });
+    const r = await api('join', { code, name: $('name').value, avatar: myAvatar() });
     setSession(r.code, r.token);
     connect();
   } catch (e) { $('lobbyErr').textContent = e.message; }
@@ -500,6 +541,7 @@ initTheme();
 initWin();
 initNotify();
 initChat();
+initAvatarEditor();
 artReady.catch((e) => ($('lobbyErr').textContent = `${e.message}. Try reloading the page.`));
 
 // Rejoin a room after a refresh, or prefill an invite link.

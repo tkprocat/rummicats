@@ -380,3 +380,87 @@ body.chatResizing #chat { transition: none; }
 .source { text-align: center; margin: 18px 0 0; font-size: .85rem; position: relative; z-index: 1; }
 .source a { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; padding: 4px 10px; border-radius: 999px; }
 .source a:hover, .source a:focus-visible { color: var(--ink); background: var(--surface); }
+
+/* ---- Avatars (public/art/avatar.svg, colors from public/avatar.js) ---- */
+.avatar { display: block; flex: none; overflow: visible; }
+.avatar .fur { fill: var(--fur); }
+.avatar .fur-line { stroke: var(--fur); }
+.avatar .pat1 { fill: var(--pat1); }
+.avatar .pat1-line { stroke: var(--pat1); }
+.avatar .pat2 { fill: var(--pat2); }
+.avatar .iris { fill: var(--eye); }
+.avatar .inner { fill: var(--inner); }
+.avatar .acc { fill: var(--acc); }
+.avatar .acc-line { stroke: var(--acc); }
+.avatar .face-line { stroke: var(--face-ink); }
+.avatar .mouth-line { stroke: var(--muzzle-ink); }
+.avatar .whisker { stroke: var(--whisker); }
+/* Siamese points color the ears too; a split face colors the left one */
+.avatar.pat-points .ear, .avatar.pat-split .ear.left { fill: var(--pat1); }
+.avatar.pat-points .ear-line, .avatar.pat-split .ear-line.left { stroke: var(--pat1); }
+
+.player { display: flex; align-items: center; gap: 8px; }
+.player .pav { display: flex; }
+.player .pav.mine { cursor: pointer; border-radius: 50%; }
+.player .pav.mine:hover .avatar, .player .pav.mine:focus-visible .avatar { transform: scale(1.12) rotate(-4deg); }
+.player .pav .avatar { transition: transform .15s; }
+.msg .who { display: flex; align-items: center; gap: 4px; }
+.msg.mine .who { justify-content: flex-end; }
+
+.nameRow { display: flex; gap: 8px; align-items: center; }
+.nameRow input { flex: 1; min-width: 0; }
+#avatarBtn { position: relative; padding: 2px; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex: none; }
+#avatarBtn .pencil { position: absolute; right: -4px; bottom: -4px; background: var(--ginger); color: #fff; border-radius: 50%; width: 20px; height: 20px; font-size: .75rem; display: flex; align-items: center; justify-content: center; }
+
+#avatarPop { padding: 0; border: 0; overflow: auto; border-radius: 18px; background: var(--surface); color: var(--ink); max-width: min(560px, calc(100vw - 32px)); width: 100%; max-height: calc(100dvh - 32px); box-shadow: 0 10px 40px #0006; }
+#avatarPop::backdrop { background: #0007; }
+.avCard { padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; }
+.avHead { display: flex; gap: 16px; align-items: center; }
+.avHead h2 { margin: 0 0 2px; font-size: 1.3rem; }
+.avHint { margin: 0 0 8px; color: var(--muted); font-size: .85rem; }
+#avatarPreview { background: var(--bg); border-radius: 50%; padding: 6px; flex: none; }
+#avatarRows h3 { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 14px 0 6px; }
+.presets { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.preset { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 6px; font-size: .72rem; flex: none; min-width: 64px; }
+.avRow { display: grid; grid-template-columns: 110px 1fr; gap: 8px; align-items: start; margin: 6px 0; }
+.avLabel { font-size: .85rem; padding-top: 4px; }
+.avOpts { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip[aria-pressed="true"] { background: var(--ginger); border-color: var(--ginger); color: #fff; }
+.swatch { width: 26px; height: 26px; padding: 0; border-radius: 50%; background: var(--sw); border: 2px solid var(--line); }
+.swatch[aria-pressed="true"] { outline: 3px solid var(--ginger); outline-offset: 2px; }
+.avBtns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; position: sticky; bottom: 0; background: var(--surface); padding-top: 8px; }
+@media (max-width: 480px) {
+  .avRow { grid-template-columns: 1fr; gap: 4px; }
+  .avHead { gap: 10px; }
+  #avatarPreview .avatar { width: 88px; height: 88px; }
+}
+@media (prefers-reduced-motion: reduce) { .player .pav .avatar { transition: none; } }
+
+/* Avatars in the game: watchers, the winner popup, and the big "whose turn" cat beside the board */
+.watcher { display: inline-flex; align-items: center; gap: 3px; margin-right: 6px; vertical-align: middle; }
+.winCard .scores .who { display: flex; align-items: center; gap: 6px; }
+.winCard .trophy { position: relative; display: inline-block; }
+.winCard .trophy .avatar { display: block; }
+.winCard .trophy span { position: absolute; right: -10px; bottom: -6px; font-size: 2.2rem; }
+
+/* Only when the table is wide enough (big screens, chat closed or not); smaller screens keep the ginger outline on the player chip */
+#tableArea { container-type: inline-size; }
+#game.screen { max-width: 1280px; }
+#turnCat { display: none; }
+@container (min-width: 1000px) {
+  #turnCat:not(:empty) { flex: none; width: 150px; align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; padding: 18px 8px 12px; text-align: center; color: #fffffff0; border-right: 2px dashed #ffffff30; }
+  #turnCat .tcAv { background: #ffffff22; border-radius: 50%; padding: 6px; box-shadow: 0 0 0 3px #ffffff40; }
+  #turnCat.mine .tcAv { box-shadow: 0 0 0 4px var(--ginger), 0 0 18px var(--ginger); }
+  #turnCat.won .tcAv { box-shadow: 0 0 0 4px #ffd84a, 0 0 18px #ffd84a; }
+  #turnCat.off .tcAv { opacity: .55; }
+  #turnCat .tcName { font-weight: 700; margin-top: 6px; overflow-wrap: anywhere; }
+  #turnCat .tcSub { font-size: .85rem; color: #ffffffb0; }
+  #turnCat.mine .tcSub { color: #fff; font-weight: 600; }
+  #turnCat.hop .avatar { animation: turnHop .5s cubic-bezier(.2, 1.6, .4, 1); }
+  /* The holiday decorations at the bottom left move over so they don't sit under the cat */
+  .deco-table:has(~ #turnCat:not(:empty)) .left { left: 160px; }
+}
+@keyframes turnHop { from { transform: translateY(10px) scale(.8); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { #turnCat.hop .avatar { animation: none; } }
+/* A joke photo avatar (KAT_JOKE) */
+img.avatar.photo { border-radius: 50%; object-fit: cover; display: block; overflow: clip; }

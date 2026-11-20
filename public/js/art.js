@@ -4,15 +4,15 @@
 
 const ART = {};
 
-export const artReady = Promise.all(['cat', 'kitten', 'pumpkin', 'present', 'tree', 'sky'].map(async (name) => {
+export const artReady = Promise.all(['cat', 'kitten', 'pumpkin', 'present', 'tree', 'sky', 'avatar'].map(async (name) => {
   const res = await fetch(new URL(`../art/${name}.svg`, import.meta.url));
   if (!res.ok) throw new Error(`Couldn't load the ${name} artwork`);
   let svg = await res.text();
   svg = svg.slice(svg.indexOf('<svg')); // drop an XML header or doctype a design tool may add
   // Size comes from the page, not the file, so drop any width/height a design tool saved on the root.
   svg = svg.replace(/^<svg[^>]*>/, (tag) => tag.replace(/\s(width|height)="[^"]*"/g, ''));
-  if (name === 'cat') {
-    // The wild cat's rainbow gradient goes on the page once, instead of once per tile.
+  if (name === 'cat' || name === 'avatar') {
+    // Shared defs (the wild cat's rainbow, the avatar's head outline) go on the page once, instead of once per drawing.
     const defs = svg.match(/<defs>[\s\S]*?<\/defs>/);
     if (defs) {
       svg = svg.replace(defs[0], '');
@@ -43,3 +43,29 @@ export const kittenSvg = (height, fur, hat) => art('kitten', {
 export const presentSvg = (size, box = '#d8322f', ribbon = '#ffd84a') => art('present', { width: size, height: size, vars: { box, ribbon } });
 export const treeSvg = (height) => art('tree', { width: height * 0.8, height });
 export const skySvg = () => art('sky', { width: 180, height: 140 });
+
+// A player's avatar (see public/avatar.js) at a size in pixels. The artwork has every option of every part;
+// only the chosen group of each part (named <part>-<option>) is kept. Its colors come from CSS variables.
+let avatarTemplate = null;
+export function avatarSvg(av, size = 32) {
+  // A joke photo the server gave this player (see KAT_JOKE in server.js). Only this fixed file, never a URL from anyone.
+  if (av && av.photo === 'kat') return `<img class="avatar photo" src="art/kat.jpg" width="${size}" height="${size}" alt="" aria-hidden="true">`;
+  av = window.Avatar.clean(av);
+  if (!avatarTemplate) {
+    const t = document.createElement('template');
+    t.innerHTML = ART.avatar;
+    avatarTemplate = t.content.querySelector('svg');
+  }
+  const svg = avatarTemplate.cloneNode(true);
+  for (const el of svg.querySelectorAll('[class]')) {
+    const m = el.getAttribute('class').match(/^(ears|eyes|mouth|pattern|extra)-(\w+)$/);
+    // Only real options count, so a class like mouth-line (a color hook) is never mistaken for one.
+    if (m && Object.hasOwn(window.Avatar.PARTS[m[1]].options, m[2]) && av[m[1]] !== m[2]) el.remove();
+  }
+  svg.setAttribute('class', `avatar pat-${av.pattern}`);
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('width', size);
+  svg.setAttribute('height', size);
+  svg.setAttribute('style', Object.entries(window.Avatar.cssVars(av)).map(([k, v]) => `--${k}:${v}`).join(';'));
+  return svg.outerHTML;
+}

@@ -2,6 +2,7 @@
 // Messages come from other people, so they only ever go into the page as text, never as HTML.
 import { $, store } from './dom.js';
 import { api } from './api.js';
+import { avatarSvg } from './art.js';
 
 const EMOJI = {
   '🐱': ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾', '🐱', '🐈', '🐈‍⬛', '🐾', '🐟', '🧶', '🥛'],
@@ -47,7 +48,8 @@ function drawMessages() {
     if (!prev || prev.name !== m.name || prev.mine !== m.mine || m.at - prev.at > 5 * 60e3) {
       const who = document.createElement('div');
       who.className = 'who';
-      who.textContent = `${m.watching ? '👀 ' : ''}${m.mine ? 'You' : m.name} · ${timeOf(m.at)}`;
+      who.innerHTML = m.avatar ? avatarSvg(m.avatar, 18) : '';
+      who.append(`${m.watching ? '👀 ' : ''}${m.mine ? 'You' : m.name} · ${timeOf(m.at)}`);
       li.appendChild(who);
     }
     const body = document.createElement('div');

@@ -11,6 +11,7 @@ or a text editor) and reload the game to see the change. No build step.
 | `sky.svg` | Halloween moon, stars and clouds |
 | `present.svg` | Christmas presents |
 | `tree.svg` | Christmas tree |
+| `avatar.svg` | Player avatars: every ear, eye, mouth, pattern and extra option (see below) |
 | `favicon.svg` | The browser tab icon. Shown as a plain image, so it has no class names and isn't recolored: edit its colors directly |
 
 ## Keep these class names
@@ -27,12 +28,20 @@ anything that should keep its behaviour. A part without a class just keeps the c
 - `box` and `ribbon` (`present.svg`): set per present.
 - On black (midnight) cats, `eye`, `mouth` and `inner` are swapped to the light versions in `style.css`.
 
+- `avatar.svg`: `fur`/`fur-line` (fur), `pat1`/`pat1-line` and `pat2` (pattern colors), `iris` (eye color),
+  `inner` (nose and inner ears), `acc`/`acc-line` (extra color), `face-line` and `mouth-line` (drawn light on dark
+  fur), `whisker`. Ear shapes also have `ear` (and `left` on the left one), so Siamese points and split faces can
+  color them. The palettes live in `public/avatar.js`.
+
 **Shown, hidden or animated.**
 
 - `cat.svg`: `hat` (Halloween wizard hat) and `santa` (Christmas hat) are hidden outside their theme.
 - `kitten.svg`: `kithat` bounces when a kitten is poked; inside it, `wizard` or `santa` is shown.
 - `pumpkin.svg`: `glow` is the flickering face (hidden on some pumpkins).
 - `tree.svg`: every circle in `lights` blinks.
+- `avatar.svg`: each option is a group named `<part>-<option>` (`ears-fold`, `pattern-tabby`, `extra-crown`…), and
+  only the chosen one of each part is kept. To add an option, draw a new group and add its name to `PARTS` in
+  `public/avatar.js`. The head outline used to clip patterns is the `av-head` clip path.
 - `sky.svg`: `twinkle` stars twinkle, `cloud one` and `cloud two` drift at different speeds.
 
 ## Tips

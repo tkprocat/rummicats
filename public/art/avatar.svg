@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Player avatars. Every option of every part is a group named <part>-<option> (ears-fold, pattern-tabby, ...);
+       the game keeps only the chosen group of each part, so in a design tool they are all drawn on top of each
+       other: hide the ones you are not working on. Groups without a part name (head, whiskers, nose) are always
+       shown. See art/README.md for the class names the game recolors. -->
+  <defs>
+    <clipPath id="av-head"><ellipse cx="32" cy="38" rx="24" ry="20"/></clipPath>
+  </defs>
+
+  <!-- Ears behind the head. The left ear is drawn, the right one is its mirror image. -->
+  <g class="ears-pointy">
+    <polygon class="fur ear left" points="8,34 13,6 30,21" fill="#ef8a2b"/>
+    <polygon class="inner" points="13,28 15,12 25,21" fill="#ffc4c4"/>
+    <g transform="matrix(-1 0 0 1 64 0)">
+      <polygon class="fur ear" points="8,34 13,6 30,21" fill="#ef8a2b"/>
+      <polygon class="inner" points="13,28 15,12 25,21" fill="#ffc4c4"/>
+    </g>
+  </g>
+  <g class="ears-round">
+    <circle class="fur ear left" cx="16" cy="20" r="9.5" fill="#ef8a2b"/>
+    <circle class="inner" cx="16.5" cy="21" r="5.5" fill="#ffc4c4"/>
+    <circle class="fur ear" cx="48" cy="20" r="9.5" fill="#ef8a2b"/>
+    <circle class="inner" cx="47.5" cy="21" r="5.5" fill="#ffc4c4"/>
+  </g>
+  <g class="ears-tufted">
+    <path class="fur-line ear-line left" d="M12 5 L10.5 0.6 M12 5 L13.8 0.9" stroke="#ef8a2b" stroke-width="1.4" stroke-linecap="round"/>
+    <polygon class="fur ear left" points="8,34 12,4 30,21" fill="#ef8a2b"/>
+    <polygon class="inner" points="13,28 14,10 25,21" fill="#ffc4c4"/>
+    <g transform="matrix(-1 0 0 1 64 0)">
+      <path class="fur-line ear-line" d="M12 5 L10.5 0.6 M12 5 L13.8 0.9" stroke="#ef8a2b" stroke-width="1.4" stroke-linecap="round"/>
+      <polygon class="fur ear" points="8,34 12,4 30,21" fill="#ef8a2b"/>
+      <polygon class="inner" points="13,28 14,10 25,21" fill="#ffc4c4"/>
+    </g>
+  </g>
+
+  <!-- Head -->
+  <ellipse class="fur" cx="32" cy="38" rx="24" ry="20" fill="#ef8a2b"/>
+
+  <!-- Coat patterns, clipped to the head so they never spill outside it -->
+  <g class="pattern-tabby" clip-path="url(#av-head)" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path class="pat1-line" d="M25 27 L27.5 21 L32 25.5 L36.5 21 L39 27 M32 16 v4 M28 16.5 v3 M36 16.5 v3" stroke="#a8653a"/>
+    <path class="pat1-line" d="M7 33 h8 M7 39 h7 M8 45 h6 M57 33 h-8 M57 39 h-7 M56 45 h-6" stroke="#a8653a"/>
+  </g>
+  <g class="pattern-tuxedo" clip-path="url(#av-head)">
+    <path class="pat1" d="M32 30 C27 34 23 40 22 46 C20 54 25 60 32 60 C39 60 44 54 42 46 C41 40 37 34 32 30 Z" fill="#fbf8f2"/>
+    <ellipse class="pat1" cx="32" cy="58" rx="16" ry="6" fill="#fbf8f2"/>
+  </g>
+  <g class="pattern-points" clip-path="url(#av-head)">
+    <ellipse class="pat1" cx="32" cy="46" rx="11" ry="8.5" opacity=".45" fill="#5e3d2c"/>
+    <ellipse class="pat1" cx="32" cy="46" rx="8.5" ry="6.5" fill="#5e3d2c"/>
+  </g>
+  <g class="pattern-calico" clip-path="url(#av-head)">
+    <path class="pat1" d="M7 18 H27 Q29 27 24 31 Q16 35 7 31 Z" fill="#ef8a2b"/>
+    <path class="pat2" d="M41 17 Q51 17 57 25 V41 Q50 43 46 36 Q41 30 41 17 Z" fill="#2a2a33"/>
+    <circle class="pat2" cx="21" cy="52" r="4.5" fill="#2a2a33"/>
+    <ellipse class="pat1" cx="46" cy="53" rx="4" ry="3" fill="#ef8a2b"/>
+  </g>
+  <g class="pattern-tortie" clip-path="url(#av-head)">
+    <ellipse class="pat1" cx="16" cy="29" rx="8" ry="6" transform="rotate(-20 16 29)" fill="#ef8a2b"/>
+    <ellipse class="pat1" cx="41" cy="51" rx="7" ry="4" fill="#ef8a2b"/>
+    <ellipse class="pat1" cx="31" cy="20" rx="6" ry="3.5" fill="#ef8a2b"/>
+    <ellipse class="pat1" cx="51" cy="40" rx="4" ry="5" fill="#ef8a2b"/>
+    <ellipse class="pat2" cx="45" cy="25" rx="7" ry="5" transform="rotate(15 45 25)" fill="#f4b673"/>
+    <ellipse class="pat2" cx="21" cy="48" rx="6" ry="5" fill="#f4b673"/>
+    <ellipse class="pat2" cx="12" cy="41" rx="3" ry="4" fill="#f4b673"/>
+  </g>
+  <g class="pattern-spotted" clip-path="url(#av-head)">
+    <g class="pat1" fill="#5e3d2c">
+      <circle cx="18" cy="26" r="2.2"/><circle cx="25" cy="21" r="2.2"/><circle cx="39" cy="21" r="2.2"/>
+      <circle cx="46" cy="26" r="2.2"/><circle cx="32" cy="20.5" r="1.8"/><circle cx="13" cy="40" r="2.2"/>
+      <circle cx="51" cy="40" r="2.2"/><circle cx="17" cy="49" r="1.8"/><circle cx="47" cy="49" r="1.8"/>
+      <circle cx="27" cy="55" r="1.6"/><circle cx="37" cy="55" r="1.6"/>
+    </g>
+  </g>
+  <g class="pattern-patch" clip-path="url(#av-head)">
+    <ellipse class="pat1" cx="41" cy="34" rx="10" ry="9" transform="rotate(-15 41 34)" fill="#2a2a33"/>
+  </g>
+  <g class="pattern-split" clip-path="url(#av-head)">
+    <rect class="pat1" x="0" y="0" width="32" height="64" fill="#2a2a33"/>
+  </g>
+
+  <!-- Folded ears sit on top of the head -->
+  <g class="ears-fold">
+    <path class="fur ear left" d="M11 26 Q11 13 25 17 Q23 23 13 28 Z" fill="#ef8a2b"/>
+    <path class="face-line" d="M13.5 24 Q16 18.5 23 18.5" stroke="#2b2420" stroke-width=".8" fill="none" opacity=".35"/>
+    <g transform="matrix(-1 0 0 1 64 0)">
+      <path class="fur ear" d="M11 26 Q11 13 25 17 Q23 23 13 28 Z" fill="#ef8a2b"/>
+      <path class="face-line" d="M13.5 24 Q16 18.5 23 18.5" stroke="#2b2420" stroke-width=".8" fill="none" opacity=".35"/>
+    </g>
+  </g>
+
+  <!-- Eyes -->
+  <g class="eyes-round">
+    <circle class="iris" cx="23" cy="36" r="4.2" fill="#7cc35a"/>
+    <circle class="iris" cx="41" cy="36" r="4.2" fill="#7cc35a"/>
+    <ellipse cx="23" cy="36" rx="1.5" ry="3" fill="#1d1714"/>
+    <ellipse cx="41" cy="36" rx="1.5" ry="3" fill="#1d1714"/>
+    <circle cx="24" cy="34.8" r="1" fill="#fff"/>
+    <circle cx="42" cy="34.8" r="1" fill="#fff"/>
+  </g>
+  <g class="eyes-big">
+    <circle class="iris" cx="23" cy="36" r="5.4" fill="#7cc35a"/>
+    <circle class="iris" cx="41" cy="36" r="5.4" fill="#7cc35a"/>
+    <circle cx="23" cy="36.3" r="3.3" fill="#1d1714"/>
+    <circle cx="41" cy="36.3" r="3.3" fill="#1d1714"/>
+    <circle cx="24.6" cy="34.2" r="1.6" fill="#fff"/>
+    <circle cx="42.6" cy="34.2" r="1.6" fill="#fff"/>
+    <circle cx="21.4" cy="37.8" r=".8" fill="#fff"/>
+    <circle cx="39.4" cy="37.8" r=".8" fill="#fff"/>
+  </g>
+  <g class="eyes-sleepy">
+    <path class="iris" d="M18.8 36 a4.2 4.2 0 0 0 8.4 0 Z M36.8 36 a4.2 4.2 0 0 0 8.4 0 Z" fill="#7cc35a"/>
+    <path d="M21.5 36 a1.5 2.4 0 0 0 3 0 Z M39.5 36 a1.5 2.4 0 0 0 3 0 Z" fill="#1d1714"/>
+    <path class="face-line" d="M18 36 h10 M36 36 h10" stroke="#2b2420" stroke-width="1.4" stroke-linecap="round"/>
+  </g>
+  <g class="eyes-happy">
+    <path class="face-line" d="M19 38 Q23 32 27 38 M37 38 Q41 32 45 38" stroke="#2b2420" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  </g>
+  <g class="eyes-wink">
+    <circle class="iris" cx="23" cy="36" r="4.2" fill="#7cc35a"/>
+    <ellipse cx="23" cy="36" rx="1.5" ry="3" fill="#1d1714"/>
+    <circle cx="24" cy="34.8" r="1" fill="#fff"/>
+    <path class="face-line" d="M37 38 Q41 32 45 38" stroke="#2b2420" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- Whiskers and nose -->
+  <path class="whisker" d="M6 41 l11 1.5 M6 46 l11 -1 M58 41 l-11 1.5 M58 46 l-11 -1" stroke="#00000040" stroke-width=".8" stroke-linecap="round"/>
+  <path class="inner" d="M29.3 42.8 h5.4 l-2.7 3.2 z" fill="#ffc4c4" stroke-linejoin="round"/>
+
+  <!-- Mouths -->
+  <g class="mouth-smile">
+    <path class="mouth-line" d="M32 46 v1 M32 47 q-2.5 3 -5 1.2 M32 47 q2.5 3 5 1.2" stroke="#2b2420" stroke-width="1" stroke-linecap="round" fill="none"/>
+  </g>
+  <g class="mouth-w">
+    <path class="mouth-line" d="M32 46 v1.2 M27 47 q2.5 3 5 .2 q2.5 2.8 5 -.2" stroke="#2b2420" stroke-width="1" stroke-linecap="round" fill="none"/>
+  </g>
+  <g class="mouth-open">
+    <path d="M27.5 47.5 Q32 55.5 36.5 47.5 Q32 49.5 27.5 47.5 Z" fill="#6b2a35"/>
+    <path d="M29.6 51 Q32 54.6 34.4 51 Q32 49.8 29.6 51 Z" fill="#f08a9a"/>
+    <path class="mouth-line" d="M32 46 v1.4" stroke="#2b2420" stroke-width="1" stroke-linecap="round"/>
+  </g>
+  <g class="mouth-blep">
+    <path d="M30.6 48.2 h2.8 v2.3 a1.4 1.4 0 0 1 -2.8 0 z" fill="#f08a9a"/>
+    <path class="mouth-line" d="M32 46 v1 M32 47 q-2.5 3 -5 1.2 M32 47 q2.5 3 5 1.2" stroke="#2b2420" stroke-width="1" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- Extras -->
+  <g class="extra-bow" transform="rotate(20 47 21)">
+    <path class="acc" d="M47 21 L40 16.5 L40 25.5 Z M47 21 L54 16.5 L54 25.5 Z" fill="#d8322f" stroke-linejoin="round"/>
+    <circle class="acc" cx="47" cy="21" r="2.4" fill="#d8322f"/>
+    <circle cx="47" cy="21" r="2.4" fill="#00000026"/>
+  </g>
+  <g class="extra-flower">
+    <g class="acc" fill="#d8322f">
+      <circle cx="18" cy="19.2" r="2.6"/><circle cx="20.66" cy="21.13" r="2.6"/><circle cx="19.65" cy="24.27" r="2.6"/>
+      <circle cx="16.35" cy="24.27" r="2.6"/><circle cx="15.34" cy="21.13" r="2.6"/>
+    </g>
+    <circle cx="18" cy="22" r="1.8" fill="#fff3b0"/>
+  </g>
+  <g class="extra-glasses" fill="none" stroke-width="1.6" stroke-linecap="round">
+    <circle class="acc-line" cx="23" cy="36" r="6.5" stroke="#d8322f" fill="#ffffff22"/>
+    <circle class="acc-line" cx="41" cy="36" r="6.5" stroke="#d8322f" fill="#ffffff22"/>
+    <path class="acc-line" d="M29.5 35 q2.5 -2 5 0 M16.5 35 L9 33 M47.5 35 L55 33" stroke="#d8322f"/>
+  </g>
+  <g class="extra-collar">
+    <path class="acc-line" d="M10 50 Q32 63 54 50" clip-path="url(#av-head)" stroke="#d8322f" stroke-width="3.6" fill="none"/>
+    <circle cx="32" cy="59" r="2.8" fill="#ffd84a" stroke="#b8901f" stroke-width=".6"/>
+    <path d="M30.5 60 h3" stroke="#8a6a12" stroke-width=".6" stroke-linecap="round"/>
+  </g>
+  <g class="extra-crown">
+    <polygon class="acc" points="24,19 25,10 28.5,14 32,8 35.5,14 39,10 40,19" fill="#d8322f" stroke-linejoin="round"/>
+    <circle cx="32" cy="15" r="1.2" fill="#ffffffcc"/>
+    <circle cx="27" cy="16.5" r=".8" fill="#ffffffaa"/>
+    <circle cx="37" cy="16.5" r=".8" fill="#ffffffaa"/>
+  </g>
+</svg>

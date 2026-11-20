@@ -1,17 +1,21 @@
 // Winner popup with confetti in the cat colors.
 import { $ } from './dom.js';
+import { avatarSvg } from './art.js';
 
 // over: the server's { winner, why, scores: [{ name, penalty }] }. youWon picks the headline.
 export function showWin(over, youWon) {
   const box = $('winPop');
   $('winTitle').textContent = youWon ? 'You win! 🎉' : `${over.winner} wins!`;
   box.querySelector('.why').textContent = over.why || '';
+  // The winner's cat holds up the trophy
+  const champ = over.scores.find((x) => x.name === over.winner);
+  box.querySelector('.trophy').innerHTML = champ?.avatar ? `${avatarSvg(champ.avatar, 96)}<span>🏆</span>` : '🏆';
   const ul = box.querySelector('.scores');
   ul.innerHTML = '';
   [...over.scores].sort((a, b) => a.penalty - b.penalty).forEach((x) => {
     const li = document.createElement('li');
-    li.innerHTML = '<span></span><span></span>';
-    li.children[0].textContent = x.name;
+    li.innerHTML = `<span class="who">${x.avatar ? avatarSvg(x.avatar, 24) : ''}<span></span></span><span></span>`;
+    li.querySelector('.who > span').textContent = x.name;
     li.children[1].textContent = `${x.penalty} pts left`;
     ul.appendChild(li);
   });
