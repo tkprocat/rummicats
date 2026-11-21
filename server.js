@@ -85,6 +85,8 @@ function viewFor(room, member) {
     turnEnds: room.turnEnds,
     idleLimit: room.idleLimit,
     idleEnds: room.idleEnds,
+    glow: room.glow,
+    lastPlayed: room.glow ? room.lastPlayed : [],
     now: Date.now(),
     pool: room.pool.length,
     table: room.table,
@@ -109,7 +111,10 @@ function broadcast(room) {
     for (const res of m.clients) res.write(`data: ${JSON.stringify(viewFor(room, m))}\n\n`);
 }
 
-function nextTurn(room) {
+// Every turn end records what that turn put on the table (nothing for a draw, pass or skip),
+// so the next player can see what changed.
+function nextTurn(room, played = []) {
+  room.lastPlayed = played;
   room.turn = (room.turn + 1) % room.players.length;
   room.turnId++;
   room.draft = null;
@@ -230,7 +235,7 @@ const actions = {
     const room = {
       code: newCode(), players: [], spectators: [], host: null, started: false, over: null, turn: 0, turnId: 0,
       pool: [], table: [], draft: null, log: [], chat: [], chatId: 0, passes: 0, turnLimit: 0, turnEnds: null, clock: null, botTimer: null,
-      idleLimit: 0, idleEnds: null, idleClock: null, lastActive: Date.now(),
+      idleLimit: 0, idleEnds: null, idleClock: null, lastActive: Date.now(), glow: true, lastPlayed: [],
     };
     rooms.set(room.code, room);
     const result = actions.join({ ...body, code: room.code });
@@ -306,19 +311,20 @@ const actions = {
     log(room, `🤖 ${bot.name} left`);
   },
 
-  // Lobby only: the host picks the timers, and everyone sees the choice in the room rules straight away.
+  // Lobby only: the host picks the timers and the glow, and everyone sees the choice in the room rules straight away.
   // Anything not on the list means off.
-  settings({ timer, idle }, room, member) {
+  settings({ timer, idle, glow }, room, member) {
     mustBeHostInLobby(room, member);
     if (timer !== undefined) room.turnLimit = TURN_LIMITS.includes(Number(timer)) ? Number(timer) : 0;
     if (idle !== undefined) room.idleLimit = IDLE_LIMITS.includes(Number(idle)) ? Number(idle) : 0;
+    if (glow !== undefined) room.glow = glow === true;
   },
 
-  start({ timer, idle }, room, member) {
+  start({ timer, idle, glow }, room, member) {
     if (room.started) throw new Error('Already started');
     if (room.host !== member) throw new Error('Only the host can start');
     if (room.players.length < 2) throw new Error('Need at least 2 players');
-    actions.settings({ timer, idle }, room, member); // timers sent with start win over earlier settings
+    actions.settings({ timer, idle, glow }, room, member); // settings sent with start win over earlier ones
     room.pool = shuffle(Rules.TILES.map((t) => t.id));
     for (const p of room.players) p.hand = room.pool.splice(0, 14);
     room.started = true;
@@ -337,6 +343,8 @@ const actions = {
   draft({ table }, room, player) {
     mustBeTurn(room, player);
     room.draft = isTable(table) ? table : null;
+    // The previous turn's glow goes out once this player starts changing the table.
+    if (room.draft && JSON.stringify(room.draft) !== JSON.stringify(room.table)) room.lastPlayed = [];
     startIdle(room); // moving a cat counts as not idle
   },
 
@@ -359,7 +367,7 @@ const actions = {
     player.melded = true;
     log(room, `${player.name} played ${r.played.length} cat${r.played.length > 1 ? 's' : ''}`);
     if (player.hand.length === 0) return finish(room, player, 'Their paws are empty.');
-    nextTurn(room);
+    nextTurn(room, r.played);
   },
 };
 

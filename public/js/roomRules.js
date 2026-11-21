@@ -1,5 +1,5 @@
-// The room's rules, in a dropdown at the top: the timers the host picked, then the basics of the game.
-// Built as text (no HTML from the server), and only redrawn when the timers change.
+// The room's rules, in a dropdown at the top: the settings the host picked, then the basics of the game.
+// Built as text (no HTML from the server), and only redrawn when the settings change.
 import { $ } from './dom.js';
 
 export const duration = (s) => (s < 60 ? `${s} sec` : `${s / 60} min`);
@@ -7,7 +7,7 @@ export const duration = (s) => (s < 60 ? `${s} sec` : `${s / 60} min`);
 let drawn = null;
 
 export function renderRules(S) {
-  const key = `${S.turnLimit}|${S.idleLimit}|${S.started}`;
+  const key = `${S.turnLimit}|${S.idleLimit}|${S.glow}|${S.started}`;
   if (key === drawn) return;
   drawn = key;
 
@@ -33,13 +33,16 @@ export function renderRules(S) {
     body.appendChild(ul);
   };
 
-  heading('Timers in this room');
+  heading('Settings in this room');
   list([
     ['⏰ Turn timer:', S.turnLimit
       ? `${duration(S.turnLimit)} per turn. When it runs out, your moves are undone and you draw a cat (3 cats if you left the table invalid).`
       : 'off. Take as long as you like.'],
     ['💤 Idle timer:', S.idleLimit
       ? `${duration(S.idleLimit)}. Moving a cat restarts it. If you don't move a cat in time, your moves are undone and your turn is skipped (you don't draw).`
+      : 'off.'],
+    ['✨ Glow:', S.glow
+      ? 'on. The cats the last player put on the table glow until the next player starts moving cats. With auto-sort on, the cat you just drew glows too.'
       : 'off.'],
   ]);
   if (!S.started) {

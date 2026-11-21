@@ -126,6 +126,7 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 .tile { width: 58px; height: 84px; background: var(--tile); border-radius: 8px; box-shadow: 0 2px 0 var(--tile-edge), 0 3px 6px #0003; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px 2px 3px; cursor: pointer; user-select: none; position: relative; flex: none; }
 .tile svg { width: 44px; height: 40px; }
 .tile .rank { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 2px; }
+.tile.glow { box-shadow: 0 2px 0 var(--tile-edge), 0 0 0 2px #ffd54a, 0 0 14px 2px #ffd54acc; }
 .tile.selected { transform: translateY(-6px); box-shadow: 0 0 0 3px var(--ginger), 0 6px 10px #0004; }
 .tile.fresh::after { content: ""; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--ginger); }
 .c-ginger .rank { color: var(--ginger); }
@@ -363,6 +364,7 @@ body.chatResizing { cursor: ew-resize; user-select: none; }
 body.chatResizing #chat { transition: none; }
 
 /* Idle timer pick in the lobby, and the countdowns in the top bar */
+#glowPick { display: flex; gap: 8px; align-items: center; justify-content: center; color: var(--muted); }
 #idlePick { display: flex; gap: 8px; align-items: center; justify-content: center; color: var(--muted); }
 #timer span + span { margin-left: 12px; }
 #timer .low { color: var(--err); }

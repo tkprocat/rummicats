@@ -22,6 +22,8 @@ let selected = []; // tile ids picked up, in the order they were tapped
 let events = null;
 let clockSkew = 0; // server time minus local time
 let celebrated = null; // room code whose win we have already announced
+let prevHand = null; // my hand in the last state, to spot cats I just drew
+let lastDrawn = []; // cats I drew last time my hand changed; they glow on a sorted rack
 
 // Auto-sort: keep the rack in color or number order, so drawn cats land in place instead of at the end.
 // Moving a cat to a slot yourself turns it off, since a sorted rack would undo the move.
@@ -84,6 +86,13 @@ function showLobbyError(msg) {
 const myTurn = () => S && S.started && !S.over && S.turn === S.you;
 
 function syncWork() {
+  // Cats that showed up in my hand were drawn. Any other change (a play, a new game) clears them.
+  const before = prevHand;
+  prevHand = S.hand;
+  if (!before || before.join() !== S.hand.join()) {
+    const old = new Set(before || []);
+    lastDrawn = before && before.length ? S.hand.filter((id) => !old.has(id)) : [];
+  }
   // Cats that left my hand leave a gap; new ones get a slot when the rack is drawn.
   keepOnly(new Set(S.hand));
   if (!myTurn() || workTurnId !== S.turnId) resetWork();
@@ -335,7 +344,8 @@ function render() {
 
   const seated = S.you >= 0;
   $('waiting').classList.toggle('hidden', S.started);
-  for (const id of ['startBtn', 'timerPick', 'idlePick', 'addBotBtn']) $(id).classList.toggle('hidden', !S.isHost);
+  for (const id of ['startBtn', 'timerPick', 'idlePick', 'glowPick', 'addBotBtn']) $(id).classList.toggle('hidden', !S.isHost);
+  $('glowSel').checked = S.glow;
   // The host's timer picks live on the server, so they show in everyone's rules and survive a refresh.
   for (const [id, value] of [['timerSel', S.turnLimit], ['idleSel', S.idleLimit]])
     if (document.activeElement !== $(id)) $(id).value = String(value || 0);
@@ -350,6 +360,8 @@ function render() {
   for (const id of ['controls', 'handBar', 'hand']) $(id).classList.toggle('hidden', !S.started || !seated);
 
   const mine = myTurn();
+  // Glows go out once I start changing the table on my turn, like they do for everyone watching.
+  const glowing = S.glow && !(mine && JSON.stringify(work.table) !== JSON.stringify(S.table));
   const playedIds = new Set(mine ? work.table.flat().filter((id) => S.hand.includes(id)) : []);
   const moved = mine && (playedIds.size > 0 || JSON.stringify(work.table) !== JSON.stringify(S.table));
   if (S.over) {
@@ -392,6 +404,7 @@ function render() {
     set.forEach((id, i) => {
       el.appendChild(gap(i));
       const t = tileEl(id, { fresh: playedIds.has(id) });
+      if (glowing && S.lastPlayed.includes(id)) t.classList.add('glow'); // played last turn
       t.onclick = (e) => onTileClick(id, e);
       t.onpointerdown = (e) => startBoardSelection(id, t, e, myTurn());
       el.appendChild(t);
@@ -436,6 +449,8 @@ function render() {
       if (id != null && shown.has(id)) {
         const t = tileEl(id);
         if (!S.hand.includes(id)) t.classList.add('borrowed'); // a wild cat swapped off the table this turn
+        // On a sorted rack a drawn cat lands somewhere in the middle, so show where.
+        if (glowing && SORTS[autoSort] && lastDrawn.includes(id)) t.classList.add('glow');
         t.onclick = (e) => onTileClick(id, e);
         t.onpointerdown = (e) => startHandDrag(id, t, e, myTurn());
         slot.appendChild(t);
@@ -518,9 +533,10 @@ $('name').value = store.get('name') || '';
 $('name').onchange = () => store.set('name', $('name').value);
 
 // Game
-$('startBtn').onclick = () => api('start', { timer: $('timerSel').value, idle: $('idleSel').value }).catch((e) => ($('waitMsg').textContent = e.message));
+$('startBtn').onclick = () => api('start', { timer: $('timerSel').value, idle: $('idleSel').value, glow: $('glowSel').checked }).catch((e) => ($('waitMsg').textContent = e.message));
 for (const [id, key] of [['timerSel', 'timer'], ['idleSel', 'idle']])
   $(id).onchange = () => api('settings', { [key]: $(id).value }).catch((e) => ($('waitMsg').textContent = e.message));
+$('glowSel').onchange = () => api('settings', { glow: $('glowSel').checked }).catch((e) => ($('waitMsg').textContent = e.message));
 $('addBotBtn').onclick = () => api('addBot').catch((e) => ($('waitMsg').textContent = e.message));
 $('seatBtn').onclick = () => api('spectate').catch((e) => ($('waitMsg').textContent = e.message));
 $('doneBtn').onclick = () => api('commit', { table: work.table }).catch((e) => flash(e.message));
