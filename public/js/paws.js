@@ -24,6 +24,12 @@ export function syncPaws() {
 
 // Rack: tiers of slots, and gaps stay wherever you leave them
 export function renderPaws() {
+  // Put away with the paws tab: just the count on the tab. The rack isn't redrawn, since a hidden rack has no
+  // width to fit its tiers to.
+  const away = document.body.classList.contains('pawsHidden');
+  $('pawsCount').textContent = S.hand.length;
+  $('pawsCount').classList.toggle('hidden', !away);
+  if (away) return;
   const mine = myTurn();
   // The drawn-cat glow goes out with the others once I start changing the table.
   const glowing = S.glow && !tableChanged();
@@ -64,6 +70,14 @@ export function renderPaws() {
 
 // redraw: app.js's render, run after anything here changes the rack.
 export function initPaws(redraw) {
+  // The paws tab puts the sort bar and rack away and brings them back, to see more of the table. Not remembered,
+  // so a reload never leaves you wondering where your cats went.
+  $('pawsTab').onclick = () => {
+    const away = document.body.classList.toggle('pawsHidden');
+    $('pawsTab').setAttribute('aria-expanded', String(!away));
+    $('pawsTab').title = away ? 'Show your paws' : 'Hide your paws';
+    redraw();
+  };
   $('hand').onclick = () => myTurn() && moveTo({ where: 'hand' });
   // One-off sorts for people who'd rather arrange their own cats afterwards. They turn auto-sort off,
   // so the next draw doesn't re-sort the rack the other way.

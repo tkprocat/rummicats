@@ -95,7 +95,7 @@ function render() {
   // for players (spectators have no rack and no turn).
   const seated = S.you >= 0;
   for (const id of ['status', 'tableArea']) $(id).classList.toggle('hidden', !S.started);
-  for (const id of ['controls', 'handBar', 'hand']) $(id).classList.toggle('hidden', !S.started || !seated);
+  for (const id of ['controls', 'handBar', 'hand', 'pawsTab']) $(id).classList.toggle('hidden', !S.started || !seated);
   $('turnDot').classList.toggle('hidden', !myTurn());
 
   renderWin();

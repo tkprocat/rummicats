@@ -128,7 +128,10 @@
 
     <details id="logBox"><summary>Game log</summary><ul id="log"></ul></details>
 
-    <button id="chatTab" title="Open chat" aria-controls="chat" aria-expanded="false">💬 <span>Chat</span><b id="chatBadge" class="hidden"></b></button>
+    <div id="sideTabs">
+      <button id="chatTab" title="Open chat" aria-controls="chat" aria-expanded="false">💬 <span>Chat</span><b id="chatBadge" class="hidden"></b></button>
+      <button id="pawsTab" class="hidden" title="Hide your paws" aria-controls="hand" aria-expanded="true">🐾 <span>Paws</span><b id="pawsCount" class="hidden"></b></button>
+    </div>
     <aside id="chat" aria-label="Room chat">
       <div id="chatResize" role="separator" aria-orientation="vertical" aria-label="Resize chat" tabindex="0"
         title="Drag to resize · double-click to reset"></div>

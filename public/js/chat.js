@@ -98,6 +98,7 @@ function setOpen(open) {
   document.body.classList.toggle('chatOpen', open);
   store.set('chatOpen', open ? '1' : '0');
   $('chatTab').setAttribute('aria-expanded', open);
+  $('chatTab').title = open ? 'Hide chat' : 'Open chat';
   if (open) {
     markSeen();
     const list = $('chatList');
@@ -245,7 +246,7 @@ function initResize() {
 
 export function initChat() {
   initResize();
-  $('chatTab').onclick = () => setOpen(true);
+  $('chatTab').onclick = () => setOpen(!isOpen());
   $('chatClose').onclick = () => setOpen(false);
   $('chatForm').onsubmit = (e) => { e.preventDefault(); send(); };
   $('emojiBtn').onclick = () => showPicker($('emojiPicker').classList.contains('hidden'));
