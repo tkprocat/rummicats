@@ -293,9 +293,27 @@ function pickedText() {
     'Tap more cats to add them, or tap the empty spot, a gap, or your paws to put them down.';
 }
 
+// Every redraw rebuilds the players, table and rack, and text above them can change length (say when you
+// pick up a cat), which on a phone moves what you were looking at. Keep the paws where they were on screen
+// if any of them were in view, otherwise the table, so picking up several cats doesn't send you scrolling back.
+function holdScroll() {
+  const inView = (el) => {
+    const r = el.getBoundingClientRect();
+    return r.height > 0 && r.bottom > 0 && r.top < innerHeight;
+  };
+  const anchor = [$('hand'), $('tableArea')].find(inView);
+  if (!anchor) return () => {};
+  const top = anchor.getBoundingClientRect().top;
+  return () => {
+    const shift = anchor.getBoundingClientRect().top - top;
+    if (shift) window.scrollBy(0, shift);
+  };
+}
+
 function render() {
   if (!S) return;
   if (isDragging()) return; // redrawn on drop
+  const restoreScroll = holdScroll();
   $('roomCode').textContent = S.code;
   document.querySelector('#waiting .code').textContent = S.code;
 
@@ -489,6 +507,7 @@ function render() {
     li.textContent = line;
     $('log').appendChild(li);
   }
+  restoreScroll();
 }
 
 // Turn and idle countdowns, redrawn on their own between server updates. The idle one starts again on every move.
