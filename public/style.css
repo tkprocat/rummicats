@@ -153,6 +153,10 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 
 /* Dragging cats around in your paws */
 #hand .tile { touch-action: none; }
+/* iOS (Safari, and Chrome on iPhone, which uses the same engine) still wants the prefixed user-select, and
+   shows its copy/look-up menu on a long press unless touch-callout is off too. A press that starts on the rack
+   or table around a cat can select it as well, so cover those. */
+.tile, #hand, #table { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .tile.placeholder { opacity: .3; }
 .tile.ghost { position: fixed; left: 0; top: 0; z-index: 10; pointer-events: none; box-shadow: 0 0 0 3px var(--ginger), 0 10px 18px #0005; }
 
