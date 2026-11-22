@@ -9,6 +9,7 @@ import { rack, cols, keepOnly, dropInRack, setCols, fitRack, sortByColor, sortBy
 import { work, selected, setRedraw, syncWork, shownSet, tableChanged, canUndo, pickTile, arrange, moveTo, onTileClick, initTurn } from './turn.js';
 import { tileEl } from './tile.js';
 import { renderBoard } from './board.js';
+import { syncPaws, renderPaws, initPaws } from './paws.js';
 import { isDragging, startHandDrag, startBoardSelection, initHandDrag } from './drag.js';
 import { wrapLongSets } from './setWrap.js';
 import { initTheme } from './theme.js';
@@ -24,8 +25,6 @@ const { turnChanges } = window.Changes;
 let events = null;
 let clockSkew = 0; // server time minus local time
 let celebrated = null; // room code whose win we have already announced
-let prevHand = null; // my hand in the last state, to spot cats I just drew
-let lastDrawn = []; // cats I drew last time my hand changed; they glow on a sorted rack
 
 // ---- Connection ----
 
@@ -60,18 +59,6 @@ function showLobbyError(msg) {
   $('game').classList.add('hidden');
   $('lobby').classList.remove('hidden');
   $('lobbyErr').textContent = msg;
-}
-
-// Cats that showed up in my hand were drawn. Any other change (a play, a new game) clears them.
-// Cats that left my hand leave a gap on the rack; new ones get a slot when the rack is drawn.
-function syncPaws() {
-  const before = prevHand;
-  prevHand = S.hand;
-  if (!before || before.join() !== S.hand.join()) {
-    const old = new Set(before || []);
-    lastDrawn = before && before.length ? S.hand.filter((id) => !old.has(id)) : [];
-  }
-  keepOnly(new Set(S.hand));
 }
 
 // ---- Drawing ----
@@ -174,43 +161,7 @@ function render() {
   }
 
   renderBoard();
-
-  // Rack: tiers of slots, and gaps stay wherever you leave them
-  const mine = myTurn();
-  const glowing = S.glow && !tableChanged();
-  const hd = $('hand');
-  const shown = shownSet();
-  const slotW = parseFloat(getComputedStyle(hd).getPropertyValue('--tile-w')) + 4; // cat width + gap, from the CSS
-  setCols(Math.max(6, Math.floor((hd.clientWidth - 16) / slotW)));
-  $('autoSort').value = autoSort; // auto-sort turns itself off when you move a cat, so keep the dropdown in step
-  if (SORTS[autoSort]) SORTS[autoSort](shown);
-  fitRack(shown);
-  hd.innerHTML = '';
-  hd.classList.toggle('picking', mine && selected.length > 0);
-  hd.classList.toggle('returning', mine && selected.some((id) => !work.hand.includes(id)));
-  for (let r = 0; r < rack.length / cols; r++) {
-    const tier = document.createElement('div');
-    tier.className = 'tier';
-    for (let i = r * cols; i < (r + 1) * cols; i++) {
-      const slot = document.createElement('div');
-      slot.className = 'slot';
-      slot.dataset.i = i;
-      const id = rack[i];
-      if (id != null && shown.has(id)) {
-        const t = tileEl(id);
-        if (!S.hand.includes(id)) t.classList.add('borrowed'); // a wild cat swapped off the table this turn
-        // On a sorted rack a drawn cat lands somewhere in the middle, so show where.
-        if (glowing && SORTS[autoSort] && lastDrawn.includes(id)) t.classList.add('glow');
-        t.onclick = (e) => onTileClick(id, e);
-        t.onpointerdown = (e) => startHandDrag(id, t, e, myTurn());
-        slot.appendChild(t);
-      } else {
-        slot.onclick = (e) => { e.stopPropagation(); if (myTurn()) moveTo({ where: 'hand', slot: i }); };
-      }
-      tier.appendChild(slot);
-    }
-    hd.appendChild(tier);
-  }
+  renderPaws();
 
   tick();
 
@@ -274,36 +225,16 @@ $('againBtn').onclick = playAgain;
 $('winAgain').onclick = playAgain;
 $('addBotBtn').onclick = () => api('addBot').catch((e) => ($('waitMsg').textContent = e.message));
 $('seatBtn').onclick = () => api('spectate').catch((e) => ($('waitMsg').textContent = e.message));
-$('hand').onclick = () => myTurn() && moveTo({ where: 'hand' });
 window.addEventListener('resize', render);
 $('copyLink').onclick = () => {
   const link = `${location.origin}${location.pathname}?room=${session.code}`;
   navigator.clipboard?.writeText(link).then(() => flash('Invite link copied!'), () => flash(link));
 };
-// One-off sorts for people who'd rather arrange their own cats afterwards. They turn auto-sort off,
-// so the next draw doesn't re-sort the rack the other way.
-$('sortColor').onclick = () => { setAutoSort('off'); sortByColor(shownSet()); render(); };
-$('sortRank').onclick = () => { setAutoSort('off'); sortByRank(shownSet()); render(); };
-$('autoSort').value = autoSort;
-$('autoSort').onchange = (e) => { setAutoSort(e.target.value); render(); };
-
 // ---- Start up ----
 
-initHandDrag((id, slot) => {
-  if (slot != null) {
-    setAutoSort('off');
-    dropInRack(id, slot, shownSet());
-  }
-  render();
-}, (id, el, select) => {
-  if (!myTurn()) return;
-  pickTile(id, select);
-  el.classList.toggle('selected', select);
-}, () => {
-  render();
-});
 setRedraw(render);
 initTurn();
+initPaws(render);
 initTheme();
 initCompact(render);
 initWin();
