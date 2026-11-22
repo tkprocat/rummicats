@@ -109,18 +109,16 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 /* The rack: dark wood tiers, like a real Rummikub rack */
 #hand { background: var(--rack); border-radius: 12px; padding: 10px 10px 6px; display: flex; flex-direction: column; gap: 8px; margin-top: 6px; box-shadow: inset 0 2px 6px #0007, 0 3px 8px #0003; }
 #hand.returning { outline: 3px dashed var(--ginger); cursor: pointer; }
-/* Pinned paws, on phones only: the turn buttons, sort bar and rack stay at the bottom of the screen while you
-   scroll the table. Sticky rather than fixed, so they still take their place in the page: nothing moves when
-   they appear, and at the end of the page they settle under the table instead of covering it. */
-#pinBtn { display: none; }
+/* Pinned paws: the turn buttons, sort bar and rack stay at the bottom of the screen while you scroll the table,
+   so you can compare your cats with the sets on the table. Sticky rather than fixed, so they still take their
+   place in the page: nothing moves when they appear, at the end of the page they settle under the table instead
+   of covering it, and on a screen tall enough for both they do nothing at all. */
+:root.pinned #dock:has(#hand:not(.hidden)) { position: sticky; bottom: 0; z-index: 20; background: var(--bg); margin: 0 -16px; padding: 0 16px 8px; box-shadow: 0 -6px 8px -6px #0005; }
+#handBar { flex-wrap: wrap; }
+#pinBtn { margin-left: auto; }
 /* Paws put away with the paws tab: the turn buttons stay. */
 body.pawsHidden #handBar, body.pawsHidden #hand { display: none; }
-@media (max-width: 600px) {
-  #handBar { flex-wrap: wrap; }
-  #pinBtn { display: inline-block; margin-left: auto; }
-  #table { min-height: 120px; }
-  :root.pinned #dock:has(#hand:not(.hidden)) { position: sticky; bottom: 0; z-index: 20; background: var(--bg); margin: 0 -16px; padding: 0 16px 8px; box-shadow: 0 -6px 8px -6px #0005; }
-}
+@media (max-width: 600px) { #table { min-height: 120px; } }
 .tier { display: flex; gap: 4px; padding-bottom: 4px; border-bottom: 7px solid var(--rack-ledge); box-shadow: 0 2px 0 #ffffff12; }
 .slot { width: var(--tile-w); height: var(--tile-h); flex: none; border-radius: 8px; }
 .picking .slot:empty { cursor: pointer; }
