@@ -170,3 +170,38 @@ test('the host can turn the glow off in the lobby, and then nobody is sent it', 
   assert.throws(() => actions.settings({ glow: true }, room, host), /already started/);
   stopTimers(room);
 });
+
+// ---- Another game in the same room ----
+
+test('after a game ends the host can take the room back to the lobby, keeping seats and settings', () => {
+  const { code } = actions.create({ name: 'A' });
+  actions.join({ code, name: 'B' });
+  const room = rooms.get(code);
+  const [host, guest] = room.players;
+  actions.addBot(null, room, host);
+  actions.start({ timer: 120, glow: false }, room, host);
+  assert.throws(() => actions.again(null, room, host), /not over/);
+
+  const winner = current(room);
+  actions.commit({ table: [rigMeld(room)] }, room, winner); // not a win yet: rig an empty hand next
+  winner.hand = [];
+  room.over = { winner: winner.name, why: 'test', scores: [] };
+  assert.throws(() => actions.again(null, room, guest), /Only the host/);
+
+  const turnId = room.turnId;
+  actions.again(null, room, host);
+  assert.strictEqual(room.started, false);
+  assert.strictEqual(room.over, null);
+  assert.deepStrictEqual(room.table, []);
+  assert.deepStrictEqual(room.players.map((p) => [p.name, p.hand.length, p.melded]), [['A', 0, false], ['B', 0, false], [room.players[2].name, 0, false]]);
+  assert.ok(room.players[2].bot, 'the bot keeps its seat');
+  assert.deepStrictEqual([room.turnLimit, room.glow], [120, false], 'settings stay');
+
+  // It's a lobby again: people can join, and the host starts a fresh game.
+  actions.join({ code, name: 'C' });
+  actions.start({}, room, host);
+  assert.ok(room.players.every((p) => p.hand.length === 14));
+  assert.strictEqual(room.pool.length, 106 - 4 * 14);
+  assert.ok(room.turnId > turnId, 'turn ids keep counting up, so old timers and drafts never match');
+  stopTimers(room);
+});

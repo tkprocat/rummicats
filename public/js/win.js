@@ -3,8 +3,11 @@ import { $ } from './dom.js';
 import { avatarSvg } from './art.js';
 
 // over: the server's { winner, why, scores: [{ name, penalty }] }. youWon picks the headline.
-export function showWin(over, youWon) {
+// isHost decides between the New game button and a note that the host can start one.
+export function showWin(over, youWon, isHost) {
   const box = $('winPop');
+  $('winAgain').classList.toggle('hidden', !isHost);
+  box.querySelector('.againNote').classList.toggle('hidden', isHost);
   $('winTitle').textContent = youWon ? 'You win! 🎉' : `${over.winner} wins!`;
   box.querySelector('.why').textContent = over.why || '';
   // The winner's cat holds up the trophy
@@ -24,7 +27,7 @@ export function showWin(over, youWon) {
   confetti($('confetti'));
 }
 
-function hideWin() {
+export function hideWin() {
   $('winPop').classList.add('hidden');
 }
 

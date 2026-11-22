@@ -7,7 +7,7 @@ import { myAvatar, openAvatarEditor, initAvatarEditor } from './avatarEditor.js'
 import { rack, cols, keepOnly, dropInRack, setCols, fitRack, sortByColor, sortByRank } from './rack.js';
 import { isDragging, startHandDrag, startBoardSelection, initHandDrag } from './drag.js';
 import { initTheme } from './theme.js';
-import { showWin, initWin } from './win.js';
+import { showWin, hideWin, initWin } from './win.js';
 import { initNotify, notifyTurn } from './notify.js';
 import { initChat, renderChat } from './chat.js';
 import { renderRules } from './roomRules.js';
@@ -364,6 +364,12 @@ function render() {
   const glowing = S.glow && !(mine && JSON.stringify(work.table) !== JSON.stringify(S.table));
   const playedIds = new Set(mine ? work.table.flat().filter((id) => S.hand.includes(id)) : []);
   const moved = mine && (playedIds.size > 0 || JSON.stringify(work.table) !== JSON.stringify(S.table));
+  if (!S.over && celebrated) {
+    // The host set up a new game: put the winner away, so the next win gets its own celebration.
+    celebrated = null;
+    hideWin();
+  }
+  $('againBtn').classList.toggle('hidden', !(S.over && S.isHost));
   if (S.over) {
     // Names come from other players, so they only ever go in as text.
     const scores = S.over.scores.map((x) => `${x.name}: ${x.penalty}`).join(' · ');
@@ -373,7 +379,7 @@ function render() {
     if (celebrated !== S.code) {
       celebrated = S.code;
       const me = S.players[S.you];
-      showWin(S.over, !!me && me.name === S.over.winner);
+      showWin(S.over, !!me && me.name === S.over.winner, S.isHost);
     }
   } else if (mine) {
     $('status').textContent = selected.length ? pickedText()
@@ -537,6 +543,9 @@ $('startBtn').onclick = () => api('start', { timer: $('timerSel').value, idle: $
 for (const [id, key] of [['timerSel', 'timer'], ['idleSel', 'idle']])
   $(id).onchange = () => api('settings', { [key]: $(id).value }).catch((e) => ($('waitMsg').textContent = e.message));
 $('glowSel').onchange = () => api('settings', { glow: $('glowSel').checked }).catch((e) => ($('waitMsg').textContent = e.message));
+const playAgain = () => api('again').then(hideWin, (e) => flash(e.message));
+$('againBtn').onclick = playAgain;
+$('winAgain').onclick = playAgain;
 $('addBotBtn').onclick = () => api('addBot').catch((e) => ($('waitMsg').textContent = e.message));
 $('seatBtn').onclick = () => api('spectate').catch((e) => ($('waitMsg').textContent = e.message));
 $('doneBtn').onclick = () => api('commit', { table: work.table }).catch((e) => flash(e.message));
