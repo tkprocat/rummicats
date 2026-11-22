@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const Rules = require('./public/rules.js');
 const Bot = require('./bot.js');
 const Avatar = require('./public/avatar.js');
+const Persist = require('./persist.js');
 
 const PORT = process.env.PORT || 3000;
 const BOT_DELAY = Number(process.env.BOT_DELAY_MS ?? 1500); // pause before a bot plays, so people can follow along
@@ -13,6 +14,11 @@ const PUBLIC = path.join(__dirname, 'public');
 // Joke avatars: KAT_JOKE=1 gives anyone named "Kat" the photo in public/art/kat.jpg instead of their cat. Off by default.
 const config = { katJoke: /^(1|true|on|yes)$/i.test(process.env.KAT_JOKE || '') };
 const rooms = new Map();
+// Games in progress are saved at the start of every turn and restored after a restart (see persist.js).
+// Off unless DATA_DIR is set; the Docker image sets it to /data.
+let store = Persist.createStore(process.env.DATA_DIR);
+const save = (room) => store && store.save(room);
+const forget = (code) => store && store.remove(code);
 const TURN_LIMITS = [60, 120, 180]; // seconds the host can pick for the turn timer
 const IDLE_LIMITS = [30, 60, 120, 180, 300]; // ...and for the idle timer
 
@@ -121,6 +127,7 @@ function nextTurn(room, played = []) {
   startClock(room);
   startIdle(room);
   scheduleBot(room);
+  save(room); // the start of the next turn is where a restart picks up
 }
 
 // Is a person (not a bot) looking at this room right now?
@@ -228,15 +235,35 @@ function finish(room, winner, why) {
   room.idleEnds = null;
   room.over = { winner: winner.name, why, scores: room.players.map((p) => ({ name: p.name, avatar: p.avatar, penalty: Rules.handPenalty(p.hand) })) };
   log(room, `🏆 ${winner.name} wins! ${why}`);
+  forget(room.code); // finished games aren't kept across a restart
+}
+
+// A room with every field at its starting value. New rooms start here, and so do saved ones being restored,
+// so a save from before a field existed still gets a sensible value for it.
+function newRoom(code) {
+  return {
+    code, players: [], spectators: [], host: null, started: false, over: null, turn: 0, turnId: 0,
+    pool: [], table: [], draft: null, log: [], chat: [], chatId: 0, passes: 0, turnLimit: 0, turnEnds: null, clock: null, botTimer: null,
+    idleLimit: 0, idleEnds: null, idleClock: null, lastActive: Date.now(), glow: true, lastPlayed: [],
+  };
+}
+
+// Bring back the games saved before a restart, each at the start of the turn it was on, with fresh timers.
+// Bots wait as usual until someone has the room open.
+function restoreRooms() {
+  if (!store) return 0;
+  const restored = store.loadAll(newRoom).filter((room) => room.started && room.players.length >= 2);
+  for (const room of restored) {
+    rooms.set(room.code, room);
+    startClock(room);
+    startIdle(room);
+  }
+  return restored.length;
 }
 
 const actions = {
   create(body) {
-    const room = {
-      code: newCode(), players: [], spectators: [], host: null, started: false, over: null, turn: 0, turnId: 0,
-      pool: [], table: [], draft: null, log: [], chat: [], chatId: 0, passes: 0, turnLimit: 0, turnEnds: null, clock: null, botTimer: null,
-      idleLimit: 0, idleEnds: null, idleClock: null, lastActive: Date.now(), glow: true, lastPlayed: [],
-    };
+    const room = newRoom(newCode());
     rooms.set(room.code, room);
     const result = actions.join({ ...body, code: room.code });
     room.host = room.players[0];
@@ -336,6 +363,7 @@ const actions = {
     startClock(room);
     startIdle(room);
     scheduleBot(room); // a bot may go first
+    save(room);
   },
 
   // After a game ends, the host takes the room back to the lobby for another one. Seats, bots and settings stay,
@@ -487,10 +515,18 @@ setInterval(() => {
       clearTimeout(room.botTimer);
       clearTimeout(room.idleClock);
       rooms.delete(code);
+      forget(code);
     }
 }, 600e3).unref();
 
 // Start listening only when run directly (`node server.js`); tests require this file instead.
-if (require.main === module) server.listen(PORT, () => console.log(`🐱 Rummicats running on http://localhost:${PORT}`));
+if (require.main === module) {
+  const restored = restoreRooms();
+  if (store) console.log(`💾 Saving games in progress to ${store.dir}${restored ? ` (restored ${restored})` : ''}`);
+  server.listen(PORT, () => console.log(`🐱 Rummicats running on http://localhost:${PORT}`));
+}
 
-module.exports = { actions, rooms, findMember, server, cleanChat, viewFor, config };
+// Tests swap in a store of their own (persistence is off unless DATA_DIR is set).
+const useStore = (s) => { store = s; };
+
+module.exports = { actions, rooms, findMember, server, cleanChat, viewFor, config, restoreRooms, useStore };

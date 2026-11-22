@@ -22,10 +22,39 @@ very special avatar.
 Every push to `main` publishes an image to the GitHub Container Registry (see `.github/workflows/build.yml`):
 
 ```
-docker run -p 3000:3000 ghcr.io/tkprocat/rummicats
+docker run -p 3000:3000 -v rummicats-data:/data ghcr.io/tkprocat/rummicats
 ```
 
-Pass settings with `-e`, e.g. `-e KAT_JOKE=1`. Rooms are kept in memory, so restarting the container ends every game.
+Pass settings with `-e`, e.g. `-e KAT_JOKE=1`.
+
+### Games survive restarts
+
+Games in progress are saved to `/data` at the start of every turn, one file per room. After a restart or an update,
+each game comes back at the start of the turn it was on: that player starts their turn again with a fresh timer,
+and everyone's browser reconnects by itself. Rooms still in the lobby, finished games, and chat or avatar changes
+made since the turn began are not kept.
+
+Mount a named volume on `/data`, as above, so the saves outlive the container. Docker creates it the first time,
+writable by the server. Without it games still survive `docker restart`, but not an update, which replaces the
+container. With Docker Compose:
+
+```yaml
+services:
+  web:
+    image: ghcr.io/tkprocat/rummicats:latest
+    init: true
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - rummicats-data:/data
+
+volumes:
+  rummicats-data:
+```
+
+Saving only happens when `DATA_DIR` is set; the image sets it to `/data`. To try it outside Docker, run
+`DATA_DIR=./data npm start`. If a save file can't be read, that game is skipped with a warning and the rest load.
 
 ## Bots and spectators
 
