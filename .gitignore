@@ -5,6 +5,9 @@ node_modules/
 .env
 .env.*
 
+# Saved games from running locally with DATA_DIR=./data (they hold players' secret tokens)
+data/
+
 # Logs
 *.log
 npm-debug.log*

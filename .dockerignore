@@ -8,5 +8,6 @@ test
 *.log
 .env
 .env.*
+data
 Dockerfile
 .dockerignore
