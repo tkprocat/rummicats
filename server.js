@@ -338,6 +338,16 @@ const actions = {
     scheduleBot(room); // a bot may go first
   },
 
+  // After a game ends, the host takes the room back to the lobby for another one. Seats, bots and settings stay,
+  // so they can start straight away, or let people join, swap seats and change the settings first.
+  again(_, room, member) {
+    if (!room.over) throw new Error('The game is not over yet');
+    if (room.host !== member) throw new Error('Only the host can start a new game');
+    Object.assign(room, { started: false, over: null, pool: [], table: [], draft: null, lastPlayed: [], passes: 0, turnEnds: null, idleEnds: null });
+    for (const p of room.players) Object.assign(p, { hand: [], melded: false });
+    log(room, `🔁 ${member.name} set up a new game`);
+  },
+
   // Live preview of the current player's moves, so others can watch.
   // It's sent to every player, so only well-formed tables get through.
   draft({ table }, room, player) {
