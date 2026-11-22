@@ -3,7 +3,7 @@
 //   state.js  what the server last told us       turn.js   my moves during my turn
 //   lobby.js  joining and the waiting room        board.js  the table, status, turn buttons and pile
 //   players.js who's in the room                  paws.js   my rack and its sorting
-//   win.js    the winner popup and New game       plus chat, rules, themes, compact mode and alerts
+//   win.js    the winner popup and New game       plus chat, rules, themes, compact mode, pinned paws and alerts
 import { $, flash } from './dom.js';
 import { S, setState, myTurn } from './state.js';
 import { session, setSession, savedToken } from './api.js';
@@ -21,6 +21,7 @@ import { initNotify, notifyTurn } from './notify.js';
 import { initChat, renderChat } from './chat.js';
 import { renderRules } from './roomRules.js';
 import { initCompact } from './compact.js';
+import { initPin } from './pin.js';
 
 let events = null;
 let clockSkew = 0; // server time minus local time
@@ -65,12 +66,15 @@ function showLobbyError(msg) {
 // Every redraw rebuilds the players, table and rack, and text above them can change length (say when you
 // pick up a cat), which on a phone moves what you were looking at. Keep the paws where they were on screen
 // if any of them were in view, otherwise the table, so picking up several cats doesn't send you scrolling back.
+// Pinned paws stay on screen by themselves, so then it's the table that's held still.
 function holdScroll() {
   const inView = (el) => {
     const r = el.getBoundingClientRect();
     return r.height > 0 && r.bottom > 0 && r.top < innerHeight;
   };
-  const anchor = [$('hand'), $('tableArea')].find(inView);
+  const pinned = getComputedStyle($('dock')).position === 'sticky';
+  const order = pinned ? [$('tableArea'), $('hand')] : [$('hand'), $('tableArea')];
+  const anchor = order.find(inView);
   if (!anchor) return () => {};
   const top = anchor.getBoundingClientRect().top;
   return () => {
@@ -144,6 +148,7 @@ initPaws(render);
 initLobby(connect);
 initTheme();
 initCompact(render);
+initPin();
 initWin();
 initNotify();
 initChat();

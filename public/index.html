@@ -101,27 +101,30 @@
       <div id="pile" title="Draw a cat"><div class="heap"></div><div class="pileCount"></div></div>
     </div>
 
-    <div id="controls" class="hidden">
-      <button id="doneBtn" class="primary">Done ✔</button>
-      <button id="undoMoveBtn" title="Undo your last move (Ctrl+Z)">↶ Undo move</button>
-      <button id="undoBtn">Undo turn</button>
-      <button id="drawBtn">Draw a cat</button>
-      <span id="meldInfo"></span>
-    </div>
-    <p id="gameErr" class="err"></p>
+    <div id="dock">
+      <div id="controls" class="hidden">
+        <button id="doneBtn" class="primary">Done ✔</button>
+        <button id="undoMoveBtn" title="Undo your last move (Ctrl+Z)">↶ Undo move</button>
+        <button id="undoBtn">Undo turn</button>
+        <button id="drawBtn">Draw a cat</button>
+        <span id="meldInfo"></span>
+      </div>
+      <p id="gameErr" class="err"></p>
 
-    <div id="handBar" class="hidden">
-      <span>Your paws</span>
-      <button id="sortColor" class="small">sort by color</button>
-      <button id="sortRank" class="small">sort by number</button>
-      <select id="autoSort" class="small" aria-label="Keep your paws sorted" title="Keep your paws sorted, also when you draw a cat. Moving a cat yourself turns it off.">
-        <option value="off">auto-sort: off</option>
-        <option value="color">auto-sort: color</option>
-        <option value="rank">auto-sort: number</option>
-      </select>
-      <div class="deco deco-rack" aria-hidden="true"></div>
+      <div id="handBar" class="hidden">
+        <span>Your paws</span>
+        <button id="sortColor" class="small">sort by color</button>
+        <button id="sortRank" class="small">sort by number</button>
+        <select id="autoSort" class="small" aria-label="Keep your paws sorted" title="Keep your paws sorted, also when you draw a cat. Moving a cat yourself turns it off.">
+          <option value="off">auto-sort: off</option>
+          <option value="color">auto-sort: color</option>
+          <option value="rank">auto-sort: number</option>
+        </select>
+        <button id="pinBtn" class="small" title="Keep your paws and the turn buttons at the bottom of the screen while you scroll the table"></button>
+        <div class="deco deco-rack" aria-hidden="true"></div>
+      </div>
+      <div id="hand" class="hidden"></div>
     </div>
-    <div id="hand" class="hidden"></div>
 
     <details id="logBox"><summary>Game log</summary><ul id="log"></ul></details>
 
