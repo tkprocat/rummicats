@@ -1,6 +1,8 @@
 // My rack: tiers of slots, like the real game, where gaps stay wherever the player leaves them.
 // `rack` is slot by slot, row after row: a tile id, or null for a gap. Cats played this turn keep their slot
 // (they're just not shown) so they go back to it if taken back. `shown` is always the set of ids on the rack now.
+import { store } from './dom.js';
+
 const { TILES, COLORS } = window.Rules;
 
 export let rack = [];
@@ -84,3 +86,12 @@ const colorIdx = (t) => (t.joker ? 99 : COLORS.indexOf(t.color));
 export const sortByColor = (shown) => sortRack(shown, (t) => colorIdx(t) * 100 + t.rank, (a, b) => colorIdx(a) !== colorIdx(b));
 // In number order, wild cats last.
 export const sortByRank = (shown) => sortRack(shown, (t) => (t.joker ? 9999 : t.rank * 100 + colorIdx(t)), () => false);
+
+// Auto-sort, remembered in this browser: keep the rack in color or number order, so drawn cats land in place
+// instead of at the end. Moving a cat to a slot yourself turns it off, since a sorted rack would undo the move.
+export const SORTS = { color: sortByColor, rank: sortByRank };
+export let autoSort = SORTS[store.get('autoSort')] ? store.get('autoSort') : 'off';
+export function setAutoSort(mode) {
+  autoSort = SORTS[mode] ? mode : 'off';
+  store.set('autoSort', autoSort);
+}

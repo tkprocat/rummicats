@@ -13,4 +13,12 @@ export const store = {
   },
 };
 
+// A short message under the turn buttons that clears itself after a few seconds.
+let flashTimer = null;
+export function flash(msg) {
+  $('gameErr').textContent = msg;
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(() => ($('gameErr').textContent = ''), 4000);
+}
+
 export const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
