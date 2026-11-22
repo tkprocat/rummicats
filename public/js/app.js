@@ -11,6 +11,7 @@ import { showWin, initWin } from './win.js';
 import { initNotify, notifyTurn } from './notify.js';
 import { initChat, renderChat } from './chat.js';
 import { renderRules } from './roomRules.js';
+import { initCompact } from './compact.js';
 
 const { TILES, COLOR_NAMES, checkSet, checkTurn, setPoints } = window.Rules;
 
@@ -431,7 +432,7 @@ function render() {
   // Rack: tiers of slots, and gaps stay wherever you leave them
   const hd = $('hand');
   const shown = shownSet();
-  const slotW = matchMedia('(max-width: 600px)').matches ? 52 : 62; // tile width + gap
+  const slotW = parseFloat(getComputedStyle(hd).getPropertyValue('--tile-w')) + 4; // cat width + gap, from the CSS
   setCols(Math.max(6, Math.floor((hd.clientWidth - 16) / slotW)));
   if (SORTS[autoSort]) SORTS[autoSort](shown);
   fitRack(shown);
@@ -584,6 +585,7 @@ initHandDrag((id, slot) => {
   render();
 });
 initTheme();
+initCompact(render);
 initWin();
 initNotify();
 initChat();

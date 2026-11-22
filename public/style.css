@@ -107,7 +107,7 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 #hand { background: var(--rack); border-radius: 12px; padding: 10px 10px 6px; display: flex; flex-direction: column; gap: 8px; margin-top: 6px; box-shadow: inset 0 2px 6px #0007, 0 3px 8px #0003; }
 #hand.returning { outline: 3px dashed var(--ginger); cursor: pointer; }
 .tier { display: flex; gap: 4px; padding-bottom: 4px; border-bottom: 7px solid var(--rack-ledge); box-shadow: 0 2px 0 #ffffff12; }
-.slot { width: 58px; height: 84px; flex: none; border-radius: 8px; }
+.slot { width: var(--tile-w); height: var(--tile-h); flex: none; border-radius: 8px; }
 .picking .slot:empty { cursor: pointer; }
 .picking .slot:empty:hover, .slot.over { background: #ffffff1c; outline: 2px dashed #ffffff50; outline-offset: -2px; }
 
@@ -123,9 +123,17 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 .minirack { display: flex; flex-wrap: wrap; gap: 1px; max-width: 150px; margin-top: 4px; padding: 3px 4px 2px; background: var(--rack); border-bottom: 3px solid var(--rack-ledge); border-radius: 4px 4px 2px 2px; }
 .minirack i { width: 6px; height: 9px; background: var(--tile-back); border-radius: 1.5px; }
 
-.tile { width: 58px; height: 84px; background: var(--tile); border-radius: 8px; box-shadow: 0 2px 0 var(--tile-edge), 0 3px 6px #0003; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px 2px 3px; cursor: pointer; user-select: none; position: relative; flex: none; }
+/* Cat size, shared by the cats and the rack slots (app.js reads --tile-w to fit the rack). Smaller on phones,
+   and smaller again in compact mode, where the cat picture goes and the number keeps its size. */
+:root { --tile-w: 58px; --tile-h: 84px; --rank: 26px; }
+:root.compact { --tile-w: 36px; --tile-h: 52px; }
+@media (max-width: 600px) {
+  :root { --tile-w: 48px; --tile-h: 72px; --rank: 22px; }
+  :root.compact { --tile-w: 30px; --tile-h: 44px; }
+}
+.tile { width: var(--tile-w); height: var(--tile-h); background: var(--tile); border-radius: 8px; box-shadow: 0 2px 0 var(--tile-edge), 0 3px 6px #0003; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px 2px 3px; cursor: pointer; user-select: none; position: relative; flex: none; }
 .tile svg { width: 44px; height: 40px; }
-.tile .rank { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 2px; }
+.tile .rank { font-size: var(--rank); font-weight: 800; line-height: 1; margin-bottom: 2px; }
 .tile.glow { box-shadow: 0 2px 0 var(--tile-edge), 0 0 0 2px #ffd54a, 0 0 14px 2px #ffd54acc; }
 .tile.selected { transform: translateY(-6px); box-shadow: 0 0 0 3px var(--ginger), 0 6px 10px #0004; }
 .tile.fresh::after { content: ""; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--ginger); }
@@ -136,15 +144,17 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 .c-wild .rank { background: linear-gradient(90deg, #ef8a2b, #e45c93, #6c87ad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .mini { transform: scale(.75); transform-origin: left center; margin-right: -14px; }
 
+/* Compact mode (sizes are in --tile-w and --tile-h above) */
+.compact .tile { justify-content: center; border-radius: 6px; padding: 2px 1px; }
+.compact .tile svg { display: none; }
+.compact .tile .rank { margin: 0; letter-spacing: -1px; }
+
 #logBox { margin-top: 14px; color: var(--muted); font-size: .85rem; }
 #log { padding-left: 18px; }
 #over { text-align: center; }
 
 @media (max-width: 600px) {
-  .tile { width: 48px; height: 72px; }
   .tile svg { width: 36px; height: 32px; }
-  .tile .rank { font-size: 22px; }
-  .slot { width: 48px; height: 72px; }
   #tableArea { flex-direction: column-reverse; align-items: stretch; }
   #pile { width: auto; flex-direction: row; justify-content: center; gap: 10px; padding: 6px; }
   #pile .heap { width: 90px; height: 56px; }
