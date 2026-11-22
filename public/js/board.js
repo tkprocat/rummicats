@@ -3,9 +3,9 @@
 import { $ } from './dom.js';
 import { avatarSvg } from './art.js';
 import { S, myTurn } from './state.js';
-import { work, selected, tableChanged, canUndo, arrange, moveTo, onTileClick } from './turn.js';
+import { work, selected, tableChanged, canUndo, arrange, moveTo, onTileClick, redrawPage, reorderGroups } from './turn.js';
 import { tileEl } from './tile.js';
-import { startBoardSelection } from './drag.js';
+import { startBoardDrag, startBoardSelection } from './drag.js';
 import { wrapLongSets } from './setWrap.js';
 
 const { checkSet, checkTurn, setPoints } = window.Rules;
@@ -16,7 +16,7 @@ export function renderBoard() {
   // Glows go out once I start changing the table on my turn, like they do for everyone watching.
   const glowing = S.glow && !tableChanged();
   const playedIds = new Set(mine ? work.table.flat().filter((id) => S.hand.includes(id)) : []);
-  const moved = mine && (playedIds.size > 0 || JSON.stringify(work.table) !== JSON.stringify(S.table));
+  const moved = mine && (playedIds.size > 0 || tableChanged());
   renderStatus(mine, playedIds);
   renderTurnCat();
   renderTable(mine, glowing);
@@ -75,7 +75,32 @@ function renderTable(mine, glowing) {
   tb.innerHTML = '';
   $('tableArea').classList.toggle('watching', !mine && !!S.draft);
   tb.classList.toggle('picking', mine && selected.length > 0);
-  tableData.forEach((set, s) => {
+  const displayed = tableData;
+  displayed.forEach((set, s) => {
+    const position = s;
+    const group = document.createElement('div');
+    group.className = 'boardGroup';
+    if (mine && displayed.length > 1) {
+      group.tabIndex = 0;
+      group.setAttribute('aria-label', `Group ${position + 1} of ${displayed.length}. Use left and right arrow keys to reorder the board.`);
+      group.title = 'Drag the edge of the group to reorder the board.';
+      group.onpointerdown = (e) => startBoardDrag(group, e, (target) => {
+        if (Number.isInteger(target)) {
+          let destination = target;
+          if (destination > position) destination--;
+          reorderGroups(position, destination);
+        }
+        redrawPage();
+      }, selected.length > 0);
+      group.onkeydown = (e) => {
+        const direction = e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowRight' ? 1 : 0;
+        const destination = position + direction;
+        if (!direction || destination < 0 || destination >= displayed.length) return;
+        e.preventDefault();
+        reorderGroups(position, destination);
+        tb.querySelectorAll('.boardGroup')[destination].focus();
+      };
+    }
     const r = checkSet(set);
     const el = document.createElement('div');
     el.className = 'set ' + (r.ok ? 'valid' : 'invalid');
@@ -100,7 +125,16 @@ function renderTable(mine, glowing) {
       why.textContent = r.reason;
       el.appendChild(why);
     }
-    tb.appendChild(el);
+    group.appendChild(el);
+    if (mine && displayed.length > 1) {
+      for (const edge of ['top', 'bottom']) {
+        const handle = document.createElement('div');
+        handle.className = `groupEdge ${edge}`;
+        handle.setAttribute('aria-hidden', 'true');
+        group.appendChild(handle);
+      }
+    }
+    tb.appendChild(group);
   });
   if (mine) {
     const ns = document.createElement('div');
@@ -119,7 +153,7 @@ function renderControls(mine, playedIds, moved) {
   const check = mine ? checkTurn(S.table, work.table, S.hand, S.hasMelded) : { ok: false };
   $('doneBtn').disabled = !mine || !check.ok;
   $('doneBtn').title = check.ok ? '' : check.reason || '';
-  $('undoBtn').disabled = !moved;
+  $('undoBtn').disabled = !mine || JSON.stringify(work.table) === JSON.stringify(S.table);
   $('undoMoveBtn').disabled = !mine || !canUndo();
   $('drawBtn').disabled = !mine;
   $('drawBtn').textContent = (moved ? 'Undo & ' : '') + (S.pool ? (moved ? 'draw' : 'Draw & end turn') : (moved ? 'pass' : 'Pass'));

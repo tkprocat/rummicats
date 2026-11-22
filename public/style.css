@@ -87,6 +87,17 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 #tableArea { background: var(--felt); border-radius: 14px; display: flex; align-items: flex-start; }
 #tableArea.watching { background: var(--felt-dark); }
 #table { flex: 1; min-width: 0; padding: 12px; min-height: 260px; display: flex; flex-wrap: wrap; gap: 12px; align-content: flex-start; }
+.boardGroup { max-width: 100%; position: relative; align-self: flex-start; }
+.boardGroup[tabindex] { cursor: grab; }
+.groupEdge { position: absolute; left: 0; right: 0; height: 12px; z-index: 2; touch-action: none; }
+.groupEdge.top { top: -6px; }
+.groupEdge.bottom { bottom: -6px; }
+.boardGroup.placeholder { opacity: .3; }
+.boardGroup:focus-visible { outline: 2px solid var(--ginger); border-radius: 10px; }
+.boardGroup.groupGhost { position: fixed; left: 0; top: 0; z-index: 10; pointer-events: none; opacity: .85; }
+.groupDropSlot { position: fixed; z-index: 9; width: 18px; transform: translateX(-50%); border: 1px dashed #ffffff90; border-radius: 5px; background: var(--felt); color: #fff; display: flex; align-items: center; justify-content: center; }
+.groupDropSlot::after { content: '+'; font-size: 14px; font-weight: 700; pointer-events: none; }
+.groupDropSlot.over { background: var(--ginger); border-color: #fff; }
 /* Each set sits on a faint panel, so a long set that wraps onto rows (4px apart, against 12px between sets)
    still reads as one set. setWrap.js decides where the rows break. */
 .set { display: flex; flex-wrap: wrap; row-gap: 4px; align-items: center; padding: 6px 4px; border-radius: 10px; border: 2px dashed transparent; position: relative; background: #ffffff12; }
@@ -138,7 +149,7 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 .tile svg { width: 44px; height: 40px; }
 .tile .rank { font-size: var(--rank); font-weight: 800; line-height: 1; margin-bottom: 2px; }
 .tile.glow { box-shadow: 0 2px 0 var(--tile-edge), 0 0 0 2px #ffd54a, 0 0 14px 2px #ffd54acc; }
-.tile.selected { transform: translateY(-6px); box-shadow: 0 0 0 3px var(--ginger), 0 6px 10px #0004; }
+.tile.selected { transform: translateY(-6px); box-shadow: 0 0 0 3px var(--ginger), 0 6px 10px #0004; z-index: 3; }
 /* This turn so far: placed from the paws (a dot, top right) and moved on the table (a ring, top left). */
 .tile.placed::after { content: ""; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--ginger); }
 .tile.moved::before { content: ""; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; box-sizing: border-box; border-radius: 50%; border: 2px solid var(--smoky); }
