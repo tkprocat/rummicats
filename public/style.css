@@ -128,7 +128,9 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 .tile .rank { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 2px; }
 .tile.glow { box-shadow: 0 2px 0 var(--tile-edge), 0 0 0 2px #ffd54a, 0 0 14px 2px #ffd54acc; }
 .tile.selected { transform: translateY(-6px); box-shadow: 0 0 0 3px var(--ginger), 0 6px 10px #0004; }
-.tile.fresh::after { content: ""; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--ginger); }
+/* This turn so far: placed from the paws (a dot, top right) and moved on the table (a ring, top left). */
+.tile.placed::after { content: ""; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--ginger); }
+.tile.moved::before { content: ""; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; box-sizing: border-box; border-radius: 50%; border: 2px solid var(--smoky); }
 .c-ginger .rank { color: var(--ginger); }
 .c-midnight .rank { color: var(--midnight); }
 .c-smoky .rank { color: var(--smoky); }

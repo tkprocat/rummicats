@@ -13,6 +13,7 @@ import { initChat, renderChat } from './chat.js';
 import { renderRules } from './roomRules.js';
 
 const { TILES, COLOR_NAMES, checkSet, checkTurn, setPoints } = window.Rules;
+const { turnChanges } = window.Changes;
 
 let S = null; // latest state from the server
 let work = null; // { table, hand } my local edits during my turn
@@ -40,10 +41,12 @@ function tileEl(id, opts = {}) {
   const el = document.createElement('div');
   el.className = `tile c-${t.color}`;
   el.dataset.id = id;
-  el.title = t.joker ? 'Wild cat (joker)' : `${COLOR_NAMES[t.color]} ${t.rank}`;
+  el.title = (t.joker ? 'Wild cat (joker)' : `${COLOR_NAMES[t.color]} ${t.rank}`) +
+    (opts.placed ? ' · placed this turn' : opts.moved ? ' · moved this turn' : '');
   el.innerHTML = `${catSvg()}<span class="rank">${t.joker ? '★' : t.rank}</span>`;
   if (selected.includes(id)) el.classList.add('selected');
-  if (opts.fresh) el.classList.add('fresh');
+  if (opts.placed) el.classList.add('placed');
+  if (opts.moved) el.classList.add('moved');
   return el;
 }
 
@@ -411,6 +414,8 @@ function render() {
 
   // Table
   const tableData = mine ? work.table : S.draft || S.table;
+  // What this turn has changed so far, for the player and everyone watching. Gone once the turn ends.
+  const changes = S.started && !S.over ? turnChanges(S.table, tableData) : { placed: new Set(), moved: new Set() };
   const tb = $('table');
   tb.innerHTML = '';
   $('tableArea').classList.toggle('watching', !mine && !!S.draft);
@@ -427,7 +432,7 @@ function render() {
     };
     set.forEach((id, i) => {
       el.appendChild(gap(i));
-      const t = tileEl(id, { fresh: playedIds.has(id) });
+      const t = tileEl(id, { placed: changes.placed.has(id), moved: changes.moved.has(id) });
       if (glowing && S.lastPlayed.includes(id)) t.classList.add('glow'); // played last turn
       t.onclick = (e) => onTileClick(id, e);
       t.onpointerdown = (e) => startBoardSelection(id, t, e, myTurn());

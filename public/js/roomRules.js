@@ -59,6 +59,7 @@ export function renderRules(S) {
     ['Group:', '3 or 4 cats with the same number, each a different color.'],
     ['First meld:', 'your first play must be worth 30 points or more (each cat is worth its number), using only cats from your paws.'],
     ['Each turn:', 'play at least one cat from your paws, or draw a cat to end your turn. After your first meld you can rearrange anything on the table, as long as every set is valid when you press Done.'],
+    ['Following a turn:', 'an orange dot marks cats placed from the paws this turn, and a blue ring marks cats moved on the table.'],
     ['Winning:', 'first to empty their paws wins. When the pile runs out and everyone passes, the lowest hand wins.'],
   ]);
 }
