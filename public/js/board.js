@@ -81,8 +81,7 @@ function renderTable(mine, glowing) {
     const group = document.createElement('div');
     group.className = 'boardGroup';
     if (mine && displayed.length > 1) {
-      group.tabIndex = 0;
-      group.setAttribute('aria-label', `Group ${position + 1} of ${displayed.length}. Use left and right arrow keys to reorder the board.`);
+      group.classList.add('reorderable');
       group.title = 'Drag the edge of the group to reorder the board.';
       group.onpointerdown = (e) => startBoardDrag(group, e, (target) => {
         if (Number.isInteger(target)) {
@@ -92,14 +91,6 @@ function renderTable(mine, glowing) {
         }
         redrawPage();
       }, selected.length > 0);
-      group.onkeydown = (e) => {
-        const direction = e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowRight' ? 1 : 0;
-        const destination = position + direction;
-        if (!direction || destination < 0 || destination >= displayed.length) return;
-        e.preventDefault();
-        reorderGroups(position, destination);
-        tb.querySelectorAll('.boardGroup')[destination].focus();
-      };
     }
     const r = checkSet(set);
     const el = document.createElement('div');
