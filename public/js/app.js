@@ -1,10 +1,11 @@
 // The game screen: state from the server, my moves during my turn, and drawing it all.
 // Self-contained pieces live in their own modules (artwork, rack layout, dragging, themes, win screen, alerts).
-import { $, store } from './dom.js';
+import { $, store, flash } from './dom.js';
+import { S, setState, myTurn } from './state.js';
 import { session, setSession, savedToken, api } from './api.js';
 import { artReady, catSvg, avatarSvg } from './art.js';
 import { myAvatar, openAvatarEditor, initAvatarEditor } from './avatarEditor.js';
-import { rack, cols, keepOnly, dropInRack, setCols, fitRack, sortByColor, sortByRank } from './rack.js';
+import { rack, cols, keepOnly, dropInRack, setCols, fitRack, sortByColor, sortByRank, SORTS, autoSort, setAutoSort } from './rack.js';
 import { isDragging, startHandDrag, startBoardSelection, initHandDrag } from './drag.js';
 import { wrapLongSets } from './setWrap.js';
 import { initTheme } from './theme.js';
@@ -17,7 +18,6 @@ import { initCompact } from './compact.js';
 const { TILES, COLOR_NAMES, checkSet, checkTurn, setPoints } = window.Rules;
 const { turnChanges } = window.Changes;
 
-let S = null; // latest state from the server
 let work = null; // { table, hand } my local edits during my turn
 let workTurnId = null;
 let undoStack = []; // earlier copies of work this turn, for Undo move
@@ -27,16 +27,6 @@ let clockSkew = 0; // server time minus local time
 let celebrated = null; // room code whose win we have already announced
 let prevHand = null; // my hand in the last state, to spot cats I just drew
 let lastDrawn = []; // cats I drew last time my hand changed; they glow on a sorted rack
-
-// Auto-sort: keep the rack in color or number order, so drawn cats land in place instead of at the end.
-// Moving a cat to a slot yourself turns it off, since a sorted rack would undo the move.
-const SORTS = { color: sortByColor, rank: sortByRank };
-let autoSort = SORTS[store.get('autoSort')] ? store.get('autoSort') : 'off';
-function setAutoSort(mode) {
-  autoSort = SORTS[mode] ? mode : 'off';
-  store.set('autoSort', autoSort);
-  $('autoSort').value = autoSort;
-}
 
 function tileEl(id, opts = {}) {
   const t = TILES[id];
@@ -67,7 +57,7 @@ function listen() {
   if (events) events.close();
   events = new EventSource(`/events?code=${session.code}&token=${session.token}`);
   events.onmessage = (e) => {
-    S = JSON.parse(e.data);
+    setState(JSON.parse(e.data));
     clockSkew = S.now - Date.now();
     syncWork();
     render();
@@ -87,8 +77,6 @@ function showLobbyError(msg) {
 }
 
 // ---- My turn: a working copy of the table and my hand ----
-
-const myTurn = () => S && S.started && !S.over && S.turn === S.you;
 
 function syncWork() {
   // Cats that showed up in my hand were drawn. Any other change (a play, a new game) clears them.
@@ -210,12 +198,6 @@ let draftTimer = null;
 function pushDraft() {
   clearTimeout(draftTimer);
   draftTimer = setTimeout(() => api('draft', { table: work.table }).catch(() => {}), 150);
-}
-
-function flash(msg) {
-  $('gameErr').textContent = msg;
-  clearTimeout(flash.t);
-  flash.t = setTimeout(() => ($('gameErr').textContent = ''), 4000);
 }
 
 function onTileClick(id, e) {
@@ -466,6 +448,7 @@ function render() {
   const shown = shownSet();
   const slotW = parseFloat(getComputedStyle(hd).getPropertyValue('--tile-w')) + 4; // cat width + gap, from the CSS
   setCols(Math.max(6, Math.floor((hd.clientWidth - 16) / slotW)));
+  $('autoSort').value = autoSort; // auto-sort turns itself off when you move a cat, so keep the dropdown in step
   if (SORTS[autoSort]) SORTS[autoSort](shown);
   fitRack(shown);
   hd.innerHTML = '';
