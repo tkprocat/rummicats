@@ -319,6 +319,12 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 /* Room chat: a panel on the right, collapsed to a tab on the edge. On wide screens the game makes room for it;
    on narrow ones it slides over the game. */
 :root { --chat-w: 320px; }
+/* Your turn: a small yellow dot in the top corner of the screen. It sits over the page without taking space or
+   catching taps, pulses a few times when your turn starts, then stays still. */
+#turnDot { position: fixed; top: 10px; right: 10px; z-index: 35; width: 14px; height: 14px; border-radius: 50%; background: #ffd54a; box-shadow: 0 0 0 2px #0007, 0 0 10px 2px #ffd54aaa; pointer-events: none; animation: turnDot 1.4s ease-in-out 3; }
+@keyframes turnDot { 50% { transform: scale(1.35); box-shadow: 0 0 0 2px #0007, 0 0 16px 6px #ffd54acc; } }
+@media (min-width: 901px) { body.chatOpen #turnDot { right: calc(var(--chat-w) + 10px); } }
+@media (prefers-reduced-motion: reduce) { #turnDot { animation: none; } }
 #chatTab { position: fixed; right: 0; top: 40vh; z-index: 30; border-radius: 10px 0 0 10px; border-right: 0; padding: 10px 10px 10px 12px; box-shadow: 0 2px 10px #0003; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 #chatTab.unread { border-color: var(--ginger); animation: chatNudge 2.4s ease-in-out infinite; }
 #chatBadge { background: var(--ginger); color: #fff; border-radius: 999px; min-width: 1.4em; padding: 0 5px; font-size: .75rem; line-height: 1.4em; text-align: center; }
