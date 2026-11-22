@@ -1,30 +1,29 @@
-// The game screen: state from the server, my moves during my turn, and drawing it all.
-// Self-contained pieces live in their own modules (artwork, rack layout, dragging, themes, win screen, alerts).
-import { $, store, flash } from './dom.js';
+// The game page: the connection to the room, and one render() that redraws every part of the screen from the
+// latest state. The parts live in their own modules:
+//   state.js  what the server last told us       turn.js   my moves during my turn
+//   lobby.js  joining and the waiting room        board.js  the table, status, turn buttons and pile
+//   players.js who's in the room                  paws.js   my rack and its sorting
+//   win.js    the winner popup and New game       plus chat, rules, themes, compact mode and alerts
+import { $, flash } from './dom.js';
 import { S, setState, myTurn } from './state.js';
-import { session, setSession, savedToken, api } from './api.js';
-import { artReady, avatarSvg } from './art.js';
-import { myAvatar, openAvatarEditor, initAvatarEditor } from './avatarEditor.js';
-import { rack, cols, keepOnly, dropInRack, setCols, fitRack, sortByColor, sortByRank, SORTS, autoSort, setAutoSort } from './rack.js';
-import { work, selected, setRedraw, syncWork, shownSet, tableChanged, canUndo, pickTile, arrange, moveTo, onTileClick, initTurn } from './turn.js';
-import { tileEl } from './tile.js';
+import { session, setSession, savedToken } from './api.js';
+import { artReady } from './art.js';
+import { initAvatarEditor } from './avatarEditor.js';
+import { setRedraw, syncWork, initTurn } from './turn.js';
 import { renderBoard } from './board.js';
 import { syncPaws, renderPaws, initPaws } from './paws.js';
-import { isDragging, startHandDrag, startBoardSelection, initHandDrag } from './drag.js';
-import { wrapLongSets } from './setWrap.js';
+import { isDragging } from './drag.js';
 import { initTheme } from './theme.js';
-import { showWin, hideWin, initWin } from './win.js';
+import { renderWin, initWin } from './win.js';
+import { renderPlayers } from './players.js';
+import { renderLobby, initLobby } from './lobby.js';
 import { initNotify, notifyTurn } from './notify.js';
 import { initChat, renderChat } from './chat.js';
 import { renderRules } from './roomRules.js';
 import { initCompact } from './compact.js';
 
-const { TILES, COLOR_NAMES, checkSet, checkTurn, setPoints } = window.Rules;
-const { turnChanges } = window.Changes;
-
 let events = null;
 let clockSkew = 0; // server time minus local time
-let celebrated = null; // room code whose win we have already announced
 
 // ---- Connection ----
 
@@ -85,81 +84,17 @@ function render() {
   if (isDragging()) return; // redrawn on drop
   const restoreScroll = holdScroll();
   $('roomCode').textContent = S.code;
-  document.querySelector('#waiting .code').textContent = S.code;
+  renderPlayers();
+  renderLobby();
 
-  const pl = $('players');
-  pl.innerHTML = '';
-  S.players.forEach((p, i) => {
-    const d = document.createElement('div');
-    d.className = 'player' + (S.started && S.turn === i && !S.over ? ' turn' : '') + (p.online ? '' : ' off');
-    d.innerHTML = `<span class="pav">${avatarSvg(p.avatar, 36)}</span><div>` +
-      `${p.bot ? '🤖 ' : ''}<span class="n"></span>${i === S.you ? ' (you)' : ''}<br>` +
-      (S.started ? `${p.count} cats${p.melded ? '' : ' · not melded'}` : p.host ? 'host' : p.bot ? 'bot' : '') +
-      (S.started && i !== S.you ? `<div class="minirack">${'<i></i>'.repeat(Math.min(p.count, 30))}</div>` : '') + '</div>';
-    d.querySelector('.n').textContent = p.name;
-    if (i === S.you) { // tap your own cat to change it
-      const pav = d.querySelector('.pav');
-      pav.classList.add('mine');
-      pav.title = 'Change your cat';
-      pav.setAttribute('role', 'button');
-      pav.tabIndex = 0;
-      pav.onclick = openAvatarEditor;
-      pav.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAvatarEditor(); } };
-    }
-    if (p.bot && S.isHost && !S.started) {
-      const kick = document.createElement('button');
-      kick.className = 'small kick';
-      kick.textContent = '✕';
-      kick.title = `Remove ${p.name}`;
-      kick.onclick = () => api('removeBot', { seat: i }).catch((e) => ($('waitMsg').textContent = e.message));
-      d.appendChild(kick);
-    }
-    pl.appendChild(d);
-  });
-
-  // People watching instead of playing, each with their cat (names from other people, so text only)
-  const sp = $('spectators');
-  sp.classList.toggle('hidden', !S.spectators.length);
-  sp.textContent = '👀 Watching: ';
-  S.spectators.forEach((s, k) => {
-    const w = document.createElement('span');
-    w.className = 'watcher';
-    w.innerHTML = avatarSvg(s.avatar, 20);
-    w.append(`${s.name}${s.host ? ' (host)' : ''}${k < S.spectators.length - 1 ? ',' : ''}`);
-    sp.appendChild(w);
-  });
-  if (S.you < 0) sp.append(' (you are watching)');
-
+  // Which parts of the game screen show: the table once the game starts, and the paws and turn buttons only
+  // for players (spectators have no rack and no turn).
   const seated = S.you >= 0;
-  $('waiting').classList.toggle('hidden', S.started);
-  for (const id of ['startBtn', 'timerPick', 'idlePick', 'glowPick', 'addBotBtn']) $(id).classList.toggle('hidden', !S.isHost);
-  $('glowSel').checked = S.glow;
-  // The host's timer picks live on the server, so they show in everyone's rules and survive a refresh.
-  for (const [id, value] of [['timerSel', S.turnLimit], ['idleSel', S.idleLimit]])
-    if (document.activeElement !== $(id)) $(id).value = String(value || 0);
-  $('addBotBtn').disabled = S.players.length >= 4;
-  $('seatBtn').textContent = seated ? '👀 Watch instead' : '🪑 Take a seat';
-  $('seatBtn').disabled = !seated && S.players.length >= 4;
-  $('startBtn').disabled = S.players.length < 2;
-  $('waitMsg').textContent = !S.isHost ? 'Waiting for the host to start…'
-    : S.players.length < 2 ? 'Needs at least 2 players: invite friends or add bots.' : '';
   for (const id of ['status', 'tableArea']) $(id).classList.toggle('hidden', !S.started);
-  // Spectators have no rack and no turn
   for (const id of ['controls', 'handBar', 'hand']) $(id).classList.toggle('hidden', !S.started || !seated);
   $('turnDot').classList.toggle('hidden', !myTurn());
 
-  if (!S.over && celebrated) {
-    // The host set up a new game: put the winner away, so the next win gets its own celebration.
-    celebrated = null;
-    hideWin();
-  }
-  $('againBtn').classList.toggle('hidden', !(S.over && S.isHost));
-  if (S.over && celebrated !== S.code) {
-    celebrated = S.code;
-    const me = S.players[S.you];
-    showWin(S.over, !!me && me.name === S.over.winner, S.isHost);
-  }
-
+  renderWin();
   renderBoard();
   renderPaws();
 
@@ -195,46 +130,18 @@ setInterval(tick, 250);
 
 // ---- Buttons and keys ----
 
-// Lobby
-$('createBtn').onclick = async () => {
-  try {
-    const r = await api('create', { name: $('name').value, avatar: myAvatar() });
-    setSession(r.code, r.token);
-    connect();
-  } catch (e) { $('lobbyErr').textContent = e.message; }
-};
-$('joinBtn').onclick = async () => {
-  const code = $('codeInput').value.trim().toUpperCase();
-  try {
-    const r = await api('join', { code, name: $('name').value, avatar: myAvatar() });
-    setSession(r.code, r.token);
-    connect();
-  } catch (e) { $('lobbyErr').textContent = e.message; }
-};
-$('codeInput').onkeydown = (e) => { if (e.key === 'Enter') $('joinBtn').click(); };
-$('name').value = store.get('name') || '';
-$('name').onchange = () => store.set('name', $('name').value);
-
-// Game
-$('startBtn').onclick = () => api('start', { timer: $('timerSel').value, idle: $('idleSel').value, glow: $('glowSel').checked }).catch((e) => ($('waitMsg').textContent = e.message));
-for (const [id, key] of [['timerSel', 'timer'], ['idleSel', 'idle']])
-  $(id).onchange = () => api('settings', { [key]: $(id).value }).catch((e) => ($('waitMsg').textContent = e.message));
-$('glowSel').onchange = () => api('settings', { glow: $('glowSel').checked }).catch((e) => ($('waitMsg').textContent = e.message));
-const playAgain = () => api('again').then(hideWin, (e) => flash(e.message));
-$('againBtn').onclick = playAgain;
-$('winAgain').onclick = playAgain;
-$('addBotBtn').onclick = () => api('addBot').catch((e) => ($('waitMsg').textContent = e.message));
-$('seatBtn').onclick = () => api('spectate').catch((e) => ($('waitMsg').textContent = e.message));
 window.addEventListener('resize', render);
 $('copyLink').onclick = () => {
   const link = `${location.origin}${location.pathname}?room=${session.code}`;
   navigator.clipboard?.writeText(link).then(() => flash('Invite link copied!'), () => flash(link));
 };
+
 // ---- Start up ----
 
 setRedraw(render);
 initTurn();
 initPaws(render);
+initLobby(connect);
 initTheme();
 initCompact(render);
 initWin();

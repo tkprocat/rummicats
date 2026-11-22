@@ -1,6 +1,25 @@
-// Winner popup with confetti in the cat colors.
-import { $ } from './dom.js';
+// Winner popup with confetti in the cat colors, and the host's New game button.
+import { $, flash } from './dom.js';
+import { api } from './api.js';
 import { avatarSvg } from './art.js';
+import { S } from './state.js';
+
+let celebrated = null; // room code whose win we have already announced
+
+// Each new state: celebrate a win once, and put the popup away when the host sets up a new game.
+export function renderWin() {
+  if (!S.over && celebrated) {
+    // The host set up a new game: put the winner away, so the next win gets its own celebration.
+    celebrated = null;
+    hideWin();
+  }
+  $('againBtn').classList.toggle('hidden', !(S.over && S.isHost));
+  if (S.over && celebrated !== S.code) {
+    celebrated = S.code;
+    const me = S.players[S.you];
+    showWin(S.over, !!me && me.name === S.over.winner, S.isHost);
+  }
+}
 
 // over: the server's { winner, why, scores: [{ name, penalty }] }. youWon picks the headline.
 // isHost decides between the New game button and a note that the host can start one.
@@ -32,6 +51,9 @@ export function hideWin() {
 }
 
 export function initWin() {
+  const playAgain = () => api('again').then(hideWin, (e) => flash(e.message));
+  $('againBtn').onclick = playAgain;
+  $('winAgain').onclick = playAgain;
   $('winClose').onclick = hideWin;
   $('winPop').addEventListener('click', (e) => { if (e.target === $('winPop')) hideWin(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideWin(); });
