@@ -6,6 +6,7 @@ import { artReady, catSvg, avatarSvg } from './art.js';
 import { myAvatar, openAvatarEditor, initAvatarEditor } from './avatarEditor.js';
 import { rack, cols, keepOnly, dropInRack, setCols, fitRack, sortByColor, sortByRank } from './rack.js';
 import { isDragging, startHandDrag, startBoardSelection, initHandDrag } from './drag.js';
+import { wrapLongSets } from './setWrap.js';
 import { initTheme } from './theme.js';
 import { showWin, initWin } from './win.js';
 import { initNotify, notifyTurn } from './notify.js';
@@ -427,6 +428,7 @@ function render() {
   } else if (!tableData.length) {
     tb.innerHTML = '<div class="newset">The table is empty</div>';
   }
+  wrapLongSets(tb); // long runs wrap onto rows on a narrow screen
 
   // Rack: tiers of slots, and gaps stay wherever you leave them
   const hd = $('hand');
