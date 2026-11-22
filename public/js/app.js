@@ -3,9 +3,11 @@
 import { $, store, flash } from './dom.js';
 import { S, setState, myTurn } from './state.js';
 import { session, setSession, savedToken, api } from './api.js';
-import { artReady, catSvg, avatarSvg } from './art.js';
+import { artReady, avatarSvg } from './art.js';
 import { myAvatar, openAvatarEditor, initAvatarEditor } from './avatarEditor.js';
 import { rack, cols, keepOnly, dropInRack, setCols, fitRack, sortByColor, sortByRank, SORTS, autoSort, setAutoSort } from './rack.js';
+import { work, selected, setRedraw, syncWork, shownSet, tableChanged, canUndo, pickTile, arrange, moveTo, onTileClick, initTurn } from './turn.js';
+import { tileEl } from './tile.js';
 import { isDragging, startHandDrag, startBoardSelection, initHandDrag } from './drag.js';
 import { wrapLongSets } from './setWrap.js';
 import { initTheme } from './theme.js';
@@ -18,29 +20,11 @@ import { initCompact } from './compact.js';
 const { TILES, COLOR_NAMES, checkSet, checkTurn, setPoints } = window.Rules;
 const { turnChanges } = window.Changes;
 
-let work = null; // { table, hand } my local edits during my turn
-let workTurnId = null;
-let undoStack = []; // earlier copies of work this turn, for Undo move
-let selected = []; // tile ids picked up, in the order they were tapped
 let events = null;
 let clockSkew = 0; // server time minus local time
 let celebrated = null; // room code whose win we have already announced
 let prevHand = null; // my hand in the last state, to spot cats I just drew
 let lastDrawn = []; // cats I drew last time my hand changed; they glow on a sorted rack
-
-function tileEl(id, opts = {}) {
-  const t = TILES[id];
-  const el = document.createElement('div');
-  el.className = `tile c-${t.color}`;
-  el.dataset.id = id;
-  el.title = (t.joker ? 'Wild cat (joker)' : `${COLOR_NAMES[t.color]} ${t.rank}`) +
-    (opts.placed ? ' · placed this turn' : opts.moved ? ' · moved this turn' : '');
-  el.innerHTML = `${catSvg()}<span class="rank">${t.joker ? '★' : t.rank}</span>`;
-  if (selected.includes(id)) el.classList.add('selected');
-  if (opts.placed) el.classList.add('placed');
-  if (opts.moved) el.classList.add('moved');
-  return el;
-}
 
 // ---- Connection ----
 
@@ -59,6 +43,7 @@ function listen() {
   events.onmessage = (e) => {
     setState(JSON.parse(e.data));
     clockSkew = S.now - Date.now();
+    syncPaws();
     syncWork();
     render();
     renderChat(S); // separate from render(), which waits while you drag a cat
@@ -76,159 +61,16 @@ function showLobbyError(msg) {
   $('lobbyErr').textContent = msg;
 }
 
-// ---- My turn: a working copy of the table and my hand ----
-
-function syncWork() {
-  // Cats that showed up in my hand were drawn. Any other change (a play, a new game) clears them.
+// Cats that showed up in my hand were drawn. Any other change (a play, a new game) clears them.
+// Cats that left my hand leave a gap on the rack; new ones get a slot when the rack is drawn.
+function syncPaws() {
   const before = prevHand;
   prevHand = S.hand;
   if (!before || before.join() !== S.hand.join()) {
     const old = new Set(before || []);
     lastDrawn = before && before.length ? S.hand.filter((id) => !old.has(id)) : [];
   }
-  // Cats that left my hand leave a gap; new ones get a slot when the rack is drawn.
   keepOnly(new Set(S.hand));
-  if (!myTurn() || workTurnId !== S.turnId) resetWork();
-}
-
-function resetWork() {
-  work = { table: S.table.map((s) => [...s]), hand: [...S.hand] };
-  workTurnId = S.turnId;
-  undoStack = [];
-  selected = [];
-}
-
-// Cats on my rack right now. Cats put on the table this turn are not shown,
-// but keep their slot in case they come back.
-const shownSet = () => new Set(myTurn() ? work.hand : S.hand);
-
-// Where a tile currently sits in my working copy.
-function locate(id) {
-  const h = work.hand.indexOf(id);
-  if (h >= 0) return { where: 'hand', i: h };
-  for (let s = 0; s < work.table.length; s++) {
-    const i = work.table[s].indexOf(id);
-    if (i >= 0) return { where: 'table', s, i };
-  }
-  return null;
-}
-
-function removeTile(id) {
-  const loc = locate(id);
-  if (loc.where === 'hand') work.hand.splice(loc.i, 1);
-  else work.table[loc.s].splice(loc.i, 1);
-  return loc;
-}
-
-// Put cats in an order that makes a valid set, if one exists: by number, with wild cats tried in every slot.
-function arrange(ids) {
-  const real = ids.filter((id) => !TILES[id].joker).sort((a, b) => TILES[a].rank - TILES[b].rank);
-  const wild = ids.filter((id) => TILES[id].joker);
-  const tryAll = (seq, left) => {
-    if (!left.length) return checkSet(seq).ok ? seq : null;
-    for (let i = 0; i <= seq.length; i++) {
-      const found = tryAll([...seq.slice(0, i), left[0], ...seq.slice(i)], left.slice(1));
-      if (found) return found;
-    }
-    return null;
-  };
-  return tryAll(real, wild);
-}
-
-const byRank = (ids) => [...ids].sort((a, b) => (TILES[a].joker ? 99 : TILES[a].rank) - (TILES[b].joker ? 99 : TILES[b].rank));
-
-const saveUndo = () => undoStack.push({ table: work.table.map((s) => [...s]), hand: [...work.hand] });
-
-// Move every picked-up cat to the target in one go (one step for Undo move).
-function moveTo(target) {
-  if (!selected.length) return;
-  const ids = selected;
-  if (target.where === 'hand') {
-    const back = ids.filter((id) => !work.hand.includes(id));
-    if (!back.every((id) => S.hand.includes(id))) return flash("Cats from the table can't go back to your paws");
-    if (!back.length && target.slot == null) return; // already in your paws
-    if (back.length) {
-      saveUndo();
-      back.forEach((id) => removeTile(id));
-      work.hand.push(...back);
-      work.table = work.table.filter((x) => x.length);
-      pushDraft();
-    }
-    // Without a slot, cats go back to the slot they came from (or a free one when the rack is drawn).
-    // With auto-sort on, cats coming back from the table just take their sorted place.
-    if (target.slot != null && !(back.length && SORTS[autoSort])) {
-      if (!back.length) setAutoSort('off');
-      ids.forEach((id, k) => dropInRack(id, target.slot + k, shownSet()));
-    }
-    selected = [];
-    return render();
-  }
-  saveUndo();
-  if (target.newSet) {
-    ids.forEach((id) => removeTile(id));
-    work.table.push(arrange(ids) || byRank(ids));
-  } else {
-    const set = work.table[target.s];
-    // Remember the cat right after the gap, since taking cats out shifts positions.
-    const anchor = set.slice(target.i).find((id) => !ids.includes(id));
-    ids.forEach((id) => removeTile(id));
-    set.splice(anchor == null ? set.length : set.indexOf(anchor), 0, ...byRank(ids));
-    const fixed = !checkSet(set).ok && arrange(set);
-    if (fixed) set.splice(0, set.length, ...fixed);
-  }
-  work.table = work.table.filter((x) => x.length);
-  selected = [];
-  pushDraft();
-  render();
-}
-
-function undoMove() {
-  const prev = undoStack.pop();
-  if (!prev || !myTurn()) return;
-  // The rack keeps the player's own arrangement; returning cats find their old slot.
-  work.table = prev.table;
-  work.hand = prev.hand;
-  selected = [];
-  pushDraft();
-  render();
-}
-
-// Send my moves so the other players can watch (debounced).
-let draftTimer = null;
-function pushDraft() {
-  clearTimeout(draftTimer);
-  draftTimer = setTimeout(() => api('draft', { table: work.table }).catch(() => {}), 150);
-}
-
-function onTileClick(id, e) {
-  e.stopPropagation();
-  if (!myTurn()) return;
-  if (TILES[id].joker && selected.length === 1 && selected[0] !== id && swapWild(selected[0], id)) return;
-  selected = selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id];
-  render();
-}
-
-// With one cat picked up, tapping a wild cat on the table that it can stand in for swaps them:
-// the cat takes the wild cat's place and the wild cat comes to your paws, picked up, to be played elsewhere this turn.
-function swapWild(cat, wild) {
-  const at = locate(wild);
-  if (at.where !== 'table' || TILES[cat].joker || work.table[at.s].includes(cat)) return false;
-  const set = work.table[at.s];
-  if (!checkSet(set.map((x) => (x === wild ? cat : x))).ok) return false;
-  if (!S.hasMelded && S.table.some((s) => s.includes(wild))) {
-    flash("You can take a wild cat from the table only after your first meld. Make your 30 points first, then swap it on a later turn.");
-    return true;
-  }
-  saveUndo();
-  removeTile(cat);
-  set[set.indexOf(wild)] = cat;
-  work.table = work.table.filter((x) => x.length);
-  work.hand.push(wild);
-  selected = [wild];
-  pushDraft();
-  render();
-  flash('Swapped! The wild cat is in your paws. Play it in a set before you press Done.');
-  return true;
 }
 
 // ---- Drawing ----
@@ -367,7 +209,7 @@ function render() {
 
   const mine = myTurn();
   // Glows go out once I start changing the table on my turn, like they do for everyone watching.
-  const glowing = S.glow && !(mine && JSON.stringify(work.table) !== JSON.stringify(S.table));
+  const glowing = S.glow && !tableChanged();
   const playedIds = new Set(mine ? work.table.flat().filter((id) => S.hand.includes(id)) : []);
   const moved = mine && (playedIds.size > 0 || JSON.stringify(work.table) !== JSON.stringify(S.table));
   if (!S.over && celebrated) {
@@ -483,7 +325,7 @@ function render() {
   $('doneBtn').disabled = !mine || !check.ok;
   $('doneBtn').title = check.ok ? '' : check.reason || '';
   $('undoBtn').disabled = !moved;
-  $('undoMoveBtn').disabled = !mine || !undoStack.length;
+  $('undoMoveBtn').disabled = !mine || !canUndo();
   $('drawBtn').disabled = !mine;
   $('drawBtn').textContent = (moved ? 'Undo & ' : '') + (S.pool ? (moved ? 'draw' : 'Draw & end turn') : (moved ? 'pass' : 'Pass'));
   $('drawBtn').title = 'Ends your turn. Anything you moved goes back.';
@@ -559,22 +401,7 @@ $('againBtn').onclick = playAgain;
 $('winAgain').onclick = playAgain;
 $('addBotBtn').onclick = () => api('addBot').catch((e) => ($('waitMsg').textContent = e.message));
 $('seatBtn').onclick = () => api('spectate').catch((e) => ($('waitMsg').textContent = e.message));
-$('doneBtn').onclick = () => api('commit', { table: work.table }).catch((e) => flash(e.message));
-$('undoMoveBtn').onclick = undoMove;
-document.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.target.closest('input, select')) {
-    e.preventDefault();
-    undoMove();
-  }
-  if (e.key === 'Escape' && selected.length && !e.target.closest('input, select')) {
-    selected = [];
-    render();
-  }
-});
-$('undoBtn').onclick = () => { resetWork(); pushDraft(); render(); };
-$('drawBtn').onclick = () => { resetWork(); api('draw').catch((e) => flash(e.message)); };
 $('hand').onclick = () => myTurn() && moveTo({ where: 'hand' });
-$('pile').onclick = () => myTurn() && $('drawBtn').click();
 window.addEventListener('resize', render);
 $('copyLink').onclick = () => {
   const link = `${location.origin}${location.pathname}?room=${session.code}`;
@@ -597,12 +424,13 @@ initHandDrag((id, slot) => {
   render();
 }, (id, el, select) => {
   if (!myTurn()) return;
-  if (select && !selected.includes(id)) selected.push(id);
-  if (!select) selected = selected.filter((x) => x !== id);
+  pickTile(id, select);
   el.classList.toggle('selected', select);
 }, () => {
   render();
 });
+setRedraw(render);
+initTurn();
 initTheme();
 initCompact(render);
 initWin();
