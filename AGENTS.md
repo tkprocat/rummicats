@@ -17,6 +17,11 @@
 - Keep each player's hand private: server views may include the recipient's hand, but must not expose other hands to players or spectators.
 - Preserve the SVG class names and IDs used by the game when editing artwork. See `public/art/README.md` for the artwork contract.
 
+# User interface
+
+- Avoid introducing unexpected layout shifts when changing the interface, including as content loads or game state changes.
+- Preserve a clear overview of the board and players' paws. Do not add interface elements that obscure them or make them harder to see or use.
+
 # Validation
 
 - Run `npm test` after code changes. CI runs the suite on Node 18 and 24 and builds the Docker image for pull requests.
