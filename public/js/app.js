@@ -380,6 +380,7 @@ function render() {
   for (const id of ['status', 'tableArea']) $(id).classList.toggle('hidden', !S.started);
   // Spectators have no rack and no turn
   for (const id of ['controls', 'handBar', 'hand']) $(id).classList.toggle('hidden', !S.started || !seated);
+  $('turnDot').classList.toggle('hidden', !myTurn());
 
   const mine = myTurn();
   // Glows go out once I start changing the table on my turn, like they do for everyone watching.
