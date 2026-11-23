@@ -84,8 +84,8 @@ function sortRack(shown, key, split) {
 const colorIdx = (t) => (t.joker ? 99 : COLORS.indexOf(t.color));
 // Each color together, one bunch per color.
 export const sortByColor = (shown) => sortRack(shown, (t) => colorIdx(t) * 100 + t.rank, (a, b) => colorIdx(a) !== colorIdx(b));
-// In number order, wild cats last.
-export const sortByRank = (shown) => sortRack(shown, (t) => (t.joker ? 9999 : t.rank * 100 + colorIdx(t)), () => false);
+// Each number together, with wild cats in their own bunch last.
+export const sortByRank = (shown) => sortRack(shown, (t) => (t.joker ? 9999 : t.rank * 100 + colorIdx(t)), (a, b) => a.rank !== b.rank);
 
 // Auto-sort, remembered in this browser: keep the rack in color or number order, so drawn cats land in place
 // instead of at the end. Moving a cat to a slot yourself turns it off, since a sorted rack would undo the move.
