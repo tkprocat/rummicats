@@ -3,9 +3,9 @@
 import { $ } from './dom.js';
 import { avatarSvg } from './art.js';
 import { S, myTurn } from './state.js';
-import { work, selected, tableChanged, canUndo, arrange, moveTo, onTileClick } from './turn.js';
+import { work, selected, tableChanged, canUndo, moveTo, onTileClick, redrawPage, reorderGroups } from './turn.js';
 import { tileEl } from './tile.js';
-import { startBoardSelection } from './drag.js';
+import { startBoardDrag, startBoardSelection } from './drag.js';
 import { wrapLongSets } from './setWrap.js';
 
 const { checkSet, checkTurn, setPoints } = window.Rules;
@@ -16,35 +16,22 @@ export function renderBoard() {
   // Glows go out once I start changing the table on my turn, like they do for everyone watching.
   const glowing = S.glow && !tableChanged();
   const playedIds = new Set(mine ? work.table.flat().filter((id) => S.hand.includes(id)) : []);
-  const moved = mine && (playedIds.size > 0 || JSON.stringify(work.table) !== JSON.stringify(S.table));
-  renderStatus(mine, playedIds);
+  const moved = mine && (playedIds.size > 0 || tableChanged());
+  renderStatus();
   renderTurnCat();
   renderTable(mine, glowing);
   renderControls(mine, playedIds, moved);
   renderPile(mine);
 }
 
-function renderStatus(mine, playedIds) {
+function renderStatus() {
   if (S.over) {
     // Names come from other players, so they only ever go in as text.
     const scores = S.over.scores.map((x) => `${x.name}: ${x.penalty}`).join(' · ');
     $('status').innerHTML = '🏆 <span></span> wins! <small></small>';
     $('status').querySelector('span').textContent = S.over.winner;
     $('status').querySelector('small').textContent = `(cats left in paws, lower is better: ${scores})`;
-  } else if (mine) {
-    $('status').textContent = selected.length ? pickedText()
-      : playedIds.size ? 'Press Done when every set is valid, or Undo & draw to give up this turn.'
-      : 'Your turn! Play at least one cat from your paws, or draw a cat to end your turn.';
-  } else if (S.started) {
-    $('status').textContent = `Watching ${S.players[S.turn].name}'s turn…`;
   }
-}
-
-function pickedText() {
-  const n = selected.length;
-  const set = n >= 3 && arrange(selected);
-  return `${n === 1 ? '1 cat' : n + ' cats'} picked up${set ? ` (a valid set worth ${setPoints(set)})` : ''}. ` +
-    'Tap more cats to add them, or tap the empty spot, a gap, or your paws to put them down.';
 }
 
 // Whose turn it is, as a big cat beside the board (shown only when the table is wide enough, see style.css).
@@ -75,7 +62,23 @@ function renderTable(mine, glowing) {
   tb.innerHTML = '';
   $('tableArea').classList.toggle('watching', !mine && !!S.draft);
   tb.classList.toggle('picking', mine && selected.length > 0);
-  tableData.forEach((set, s) => {
+  const displayed = tableData;
+  displayed.forEach((set, s) => {
+    const position = s;
+    const group = document.createElement('div');
+    group.className = 'boardGroup';
+    if (mine && displayed.length > 1) {
+      group.classList.add('reorderable');
+      group.title = 'Drag the edge of the group to reorder the board.';
+      group.onpointerdown = (e) => startBoardDrag(group, e, (target) => {
+        if (Number.isInteger(target)) {
+          let destination = target;
+          if (destination > position) destination--;
+          reorderGroups(position, destination);
+        }
+        redrawPage();
+      }, selected.length > 0);
+    }
     const r = checkSet(set);
     const el = document.createElement('div');
     el.className = 'set ' + (r.ok ? 'valid' : 'invalid');
@@ -100,7 +103,16 @@ function renderTable(mine, glowing) {
       why.textContent = r.reason;
       el.appendChild(why);
     }
-    tb.appendChild(el);
+    group.appendChild(el);
+    if (mine && displayed.length > 1) {
+      for (const edge of ['top', 'bottom']) {
+        const handle = document.createElement('div');
+        handle.className = `groupEdge ${edge}`;
+        handle.setAttribute('aria-hidden', 'true');
+        group.appendChild(handle);
+      }
+    }
+    tb.appendChild(group);
   });
   if (mine) {
     const ns = document.createElement('div');
@@ -119,7 +131,7 @@ function renderControls(mine, playedIds, moved) {
   const check = mine ? checkTurn(S.table, work.table, S.hand, S.hasMelded) : { ok: false };
   $('doneBtn').disabled = !mine || !check.ok;
   $('doneBtn').title = check.ok ? '' : check.reason || '';
-  $('undoBtn').disabled = !moved;
+  $('undoBtn').disabled = !mine || JSON.stringify(work.table) === JSON.stringify(S.table);
   $('undoMoveBtn').disabled = !mine || !canUndo();
   $('drawBtn').disabled = !mine;
   $('drawBtn').textContent = (moved ? 'Undo & ' : '') + (S.pool ? (moved ? 'draw' : 'Draw & end turn') : (moved ? 'pass' : 'Pass'));

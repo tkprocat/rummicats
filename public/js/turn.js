@@ -16,6 +16,7 @@ export let selected = []; // tile ids picked up, in the order they were tapped
 // The screen redraws after every change; app.js hands over its render function at startup.
 let redraw = () => {};
 export const setRedraw = (fn) => { redraw = fn; };
+export const redrawPage = () => redraw();
 
 // A new state from the server: start the working copy over when a new turn begins (or it isn't mine).
 export function syncWork() {
@@ -34,7 +35,9 @@ export function resetWork() {
 export const shownSet = () => new Set(myTurn() ? work.hand : S.hand);
 
 // Have I changed the table this turn? (The glows go out once I do, like they do for everyone watching.)
-export const tableChanged = () => myTurn() && JSON.stringify(work.table) !== JSON.stringify(S.table);
+const sameGroups = (a, b) => a.length === b.length &&
+  JSON.stringify(a.map((s) => JSON.stringify(s)).sort()) === JSON.stringify(b.map((s) => JSON.stringify(s)).sort());
+export const tableChanged = () => myTurn() && !sameGroups(work.table, S.table);
 
 export const canUndo = () => undoStack.length > 0;
 
@@ -80,6 +83,15 @@ export function arrange(ids) {
 const byRank = (ids) => [...ids].sort((a, b) => (TILES[a].joker ? 99 : TILES[a].rank) - (TILES[b].joker ? 99 : TILES[b].rank));
 
 const saveUndo = () => undoStack.push({ table: work.table.map((s) => [...s]), hand: [...work.hand] });
+
+export function reorderGroups(from, to) {
+  if (!myTurn() || from === to || from < 0 || to < 0 || from >= work.table.length || to >= work.table.length) return;
+  saveUndo();
+  const [group] = work.table.splice(from, 1);
+  work.table.splice(to, 0, group);
+  pushDraft();
+  redraw();
+}
 
 // Move every picked-up cat to the target in one go (one step for Undo move).
 export function moveTo(target) {
@@ -189,6 +201,6 @@ export function initTurn() {
     }
   });
   $('undoBtn').onclick = () => { resetWork(); pushDraft(); redraw(); };
-  $('drawBtn').onclick = () => { resetWork(); api('draw').catch((e) => flash(e.message)); };
+  $('drawBtn').onclick = () => { const table = work.table; resetWork(); api('draw', { table }).catch((e) => flash(e.message)); };
   $('pile').onclick = () => myTurn() && $('drawBtn').click();
 }

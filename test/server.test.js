@@ -54,6 +54,58 @@ function idleGame(idle, names = ['A', 'B']) {
 }
 const stopTimers = (room) => { clearTimeout(room.clock); clearTimeout(room.idleClock); clearTimeout(room.botTimer); rooms.delete(room.code); };
 
+test('a group reorder is shared and retained when drawing, without permitting tile changes', () => {
+  const { code } = actions.create({ name: 'A' });
+  actions.join({ code, name: 'B' });
+  actions.join({ code, name: 'Watcher' });
+  const room = rooms.get(code);
+  const watcher = room.players[2];
+  actions.spectate({}, room, watcher);
+  actions.start({}, room, room.host);
+  const player = current(room);
+  const other = room.players.find((p) => p !== player);
+  room.table = [[0, 1, 2], [3, 4, 5]];
+  const reordered = [room.table[1], room.table[0]];
+  assert.throws(() => actions.draft({ table: reordered }, room, other), /Not your turn/);
+  actions.draft({ table: reordered }, room, player);
+  assert.deepStrictEqual(viewFor(room, other).draft, reordered);
+  assert.deepStrictEqual(viewFor(room, watcher).draft, reordered);
+  assert.throws(() => actions.draft({ table: reordered }, room, watcher), /Not your turn/);
+  actions.draw({ table: reordered }, room, player);
+  assert.deepStrictEqual(room.table, reordered);
+  assert.deepStrictEqual(viewFor(room, other).table, reordered);
+  assert.deepStrictEqual(viewFor(room, watcher).table, reordered);
+  const before = room.table.map((s) => [...s]);
+  actions.draw({ table: [[0], [3, 4, 5]] }, room, current(room));
+  assert.deepStrictEqual(room.table, before, 'a draw cannot alter tiles or groups');
+  stopTimers(room);
+});
+
+test('a reorder alone survives the turn timer and does not incur the invalid-table penalty', async () => {
+  const room = newGame(60);
+  const player = current(room);
+  room.table = [[0, 1, 2], [3, 4, 5]];
+  const reordered = [room.table[1], room.table[0]];
+  const handBefore = player.hand.length;
+  actions.draft({ table: reordered }, room, player);
+  await new Promise((resolve) => realSetTimeout(resolve, 80));
+  assert.deepStrictEqual(room.table, reordered);
+  assert.strictEqual(player.hand.length, handBefore + 1);
+  stopTimers(room);
+});
+
+test('a reorder alone survives an idle turn skip', async () => {
+  const room = idleGame(60);
+  const player = current(room);
+  room.table = [[0, 1, 2], [3, 4, 5]];
+  const reordered = [room.table[1], room.table[0]];
+  actions.draft({ table: reordered }, room, player);
+  await new Promise((resolve) => realSetTimeout(resolve, 80));
+  assert.notStrictEqual(current(room), player);
+  assert.deepStrictEqual(room.table, reordered);
+  stopTimers(room);
+});
+
 test('an idle player has their moves undone and their turn skipped, without drawing', async () => {
   const room = idleGame(60);
   const player = current(room);

@@ -173,8 +173,9 @@ function startClock(room) {
     // An exception in a timer would take the whole server down, so contain it to this room.
     try {
       const player = room.players[room.turn];
-      const messy = room.draft && JSON.stringify(room.draft) !== JSON.stringify(room.table) &&
+      const messy = room.draft && !sameGroups(room.table, room.draft) &&
         !Rules.checkTurn(room.table, room.draft.filter((s) => s.length), player.hand, player.melded).ok;
+      if (room.draft && sameGroups(room.table, room.draft)) room.table = room.draft;
       log(room, `⏰ ${player.name} ran out of time`);
       room.draft = null;
       drawCats(room, player, messy ? 3 : 1);
@@ -199,6 +200,7 @@ function startIdle(room) {
     try {
       if (room.turnId !== turnId || room.over) return;
       log(room, `💤 ${player.name} was idle, turn skipped`);
+      if (room.draft && sameGroups(room.table, room.draft)) room.table = room.draft;
       room.draft = null;
       if (room.pool.length) nextTurn(room);
       else drawCats(room, player, 1); // nothing to draw: counts as a pass
@@ -382,12 +384,15 @@ const actions = {
     mustBeTurn(room, player);
     room.draft = isTable(table) ? table : null;
     // The previous turn's glow goes out once this player starts changing the table.
-    if (room.draft && JSON.stringify(room.draft) !== JSON.stringify(room.table)) room.lastPlayed = [];
+    if (room.draft && !sameGroups(room.table, room.draft)) room.lastPlayed = [];
     startIdle(room); // moving a cat counts as not idle
   },
 
-  draw(_, room, player) {
+  draw(body, room, player) {
     mustBeTurn(room, player);
+    const table = body && body.table;
+    if (isTable(table) && sameGroups(room.table, table)) room.table = table;
+    else if (!table && room.draft && sameGroups(room.table, room.draft)) room.table = room.draft;
     drawCats(room, player, 1);
   },
 
@@ -413,6 +418,12 @@ const actions = {
 function isTable(table) {
   const isId = (id) => Number.isInteger(id) && id >= 0 && id < Rules.TILES.length;
   return Array.isArray(table) && table.every((s) => Array.isArray(s) && s.every(isId));
+}
+
+// Group order alone does not change any tile or set, including their order within a set.
+function sameGroups(a, b) {
+  return a.length === b.length && JSON.stringify(a.map((s) => JSON.stringify(s)).sort()) ===
+    JSON.stringify(b.map((s) => JSON.stringify(s)).sort());
 }
 
 function mustBeTurn(room, member) {
