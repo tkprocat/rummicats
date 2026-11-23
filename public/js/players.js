@@ -4,17 +4,22 @@ import { $ } from './dom.js';
 import { api } from './api.js';
 import { avatarSvg } from './art.js';
 import { openAvatarEditor } from './avatarEditor.js';
-import { S } from './state.js';
+import { S, myTurn } from './state.js';
+import { work } from './turn.js';
 
 export function renderPlayers() {
   const pl = $('players');
   pl.innerHTML = '';
   S.players.forEach((p, i) => {
+    const ownMeld = S.started && i === S.you && !p.melded && !S.over;
+    const points = ownMeld && myTurn()
+      ? work.table.filter((set) => set.every((id) => S.hand.includes(id))).reduce((sum, set) => sum + window.Rules.setPoints(set), 0)
+      : 0;
     const d = document.createElement('div');
     d.className = 'player' + (S.started && S.turn === i && !S.over ? ' turn' : '') + (p.online ? '' : ' off');
     d.innerHTML = `<span class="pav">${avatarSvg(p.avatar, 36)}</span><div>` +
       `${p.bot ? '🤖 ' : ''}<span class="n"></span>${i === S.you ? ' (you)' : ''}<br>` +
-      (S.started ? `${p.count} cats${p.melded ? '' : ' · not melded'}` : p.host ? 'host' : p.bot ? 'bot' : '') + '</div>';
+      (S.started ? `${p.count} cats${ownMeld ? ` · First meld: ${points} / 30` : p.melded ? '' : ' · not melded'}` : p.host ? 'host' : p.bot ? 'bot' : '') + '</div>';
     d.querySelector('.n').textContent = p.name;
     if (i === S.you) { // tap your own cat to change it
       const pav = d.querySelector('.pav');
