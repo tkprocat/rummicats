@@ -8,7 +8,7 @@ import { tileEl } from './tile.js';
 import { startBoardDrag, startBoardSelection } from './drag.js';
 import { wrapLongSets } from './setWrap.js';
 
-const { checkSet, checkTurn, setPoints } = window.Rules;
+const { checkSet, checkTurn } = window.Rules;
 const { turnChanges } = window.Changes;
 
 export function renderBoard() {
@@ -136,13 +136,10 @@ function renderControls(mine, playedIds, moved) {
   $('drawBtn').disabled = !mine;
   $('drawBtn').textContent = (moved ? 'Undo & ' : '') + (S.pool ? (moved ? 'draw' : 'Draw & end turn') : (moved ? 'pass' : 'Pass'));
   $('drawBtn').title = 'Ends your turn. Anything you moved goes back.';
-  if (mine && !S.hasMelded) {
-    const pts = work.table.filter((s) => s.every((id) => S.hand.includes(id))).reduce((a, s) => a + setPoints(s), 0);
-    $('meldInfo').textContent = `First meld: ${pts} / 30 points (each cat is worth its number)`;
-  } else if (mine && work.hand.some((id) => !S.hand.includes(id))) {
+  if (mine && S.hasMelded && work.hand.some((id) => !S.hand.includes(id))) {
     $('meldInfo').textContent = 'Play the wild cat you swapped off the table in a set, then press Done.';
   } else {
-    $('meldInfo').textContent = mine && !check.ok && playedIds.size ? check.reason : '';
+    $('meldInfo').textContent = mine && S.hasMelded && !check.ok && playedIds.size ? check.reason : '';
   }
 }
 
