@@ -3,7 +3,7 @@
 import { $ } from './dom.js';
 import { avatarSvg } from './art.js';
 import { S, myTurn } from './state.js';
-import { work, selected, tableChanged, canUndo, arrange, moveTo, onTileClick, redrawPage, reorderGroups } from './turn.js';
+import { work, selected, tableChanged, canUndo, moveTo, onTileClick, redrawPage, reorderGroups } from './turn.js';
 import { tileEl } from './tile.js';
 import { startBoardDrag, startBoardSelection } from './drag.js';
 import { wrapLongSets } from './setWrap.js';
@@ -17,34 +17,21 @@ export function renderBoard() {
   const glowing = S.glow && !tableChanged();
   const playedIds = new Set(mine ? work.table.flat().filter((id) => S.hand.includes(id)) : []);
   const moved = mine && (playedIds.size > 0 || tableChanged());
-  renderStatus(mine, playedIds);
+  renderStatus();
   renderTurnCat();
   renderTable(mine, glowing);
   renderControls(mine, playedIds, moved);
   renderPile(mine);
 }
 
-function renderStatus(mine, playedIds) {
+function renderStatus() {
   if (S.over) {
     // Names come from other players, so they only ever go in as text.
     const scores = S.over.scores.map((x) => `${x.name}: ${x.penalty}`).join(' · ');
     $('status').innerHTML = '🏆 <span></span> wins! <small></small>';
     $('status').querySelector('span').textContent = S.over.winner;
     $('status').querySelector('small').textContent = `(cats left in paws, lower is better: ${scores})`;
-  } else if (mine) {
-    $('status').textContent = selected.length ? pickedText()
-      : playedIds.size ? 'Press Done when every set is valid, or Undo & draw to give up this turn.'
-      : 'Your turn! Play at least one cat from your paws, or draw a cat to end your turn.';
-  } else if (S.started) {
-    $('status').textContent = `Watching ${S.players[S.turn].name}'s turn…`;
   }
-}
-
-function pickedText() {
-  const n = selected.length;
-  const set = n >= 3 && arrange(selected);
-  return `${n === 1 ? '1 cat' : n + ' cats'} picked up${set ? ` (a valid set worth ${setPoints(set)})` : ''}. ` +
-    'Tap more cats to add them, or tap the empty spot, a gap, or your paws to put them down.';
 }
 
 // Whose turn it is, as a big cat beside the board (shown only when the table is wide enough, see style.css).

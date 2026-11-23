@@ -90,7 +90,8 @@ function render() {
   // Which parts of the game screen show: the table once the game starts, and the paws and turn buttons only
   // for players (spectators have no rack and no turn).
   const seated = S.you >= 0;
-  for (const id of ['status', 'tableArea']) $(id).classList.toggle('hidden', !S.started);
+  $('tableArea').classList.toggle('hidden', !S.started);
+  $('status').classList.toggle('hidden', !S.over);
   for (const id of ['controls', 'handBar', 'hand']) $(id).classList.toggle('hidden', !S.started || !seated);
   $('turnDot').classList.toggle('hidden', !myTurn());
 

@@ -1,4 +1,4 @@
-// Who's in the room: the players (with whose turn it is, cats left and a mini rack) and the people watching.
+// Who's in the room: the players (with whose turn it is and cats left) and the people watching.
 // Shown in the lobby and during the game. Names come from other people, so they only ever go in as text.
 import { $ } from './dom.js';
 import { api } from './api.js';
@@ -14,8 +14,7 @@ export function renderPlayers() {
     d.className = 'player' + (S.started && S.turn === i && !S.over ? ' turn' : '') + (p.online ? '' : ' off');
     d.innerHTML = `<span class="pav">${avatarSvg(p.avatar, 36)}</span><div>` +
       `${p.bot ? '🤖 ' : ''}<span class="n"></span>${i === S.you ? ' (you)' : ''}<br>` +
-      (S.started ? `${p.count} cats${p.melded ? '' : ' · not melded'}` : p.host ? 'host' : p.bot ? 'bot' : '') +
-      (S.started && i !== S.you ? `<div class="minirack">${'<i></i>'.repeat(Math.min(p.count, 30))}</div>` : '') + '</div>';
+      (S.started ? `${p.count} cats${p.melded ? '' : ' · not melded'}` : p.host ? 'host' : p.bot ? 'bot' : '') + '</div>';
     d.querySelector('.n').textContent = p.name;
     if (i === S.you) { // tap your own cat to change it
       const pav = d.querySelector('.pav');
