@@ -115,11 +115,13 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 .picking .newset { cursor: pointer; }
 
 #controls, #handBar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+#controls button, #handBar button, #handBar select { font: inherit; font-size: .9rem; padding: 6px 10px; min-height: 34px; text-align: center; }
+#handBar select { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; }
 .controlLabel { flex: 0 0 3em; color: var(--muted); font-size: .8rem; font-weight: 600; }
 @media (max-width: 600px) {
   #controls, #handBar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 8px; }
   #controls .controlLabel, #handBar .controlLabel { grid-column: 1 / -1; }
-  #controls button, #handBar button, #handBar select { width: 100%; min-height: 44px; }
+  #controls button, #handBar button, #handBar select { width: 100%; min-height: 44px; padding: 9px 14px; font-size: 1rem; }
   #handBar select { grid-column: 1 / -1; }
 }
 #meldInfo { color: var(--muted); font-size: .9rem; }
