@@ -8,7 +8,7 @@ import { tileEl } from './tile.js';
 import { startHandDrag, initHandDrag } from './drag.js';
 
 let prevHand = null; // my hand in the last state, to spot cats I just drew
-let lastDrawn = []; // cats I drew last time my hand changed; they glow on a sorted rack
+let lastDrawn = []; // cats I drew last time my hand changed; they glow in the rack
 
 // A new state from the server. Cats that showed up in my hand were drawn; any other change (a play, a new game)
 // clears them. Cats that left my hand leave a gap on the rack; new ones get a slot when the rack is drawn.
@@ -48,8 +48,8 @@ export function renderPaws() {
       if (id != null && shown.has(id)) {
         const t = tileEl(id);
         if (!S.hand.includes(id)) t.classList.add('borrowed'); // a wild cat swapped off the table this turn
-        // On a sorted rack a drawn cat lands somewhere in the middle, so show where.
-        if (glowing && SORTS[autoSort] && lastDrawn.includes(id)) t.classList.add('glow');
+        // Keep drawn cats visible even when the rack is sorted or rearranged.
+        if (glowing && lastDrawn.includes(id)) t.classList.add('glow');
         t.onclick = (e) => onTileClick(id, e);
         t.onpointerdown = (e) => startHandDrag(id, t, e, myTurn());
         slot.appendChild(t);
