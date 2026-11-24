@@ -95,34 +95,38 @@
 
     <div id="status" class="hidden"></div>
     <button id="againBtn" class="primary hidden">🔁 New game</button>
-    <div id="tableArea" class="hidden">
-      <div class="deco deco-table" aria-hidden="true"></div>
-      <div id="turnCat" aria-hidden="true"></div>
-      <div id="table"></div>
-      <div id="pile" title="Draw a cat"><div class="heap"></div><div class="pileCount"></div></div>
-    </div>
+    <div class="playArea">
+      <div id="tableArea" class="hidden">
+        <div class="deco deco-table" aria-hidden="true"></div>
+        <div id="turnCat" aria-hidden="true"></div>
+        <div id="table"></div>
+        <div id="pile" title="Draw a cat"><div class="heap"></div><div class="pileCount"></div></div>
+      </div>
 
-    <div id="hand" class="hidden"></div>
-    <div id="controls" class="hidden" role="group" aria-label="Turn controls">
-      <span class="controlLabel">Turn</span>
-      <button id="doneBtn" class="primary">Done</button>
-      <button id="undoMoveBtn" title="Undo your last move (Ctrl+Z)">Undo move</button>
-      <button id="undoBtn">Undo turn</button>
-      <button id="drawBtn">Draw a cat</button>
+      <div id="hand" class="hidden"></div>
+      <div class="playControls">
+        <div id="controls" class="hidden" role="group" aria-label="Turn controls">
+          <span class="controlLabel">Turn</span>
+          <button id="doneBtn" class="primary">Done</button>
+          <button id="drawBtn">Draw a cat</button>
+          <button id="undoMoveBtn" title="Undo your last move (Ctrl+Z)">Undo move</button>
+          <button id="undoBtn">Undo turn</button>
+        </div>
+        <p id="gameErr" class="err" aria-live="polite"></p>
+        <div id="handBar" class="hidden" role="group" aria-label="Paw controls">
+          <span class="controlLabel">Paws</span>
+          <button id="sortColor">Sort by color</button>
+          <button id="sortRank">Sort by number</button>
+          <select id="autoSort" aria-label="Keep your paws sorted" title="Keep your paws sorted, also when you draw a cat. Moving a cat yourself turns it off.">
+            <option value="off">Auto-sort: off</option>
+            <option value="color">Auto-sort: color</option>
+            <option value="rank">Auto-sort: number</option>
+          </select>
+          <div class="deco deco-rack" aria-hidden="true"></div>
+        </div>
+        <div id="meldInfo"></div>
+      </div>
     </div>
-    <p id="gameErr" class="err" aria-live="polite"></p>
-    <div id="handBar" class="hidden" role="group" aria-label="Paw controls">
-      <span class="controlLabel">Paws</span>
-      <button id="sortColor">Sort by color</button>
-      <button id="sortRank">Sort by number</button>
-      <select id="autoSort" aria-label="Keep your paws sorted" title="Keep your paws sorted, also when you draw a cat. Moving a cat yourself turns it off.">
-        <option value="off">Auto-sort: off</option>
-        <option value="color">Auto-sort: color</option>
-        <option value="rank">Auto-sort: number</option>
-      </select>
-      <div class="deco deco-rack" aria-hidden="true"></div>
-    </div>
-    <div id="meldInfo"></div>
 
     <details id="logBox"><summary>Game log</summary><ul id="log"></ul></details>
 

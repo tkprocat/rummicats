@@ -581,7 +581,17 @@ body.chatResizing #chat { transition: none; }
 
 /* Only when the table is wide enough (big screens, chat closed or not); smaller screens keep the ginger outline on the player chip */
 #tableArea { container-type: inline-size; }
-#game.screen { max-width: 1280px; }
+#game.screen { max-width: 1460px; container-type: inline-size; }
+.playArea { max-width: 1248px; margin: 0 auto; }
+@container (min-width: 1240px) {
+  .playArea { max-width: none; display: grid; grid-template-columns: 160px minmax(0, 1fr); column-gap: 20px; align-items: start; }
+  #tableArea { grid-column: 2; grid-row: 1; }
+  #hand { grid-column: 2; grid-row: 2; }
+  .playControls { grid-column: 1; grid-row: 1 / 3; padding-top: 8px; }
+  #controls, #handBar { flex-direction: column; align-items: stretch; }
+  #controls .controlLabel, #handBar .controlLabel { flex: none; }
+  #handBar { margin-top: 20px; }
+}
 #turnCat { display: none; }
 @container (min-width: 1000px) {
   #turnCat:not(:empty) { flex: none; width: 150px; align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; padding: 18px 8px 12px; text-align: center; color: var(--board-text-strong); border-right: 2px dashed var(--board-divider); }
