@@ -1,4 +1,4 @@
-/* Base colors are shared by game roles and theme overrides. */
+/* Base colors used across the game. Theme-specific colors live in their theme. */
 :root {
   --orange: #e68a00;
   --red: #d32f2f;
@@ -6,23 +6,12 @@
   --black: #1d1d1b;
   --ivory: #f4efe6;
   --white: #fff;
-  --cream: #f6efe4;
-  --cream-dark: #f1e8d8;
-  --sand: #c9b9a3;
-  --sand-light: #d8cbbb;
-  --brown-ink: #2b2420;
-  --brown-muted: #7a6d62;
-  --brown-rack: #3a302b;
-  --brown-deep: #221c19;
-  --green: #2f6b4f;
-  --green-deep: #24563f;
   --green-light: #7fe0a6;
   --coral: #ff7a7a;
   --ginger-orange: #ef8a2b;
   --midnight-fur: #2c2c36;
   --smoky-blue: #6c87ad;
   --pink: #e45c93;
-  --error-red: #c0392b;
   --gold: #ffd54a;
   --gold-bright: #ffd84a;
   --violet: #a77bff;
@@ -35,60 +24,28 @@
   --flare-yellow: #fff3a0;
   --flare-gold: #ffcf4a;
   --ember-orange: #ff9a3c;
-  --gray-950: #1b1b1c;
-  --gray-900: #252526;
-  --gray-800: #3e3e40;
-  --gray-700: #434346;
-  --gray-100: #f1f1f1;
-  --dark-green: #285b46;
-  --dark-green-deep: #1e4837;
-  --salmon-light: #ff998a;
-  --purple-950: #1c1526;
-  --purple-900: #2b2138;
-  --purple-800: #3b2858;
-  --purple-850: #2c1e44;
-  --purple-700: #4a3c5c;
-  --purple-light: #b3a3c4;
-  --halloween-ink: #f1e6d6;
-  --halloween-rack: #1f1a1d;
-  --halloween-ledge: #0d0a0c;
-  --halloween-tile-back: #e6dcc6;
-  --halloween-tile-edge: #a99a80;
-  --halloween-error: #ff8a6a;
-  --navy-950: #142233;
-  --navy-900: #1e3045;
-  --navy-700: #355068;
-  --navy-light: #a9bccb;
-  --pine: #1f5a3a;
-  --pine-deep: #174a2f;
-  --winter-ink: #f3efe6;
-  --cranberry: #5a1f22;
-  --cranberry-deep: #331013;
-  --winter-tile-back: #e9eeec;
-  --winter-tile-edge: #aeb6b2;
-  --winter-error: #ff8a7a;
 }
 
 :root {
-  --bg: var(--cream);
-  --felt: var(--green);
-  --felt-dark: var(--green-deep);
-  --ink: var(--brown-ink);
-  --muted: var(--brown-muted);
+  --bg: #f6efe4;
+  --felt: #2f6b4f;
+  --felt-dark: #24563f;
+  --ink: #2b2420;
+  --muted: #7a6d62;
   --ok: var(--green-light);
   --bad: var(--coral);
   --ginger: var(--ginger-orange);
   --midnight: var(--midnight-fur);
   --smoky: var(--smoky-blue);
   --pinky: var(--pink);
-  --rack: var(--brown-rack);
-  --rack-ledge: var(--brown-deep);
-  --tile-back: var(--cream-dark);
+  --rack: #3a302b;
+  --rack-ledge: #221c19;
+  --tile-back: #f1e8d8;
   --tile: var(--ivory);
-  --tile-edge: var(--sand);
+  --tile-edge: #c9b9a3;
   --surface: var(--white);
-  --line: var(--sand-light);
-  --err: var(--error-red);
+  --line: #d8cbbb;
+  --err: #c0392b;
 
   /* Tile colors, effects and artwork accents shared by all themes. */
   --tile-orange: var(--orange);
@@ -136,48 +93,48 @@
 /* Dark mode keeps the familiar green table and light, readable tiles. */
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: var(--gray-950);
-  --felt: var(--dark-green);
-  --felt-dark: var(--dark-green-deep);
-  --ink: var(--gray-100);
-  --muted: var(--gray-100);
-  --rack: var(--gray-800);
-  --rack-ledge: var(--gray-900);
-  --surface: var(--gray-900);
-  --line: var(--gray-700);
-  --err: var(--salmon-light);
+  --bg: #1b1b1c;
+  --felt: #285b46;
+  --felt-dark: #1e4837;
+  --ink: #f1f1f1;
+  --muted: #f1f1f1;
+  --rack: #3e3e40;
+  --rack-ledge: #252526;
+  --surface: #252526;
+  --line: #434346;
+  --err: #ff998a;
 }
 /* Halloween: a moonlit night, a haunted purple table, bone-white cats in witch hats */
 :root[data-theme="halloween"] {
   color-scheme: dark;
-  --bg: var(--purple-950);
-  --felt: var(--purple-800);
-  --felt-dark: var(--purple-850);
-  --ink: var(--halloween-ink);
-  --muted: var(--purple-light);
-  --rack: var(--halloween-rack);
-  --rack-ledge: var(--halloween-ledge);
-  --tile-back: var(--halloween-tile-back);
-  --tile-edge: var(--halloween-tile-edge);
-  --surface: var(--purple-900);
-  --line: var(--purple-700);
-  --err: var(--halloween-error);
+  --bg: #1c1526;
+  --felt: #3b2858;
+  --felt-dark: #2c1e44;
+  --ink: #f1e6d6;
+  --muted: #b3a3c4;
+  --rack: #1f1a1d;
+  --rack-ledge: #0d0a0c;
+  --tile-back: #e6dcc6;
+  --tile-edge: #a99a80;
+  --surface: #2b2138;
+  --line: #4a3c5c;
+  --err: #ff8a6a;
 }
 /* Christmas: a snowy winter night, a pine-green table, a cranberry rack, cats in Santa hats */
 :root[data-theme="christmas"] {
   color-scheme: dark;
-  --bg: var(--navy-950);
-  --felt: var(--pine);
-  --felt-dark: var(--pine-deep);
-  --ink: var(--winter-ink);
-  --muted: var(--navy-light);
-  --rack: var(--cranberry);
-  --rack-ledge: var(--cranberry-deep);
-  --tile-back: var(--winter-tile-back);
-  --tile-edge: var(--winter-tile-edge);
-  --surface: var(--navy-900);
-  --line: var(--navy-700);
-  --err: var(--winter-error);
+  --bg: #142233;
+  --felt: #1f5a3a;
+  --felt-dark: #174a2f;
+  --ink: #f3efe6;
+  --muted: #a9bccb;
+  --rack: #5a1f22;
+  --rack-ledge: #331013;
+  --tile-back: #e9eeec;
+  --tile-edge: #aeb6b2;
+  --surface: #1e3045;
+  --line: #355068;
+  --err: #ff8a7a;
 }
 * { box-sizing: border-box; }
 html { scrollbar-gutter: stable; }
