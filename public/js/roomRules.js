@@ -42,7 +42,7 @@ export function renderRules(S) {
       ? `${duration(S.idleLimit)}. Moving a cat restarts it. If you don't move a cat in time, your moves are undone and your turn is skipped (you don't draw).`
       : 'off.'],
     ['✨ Glow:', S.glow
-      ? 'on. The cats the last player put on the table glow until the next player starts moving cats. With auto-sort on, the cat you just drew glows too.'
+      ? 'on. The cats the last player put on the table glow until the next player starts moving cats. The cat you just drew glows too.'
       : 'off.'],
   ]);
   if (!S.started) {
