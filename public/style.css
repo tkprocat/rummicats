@@ -8,12 +8,9 @@
   --white: #fff;
   --green-light: #7fe0a6;
   --coral: #ff7a7a;
-  --ginger-orange: #ef8a2b;
-  --midnight-fur: #2c2c36;
   --smoky-blue: #6c87ad;
   --pink: #e45c93;
   --gold: #ffd54a;
-  --gold-bright: #ffd84a;
   --violet: #a77bff;
   --hat-violet-base: #4b2a7a;
   --hat-purple-base: #6a3a9a;
@@ -22,8 +19,6 @@
   --gray-cat: #5a5a6a;
   --flare-cream: #fffbe0;
   --flare-yellow: #fff3a0;
-  --flare-gold: #ffcf4a;
-  --ember-orange: #ff9a3c;
 }
 
 :root {
@@ -34,8 +29,8 @@
   --muted: #7a6d62;
   --ok: var(--green-light);
   --bad: var(--coral);
-  --ginger: var(--ginger-orange);
-  --midnight: var(--midnight-fur);
+  --ginger: var(--orange);
+  --midnight: var(--black);
   --smoky: var(--smoky-blue);
   --pinky: var(--pink);
   --rack: #3a302b;
@@ -83,12 +78,12 @@
   --hat-purple: var(--hat-purple-base);
   --hat-blue: var(--hat-blue-base);
   --hat-wild: var(--hat-dark);
-  --cat-eye: var(--gold-bright);
+  --cat-eye: var(--gold);
   --cat-inner: var(--gray-cat);
   --flare-light: var(--flare-cream);
   --flare-mid: var(--flare-yellow);
-  --flare-deep: var(--flare-gold);
-  --spark-ember: var(--ember-orange);
+  --flare-deep: var(--gold);
+  --spark-ember: var(--orange);
 }
 /* Dark mode keeps the familiar green table and light, readable tiles. */
 :root[data-theme="dark"] {
