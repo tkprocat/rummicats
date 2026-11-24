@@ -316,14 +316,19 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 @keyframes flicker { 0%, 100% { opacity: 1; } 40% { opacity: .75; } 45% { opacity: .95; } 70% { opacity: .82; } }
 @media (prefers-reduced-motion: reduce) { .deco .glow { animation: none; } }
 
-#tableArea { position: relative; }
-#tableArea > :not(.deco) { position: relative; }
+body { isolation: isolate; }
+header, .screen { position: relative; z-index: 0; background: var(--bg); }
+#tableArea { position: relative; isolation: isolate; }
+#tableArea > :not(.deco) { position: relative; z-index: 1; }
+.deco-table { position: absolute; inset: 0; z-index: 0; }
+.gameDecorations { display: none; }
+:is([data-theme="halloween"], [data-theme="christmas"]) #game:has(#tableArea:not(.hidden)) .gameDecorations { display: flex; align-items: flex-end; justify-content: flex-end; min-height: 100px; padding: 24px 10px 0; }
 .deco-table .left, .deco-table .right { position: absolute; bottom: 6px; display: flex; align-items: flex-end; gap: 2px; }
 .deco-table .left { left: 10px; }
 .deco-table .right { right: 10px; }
 
 #handBar { position: relative; }
-.deco-rack { position: absolute; right: 18px; bottom: -14px; }
+.deco-rack { flex: none; }
 :is([data-theme="halloween"], [data-theme="christmas"]) .deco-rack { display: flex; align-items: flex-end; gap: 2px; }
 
 .card { position: relative; }
@@ -338,7 +343,7 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 .lobby-cats .kithat { display: none; }
 :is([data-theme="halloween"], [data-theme="christmas"]) .lobby-cats .kithat { display: inline; }
 
-.deco-side { position: fixed; bottom: 12px; z-index: 0; }
+.deco-side { position: fixed; bottom: 12px; z-index: -1; }
 :is([data-theme="halloween"], [data-theme="christmas"]) .deco-side { display: flex; align-items: flex-end; gap: 4px; }
 .deco-side.left { left: 14px; }
 .deco-side.right { right: 14px; }
@@ -402,7 +407,7 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 }
 
 /* The night sky: a crescent moon with drifting clouds and a few twinkling stars, behind everything */
-.deco-sky { position: fixed; top: 52px; right: 4%; z-index: -1; }
+.deco-sky { position: fixed; top: 52px; right: 4%; z-index: -2; }
 .deco-sky svg { filter: none; overflow: visible; }
 .deco-sky .cloud { animation: drift 26s ease-in-out infinite alternate; }
 .deco-sky .cloud.two { animation-duration: 34s; animation-delay: -12s; }
@@ -416,7 +421,7 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 
 /* Christmas snow: one canvas behind everything, drawn by js/snow.js */
 .deco-snow, [data-theme] .deco-snow { display: none; }
-[data-theme="christmas"] .deco-snow { display: block; position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; }
+[data-theme="christmas"] .deco-snow { display: block; position: fixed; inset: 0; width: 100%; height: 100%; z-index: -2; }
 
 /* A wild cat swapped off the table: it has to go back out this turn */
 .tile.borrowed { box-shadow: 0 0 0 3px var(--borrowed), 0 0 14px var(--borrowed-glow); }
@@ -604,7 +609,6 @@ body.chatResizing #chat { transition: none; }
   #turnCat.mine .tcSub { color: var(--on-accent); font-weight: 600; }
   #turnCat.hop .avatar { animation: turnHop .5s cubic-bezier(.2, 1.6, .4, 1); }
   /* The holiday decorations at the bottom left move over so they don't sit under the cat */
-  .deco-table:has(~ #turnCat:not(:empty)) .left { left: 160px; }
 }
 @keyframes turnHop { from { transform: translateY(10px) scale(.8); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { #turnCat.hop .avatar { animation: none; } }
