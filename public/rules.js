@@ -1,7 +1,8 @@
 // Shared game rules, loaded by both the server (require) and the browser (<script>).
 (function (exports) {
+  // These stable keys and their order determine tile IDs used in saved games.
   const COLORS = ['ginger', 'midnight', 'smoky', 'pinky'];
-  const COLOR_NAMES = { ginger: 'Ginger', midnight: 'Midnight', smoky: 'Smoky', pinky: 'Pinky' };
+  const COLOR_NAMES = { ginger: 'Orange', midnight: 'Black', smoky: 'Blue', pinky: 'Red' };
   // 106 tiles: 4 colors x 13 ranks x 2 copies, plus 2 jokers (wild cats).
   function makeTiles() {
     const tiles = [];
