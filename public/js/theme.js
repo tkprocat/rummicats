@@ -1,9 +1,9 @@
-// Normal, Halloween or Christmas look, remembered in this browser, plus the pokeable decorations.
+// Normal, dark, Halloween or Christmas look, remembered in this browser, plus the pokeable decorations.
 import { $, store, reducedMotion } from './dom.js';
 import { artReady, kittenSvg, pumpkinSvg, presentSvg, treeSvg, skySvg } from './art.js';
 import { startSnow, stopSnow } from './snow.js';
 
-const THEME_LOGOS = { normal: '🐾', halloween: '🎃', christmas: '🎄' };
+const THEME_LOGOS = { normal: '🐾', dark: '🌙', halloween: '🎃', christmas: '🎄' };
 
 // Fill the decoration spots in the page for a theme; CSS only shows them in the holiday themes.
 function decorate(theme) {
@@ -73,7 +73,7 @@ function poke(e) {
   const sparks = reducedMotion() ? 0 : 6;
   if (deco.classList.contains('kitten')) {
     const mews = [...MEWS, ...(THEME_MEWS[theme] || [])];
-    pop('bubble', x, r.top + (theme ? 0 : r.height * 0.25) - 4, mews[Math.floor(Math.random() * mews.length)]);
+    pop('bubble', x, r.top + (theme === 'halloween' || xmas ? 0 : r.height * 0.25) - 4, mews[Math.floor(Math.random() * mews.length)]);
     for (let k = 0; k < sparks; k++) pop(xmas ? 'sparkle flake' : 'sparkle', x, r.top + r.height * 0.25, xmas ? '❄' : '✦');
   } else {
     for (let k = 0; k < sparks; k++) pop(xmas ? 'sparkle' : 'sparkle ember', x, r.top + r.height * 0.4, '✦');

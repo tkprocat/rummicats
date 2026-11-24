@@ -22,8 +22,9 @@ anything that should keep its behaviour. A part without a class just keeps the c
 
 **Recolored by the game.** The color in the file is only a preview: the game picks the real one.
 
-- `fur` (fill) and `fur-line` (stroke): the cat's fur color, from `--ginger`, `--midnight`, `--smoky` and
-  `--pinky` at the top of `style.css`. Wild cats use the `rainbow` gradient defined in `cat.svg`.
+- `fur` (fill) and `fur-line` (stroke): kittens use `--ginger`, `--midnight`, `--smoky` and `--pinky`.
+  Tile cats use the same `--tile-orange`, `--tile-black`, `--tile-blue` and `--tile-red` colors as their ranks.
+  Wild cats use the `rainbow` gradient defined in `cat.svg`, recolored with those tile colors.
 - `hat-fill`: the wizard hat color, set per cat.
 - `box` and `ribbon` (`present.svg`): set per present.
 - On black (midnight) cats, `eye`, `mouth` and `inner` are swapped to the light versions in `style.css`.

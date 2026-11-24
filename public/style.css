@@ -1,55 +1,183 @@
+/* Base colors are shared by game roles and theme overrides. */
 :root {
-  --bg: #f6efe4;
-  --felt: #2f6b4f;
-  --felt-dark: #24563f;
-  --ink: #2b2420;
-  --muted: #7a6d62;
-  --ok: #7fe0a6;
-  --bad: #ff7a7a;
-  --ginger: #ef8a2b;
-  --midnight: #2c2c36;
-  --smoky: #6c87ad;
-  --pinky: #e45c93;
-  --rack: #3a302b;
-  --rack-ledge: #221c19;
-  --tile-back: #f1e8d8;
-  --tile: #fffaf2;
-  --tile-edge: #c9b9a3;
-  --surface: #fff;
-  --line: #d8cbbb;
-  --err: #c0392b;
+  --orange: #e68a00;
+  --red: #d32f2f;
+  --blue: #0055a4;
+  --black: #1d1d1b;
+  --ivory: #f4efe6;
+  --white: #fff;
+  --cream: #f6efe4;
+  --cream-dark: #f1e8d8;
+  --sand: #c9b9a3;
+  --sand-light: #d8cbbb;
+  --brown-ink: #2b2420;
+  --brown-muted: #7a6d62;
+  --brown-rack: #3a302b;
+  --brown-deep: #221c19;
+  --green: #2f6b4f;
+  --green-deep: #24563f;
+  --green-light: #7fe0a6;
+  --coral: #ff7a7a;
+  --ginger-orange: #ef8a2b;
+  --midnight-fur: #2c2c36;
+  --smoky-blue: #6c87ad;
+  --pink: #e45c93;
+  --error-red: #c0392b;
+  --gold: #ffd54a;
+  --gold-bright: #ffd84a;
+  --violet: #a77bff;
+  --hat-violet-base: #4b2a7a;
+  --hat-purple-base: #6a3a9a;
+  --hat-blue-base: #2d3a8c;
+  --hat-dark: #1d1630;
+  --gray-cat: #5a5a6a;
+  --flare-cream: #fffbe0;
+  --flare-yellow: #fff3a0;
+  --flare-gold: #ffcf4a;
+  --ember-orange: #ff9a3c;
+  --gray-950: #1b1b1c;
+  --gray-900: #252526;
+  --gray-800: #3e3e40;
+  --gray-700: #434346;
+  --gray-100: #f1f1f1;
+  --dark-green: #285b46;
+  --dark-green-deep: #1e4837;
+  --salmon-light: #ff998a;
+  --purple-950: #1c1526;
+  --purple-900: #2b2138;
+  --purple-800: #3b2858;
+  --purple-850: #2c1e44;
+  --purple-700: #4a3c5c;
+  --purple-light: #b3a3c4;
+  --halloween-ink: #f1e6d6;
+  --halloween-rack: #1f1a1d;
+  --halloween-ledge: #0d0a0c;
+  --halloween-tile-back: #e6dcc6;
+  --halloween-tile-edge: #a99a80;
+  --halloween-error: #ff8a6a;
+  --navy-950: #142233;
+  --navy-900: #1e3045;
+  --navy-700: #355068;
+  --navy-light: #a9bccb;
+  --pine: #1f5a3a;
+  --pine-deep: #174a2f;
+  --winter-ink: #f3efe6;
+  --cranberry: #5a1f22;
+  --cranberry-deep: #331013;
+  --winter-tile-back: #e9eeec;
+  --winter-tile-edge: #aeb6b2;
+  --winter-error: #ff8a7a;
+}
+
+:root {
+  --bg: var(--cream);
+  --felt: var(--green);
+  --felt-dark: var(--green-deep);
+  --ink: var(--brown-ink);
+  --muted: var(--brown-muted);
+  --ok: var(--green-light);
+  --bad: var(--coral);
+  --ginger: var(--ginger-orange);
+  --midnight: var(--midnight-fur);
+  --smoky: var(--smoky-blue);
+  --pinky: var(--pink);
+  --rack: var(--brown-rack);
+  --rack-ledge: var(--brown-deep);
+  --tile-back: var(--cream-dark);
+  --tile: var(--ivory);
+  --tile-edge: var(--sand);
+  --surface: var(--white);
+  --line: var(--sand-light);
+  --err: var(--error-red);
+
+  /* Tile colors, effects and artwork accents shared by all themes. */
+  --tile-orange: var(--orange);
+  --tile-black: var(--black);
+  --tile-blue: var(--blue);
+  --tile-red: var(--red);
+  --on-accent: var(--white);
+  --shadow-subtle: #0001;
+  --shadow-light: #0002;
+  --shadow-medium: #0003;
+  --shadow-strong: #0004;
+  --shadow-deep: #0005;
+  --shadow-heavy: #0006;
+  --shadow-overlay: #0007;
+  --board-overlay-subtle: #ffffff12;
+  --board-overlay-hover: #ffffff14;
+  --board-overlay-slot: #ffffff1c;
+  --board-overlay-avatar: #ffffff22;
+  --board-divider: #ffffff30;
+  --board-avatar-border: #ffffff40;
+  --board-slot-border: #ffffff50;
+  --board-drop-border: #ffffff60;
+  --board-drop-hover: #ffffff70;
+  --board-target-border: #ffffff90;
+  --board-text-muted: #ffffffb0;
+  --board-text: #ffffffc0;
+  --board-text-strong: #fffffff0;
+  --invalid-overlay: #ff7a7a22;
+  --last-played: var(--gold);
+  --last-played-glow: #ffd54acc;
+  --turn-indicator-glow: #ffd54aaa;
+  --borrowed: var(--violet);
+  --borrowed-glow: #a77bffaa;
+  --hat-violet: var(--hat-violet-base);
+  --hat-purple: var(--hat-purple-base);
+  --hat-blue: var(--hat-blue-base);
+  --hat-wild: var(--hat-dark);
+  --cat-eye: var(--gold-bright);
+  --cat-inner: var(--gray-cat);
+  --flare-light: var(--flare-cream);
+  --flare-mid: var(--flare-yellow);
+  --flare-deep: var(--flare-gold);
+  --spark-ember: var(--ember-orange);
+}
+/* Dark mode keeps the familiar green table and light, readable tiles. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: var(--gray-950);
+  --felt: var(--dark-green);
+  --felt-dark: var(--dark-green-deep);
+  --ink: var(--gray-100);
+  --muted: var(--gray-100);
+  --rack: var(--gray-800);
+  --rack-ledge: var(--gray-900);
+  --surface: var(--gray-900);
+  --line: var(--gray-700);
+  --err: var(--salmon-light);
 }
 /* Halloween: a moonlit night, a haunted purple table, bone-white cats in witch hats */
 :root[data-theme="halloween"] {
-  --bg: #1c1526;
-  --felt: #3b2858;
-  --felt-dark: #2c1e44;
-  --ink: #f1e6d6;
-  --muted: #b3a3c4;
-  --rack: #1f1a1d;
-  --rack-ledge: #0d0a0c;
-  --tile-back: #e6dcc6;
-  --tile: #f4ecda;
-  --tile-edge: #a99a80;
-  --surface: #2b2138;
-  --line: #4a3c5c;
-  --err: #ff8a6a;
+  color-scheme: dark;
+  --bg: var(--purple-950);
+  --felt: var(--purple-800);
+  --felt-dark: var(--purple-850);
+  --ink: var(--halloween-ink);
+  --muted: var(--purple-light);
+  --rack: var(--halloween-rack);
+  --rack-ledge: var(--halloween-ledge);
+  --tile-back: var(--halloween-tile-back);
+  --tile-edge: var(--halloween-tile-edge);
+  --surface: var(--purple-900);
+  --line: var(--purple-700);
+  --err: var(--halloween-error);
 }
 /* Christmas: a snowy winter night, a pine-green table, a cranberry rack, cats in Santa hats */
 :root[data-theme="christmas"] {
-  --bg: #142233;
-  --felt: #1f5a3a;
-  --felt-dark: #174a2f;
-  --ink: #f3efe6;
-  --muted: #a9bccb;
-  --rack: #5a1f22;
-  --rack-ledge: #331013;
-  --tile-back: #e9eeec;
-  --tile: #fbfaf6;
-  --tile-edge: #aeb6b2;
-  --surface: #1e3045;
-  --line: #355068;
-  --err: #ff8a7a;
+  color-scheme: dark;
+  --bg: var(--navy-950);
+  --felt: var(--pine);
+  --felt-dark: var(--pine-deep);
+  --ink: var(--winter-ink);
+  --muted: var(--navy-light);
+  --rack: var(--cranberry);
+  --rack-ledge: var(--cranberry-deep);
+  --tile-back: var(--winter-tile-back);
+  --tile-edge: var(--winter-tile-edge);
+  --surface: var(--navy-900);
+  --line: var(--navy-700);
+  --err: var(--winter-error);
 }
 * { box-sizing: border-box; }
 html { scrollbar-gutter: stable; }
@@ -60,14 +188,14 @@ h1 { margin: 0; font-size: 1.5rem; }
 .screen { padding: 0 16px 24px; max-width: 1100px; margin: 0 auto; }
 .hidden { display: none !important; }
 .intro { max-width: 480px; margin: 8px auto 16px; line-height: 1.5; }
-.card { background: var(--surface); border-radius: 14px; padding: 18px; max-width: 420px; margin: 0 auto 12px; box-shadow: 0 2px 10px #0001; display: flex; flex-direction: column; gap: 10px; }
+.card { background: var(--surface); border-radius: 14px; padding: 18px; max-width: 420px; margin: 0 auto 12px; box-shadow: 0 2px 10px var(--shadow-subtle); display: flex; flex-direction: column; gap: 10px; }
 .row { display: flex; gap: 8px; }
 .row input { flex: 1; text-transform: uppercase; letter-spacing: .2em; }
 .or { text-align: center; color: var(--muted); font-size: .85rem; }
 input { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); }
 button { font: inherit; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
 button:disabled { opacity: .45; cursor: default; }
-button.primary { background: var(--ginger); border-color: var(--ginger); color: #fff; font-weight: 600; }
+button.primary { background: var(--ginger); border-color: var(--ginger); color: var(--on-accent); font-weight: 600; }
 button.small { padding: 3px 8px; font-size: .8rem; }
 .err { color: var(--err); min-height: 1.2em; margin: 4px 0; }
 #gameErr:empty { display: none; }
@@ -95,23 +223,23 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 .groupEdge.bottom { bottom: -6px; }
 .boardGroup.placeholder { opacity: .3; }
 .boardGroup.groupGhost { position: fixed; left: 0; top: 0; z-index: 10; pointer-events: none; opacity: .85; }
-.groupDropSlot { position: fixed; z-index: 9; width: 18px; transform: translateX(-50%); border: 1px dashed #ffffff90; border-radius: 5px; background: var(--felt); color: #fff; display: flex; align-items: center; justify-content: center; }
+.groupDropSlot { position: fixed; z-index: 9; width: 18px; transform: translateX(-50%); border: 1px dashed var(--board-target-border); border-radius: 5px; background: var(--felt); color: var(--on-accent); display: flex; align-items: center; justify-content: center; }
 .groupDropSlot::after { content: '+'; font-size: 14px; font-weight: 700; pointer-events: none; }
-.groupDropSlot.over { background: var(--ginger); border-color: #fff; }
+.groupDropSlot.over { background: var(--ginger); border-color: var(--on-accent); }
 /* Each set sits on a faint panel, so a long set that wraps onto rows (4px apart, against 12px between sets)
    still reads as one set. setWrap.js decides where the rows break. */
-.set { display: flex; flex-wrap: wrap; row-gap: 4px; align-items: center; padding: 6px 4px; border-radius: 10px; border: 2px dashed transparent; position: relative; background: #ffffff12; }
+.set { display: flex; flex-wrap: wrap; row-gap: 4px; align-items: center; padding: 6px 4px; border-radius: 10px; border: 2px dashed transparent; position: relative; background: var(--board-overlay-subtle); }
 .set.valid { border-color: transparent; }
 .set .rowBreak { flex-basis: 100%; height: 0; }
-.set.invalid { border-color: var(--bad); background: #ff7a7a22; }
-.set .why { position: absolute; bottom: -9px; left: 8px; font-size: .68rem; background: var(--bad); color: #fff; padding: 0 5px; border-radius: 4px; white-space: nowrap; }
-.newset { width: 90px; height: calc(var(--tile-h) + 16px); flex: none; border: 2px dashed #ffffff60; border-radius: 10px; color: #ffffffb0; display: flex; align-items: center; justify-content: center; font-size: .8rem; line-height: 1.1; text-align: center; padding: 6px; }
+.set.invalid { border-color: var(--bad); background: var(--invalid-overlay); }
+.set .why { position: absolute; bottom: -9px; left: 8px; font-size: .68rem; background: var(--bad); color: var(--on-accent); padding: 0 5px; border-radius: 4px; white-space: nowrap; }
+.newset { width: 90px; height: calc(var(--tile-h) + 16px); flex: none; border: 2px dashed var(--board-drop-border); border-radius: 10px; color: var(--board-text-muted); display: flex; align-items: center; justify-content: center; font-size: .8rem; line-height: 1.1; text-align: center; padding: 6px; }
 .gap { width: 6px; flex: none; align-self: stretch; position: relative; }
 /* Expand the hit area over the edges of adjacent cats without changing the set's layout. */
 .picking .gap { cursor: pointer; z-index: 1; }
-.picking .gap::after { content: '+'; position: absolute; inset: 0 -5px; border: 1px dashed #ffffff90; border-radius: 5px; background: var(--felt); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
-.picking .gap:hover::after { background: var(--ginger); border-color: #fff; color: #fff; }
-.picking .newset:hover { background: #ffffff70; }
+.picking .gap::after { content: '+'; position: absolute; inset: 0 -5px; border: 1px dashed var(--board-target-border); border-radius: 5px; background: var(--felt); color: var(--on-accent); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+.picking .gap:hover::after { background: var(--ginger); border-color: var(--on-accent); color: var(--on-accent); }
+.picking .newset:hover { background: var(--board-drop-hover); }
 .picking .newset { cursor: pointer; }
 
 #controls, #handBar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
@@ -127,19 +255,19 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 #meldInfo { color: var(--muted); font-size: .9rem; }
 #meldInfo:not(:empty) { margin-top: 8px; }
 /* The rack: dark wood tiers, like a real Rummikub rack */
-#hand { background: var(--rack); border-radius: 12px; padding: 10px 10px 6px; display: flex; flex-direction: column; gap: 8px; margin-top: 6px; box-shadow: inset 0 2px 6px #0007, 0 3px 8px #0003; }
+#hand { background: var(--rack); border-radius: 12px; padding: 10px 10px 6px; display: flex; flex-direction: column; gap: 8px; margin-top: 6px; box-shadow: inset 0 2px 6px var(--shadow-overlay), 0 3px 8px var(--shadow-medium); }
 #hand.returning { outline: 3px dashed var(--ginger); cursor: pointer; }
-.tier { display: flex; gap: 4px; padding-bottom: 4px; border-bottom: 7px solid var(--rack-ledge); box-shadow: 0 2px 0 #ffffff12; }
+.tier { display: flex; gap: 4px; padding-bottom: 4px; border-bottom: 7px solid var(--rack-ledge); box-shadow: 0 2px 0 var(--board-overlay-subtle); }
 .slot { width: var(--tile-w); height: var(--tile-h); flex: none; border-radius: 8px; }
 .picking .slot:empty { cursor: pointer; }
-.picking .slot:empty:hover, .slot.over { background: #ffffff1c; outline: 2px dashed #ffffff50; outline-offset: -2px; }
+.picking .slot:empty:hover, .slot.over { background: var(--board-overlay-slot); outline: 2px dashed var(--board-slot-border); outline-offset: -2px; }
 
 /* The draw pile: face-down cats in a heap */
-#pile { flex: none; width: 130px; padding: 10px 8px; display: flex; flex-direction: column; align-items: center; color: #ffffffc0; font-size: .8rem; border-radius: 12px; }
+#pile { flex: none; width: 130px; padding: 10px 8px; display: flex; flex-direction: column; align-items: center; color: var(--board-text); font-size: .8rem; border-radius: 12px; }
 #pile.can { cursor: pointer; }
-#pile.can:hover { background: #ffffff14; }
+#pile.can:hover { background: var(--board-overlay-hover); }
 #pile .heap { position: relative; width: 114px; height: 96px; }
-#pile .heap i { position: absolute; width: 20px; height: 28px; background: var(--tile-back); border-radius: 4px; box-shadow: 0 1px 0 var(--tile-edge), 0 2px 3px #0004; }
+#pile .heap i { position: absolute; width: 20px; height: 28px; background: var(--tile-back); border-radius: 4px; box-shadow: 0 1px 0 var(--tile-edge), 0 2px 3px var(--shadow-strong); }
 .pileCount { margin-top: 4px; font-weight: 600; }
 
 
@@ -151,19 +279,20 @@ button.small { padding: 3px 8px; font-size: .8rem; }
   :root { --tile-w: 48px; --tile-h: 72px; --rank: 22px; }
   :root.compact { --tile-w: 30px; --tile-h: 44px; }
 }
-.tile { width: var(--tile-w); height: var(--tile-h); background: var(--tile); border-radius: 8px; box-shadow: 0 2px 0 var(--tile-edge), 0 3px 6px #0003; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px 2px 3px; cursor: pointer; user-select: none; position: relative; flex: none; }
+.tile { width: var(--tile-w); height: var(--tile-h); background: var(--tile); border-radius: 8px; box-shadow: 0 2px 0 var(--tile-edge), 0 3px 6px var(--shadow-medium); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px 2px 3px; cursor: pointer; user-select: none; position: relative; flex: none; }
 .tile svg { width: 44px; height: 40px; }
 .tile .rank { font-size: var(--rank); font-weight: 800; line-height: 1; margin-bottom: 2px; }
-.tile.glow { box-shadow: 0 2px 0 var(--tile-edge), 0 0 0 2px #ffd54a, 0 0 14px 2px #ffd54acc; }
-.tile.selected { transform: translateY(-6px); box-shadow: 0 0 0 3px var(--ginger), 0 6px 10px #0004; z-index: 3; }
+.tile.glow { box-shadow: 0 2px 0 var(--tile-edge), 0 0 0 2px var(--last-played), 0 0 14px 2px var(--last-played-glow); }
+.tile.selected { transform: translateY(-6px); box-shadow: 0 0 0 3px var(--ginger), 0 6px 10px var(--shadow-strong); z-index: 3; }
 /* This turn so far: placed from the paws (a dot, top right) and moved on the table (a ring, top left). */
 .tile.placed::after { content: ""; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--ginger); }
 .tile.moved::before { content: ""; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; box-sizing: border-box; border-radius: 50%; border: 2px solid var(--smoky); }
-.c-ginger .rank { color: var(--ginger); }
-.c-midnight .rank { color: var(--midnight); }
-.c-smoky .rank { color: var(--smoky); }
-.c-pinky .rank { color: var(--pinky); }
-.c-wild .rank { background: linear-gradient(90deg, #ef8a2b, #e45c93, #6c87ad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.tile.c-ginger { --tile-color: var(--tile-orange); }
+.tile.c-midnight { --tile-color: var(--tile-black); }
+.tile.c-smoky { --tile-color: var(--tile-blue); }
+.tile.c-pinky { --tile-color: var(--tile-red); }
+.tile:not(.c-wild) .rank { color: var(--tile-color); }
+.c-wild .rank { background: linear-gradient(90deg, var(--tile-orange), var(--tile-red), var(--tile-blue)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .mini { transform: scale(.75); transform-origin: left center; margin-right: -14px; }
 
 /* Compact mode (sizes are in --tile-w and --tile-h above) */
@@ -190,7 +319,7 @@ button.small { padding: 3px 8px; font-size: .8rem; }
    or table around a cat can select it as well, so cover those. */
 .tile, #hand, #table { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .tile.placeholder { opacity: .3; }
-.tile.ghost { position: fixed; left: 0; top: 0; z-index: 10; pointer-events: none; box-shadow: 0 0 0 3px var(--ginger), 0 10px 18px #0005; }
+.tile.ghost { position: fixed; left: 0; top: 0; z-index: 10; pointer-events: none; box-shadow: 0 0 0 3px var(--ginger), 0 10px 18px var(--shadow-deep); }
 
 /* Turn timer */
 #timerPick { display: flex; gap: 8px; align-items: center; justify-content: center; color: var(--muted); }
@@ -200,19 +329,23 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 
 /* Artwork recoloring. The drawings live in public/art/*.svg, drawn as a ginger cat; the game recolors the parts
    with these class names (see public/art/README.md). Everything else keeps the colors from the SVG file. */
-.c-ginger { --fur: var(--ginger); --hat: #4b2a7a; }
-.c-midnight { --fur: var(--midnight); --hat: #6a3a9a; }
-.c-smoky { --fur: var(--smoky); --hat: #2d3a8c; }
-.c-pinky { --fur: var(--pinky); --hat: #2d3a8c; }
-.c-wild { --hat: #1d1630; }
+.c-ginger { --fur: var(--ginger); --hat: var(--hat-violet); }
+.c-midnight { --fur: var(--midnight); --hat: var(--hat-purple); }
+.c-smoky { --fur: var(--smoky); --hat: var(--hat-blue); }
+.c-pinky { --fur: var(--pinky); --hat: var(--hat-blue); }
+.c-wild { --hat: var(--hat-wild); }
 .cat .fur, .kitten .fur { fill: var(--fur); }
+.tile:not(.c-wild) .cat .fur { fill: var(--tile-color); }
+.tile .cat #rainbow stop:nth-child(1) { stop-color: var(--tile-orange); }
+.tile .cat #rainbow stop:nth-child(2) { stop-color: var(--tile-red); }
+.tile .cat #rainbow stop:nth-child(3) { stop-color: var(--tile-blue); }
 .c-wild .cat .fur { fill: url(#rainbow); }
 .kitten .fur-line { stroke: var(--fur); }
 .cat .hat-fill, .kitten .hat-fill { fill: var(--hat); }
 /* Black cats get yellow eyes and a darker inner ear and nose */
-.c-midnight .cat .eye, .kitten.dark .eye { fill: #ffd84a; }
-.c-midnight .cat .mouth { stroke: #ffd84a; }
-.c-midnight .cat .inner { fill: #5a5a6a; }
+.c-midnight .cat .eye, .kitten.dark .eye { fill: var(--cat-eye); }
+.c-midnight .cat .mouth { stroke: var(--cat-eye); }
+.c-midnight .cat .inner { fill: var(--cat-inner); }
 .kitten.santa-hat .wizard, .kitten:not(.santa-hat) .santa { display: none; }
 .pumpkin.noface .glow { display: none; }
 .present .box { fill: var(--box); }
@@ -221,12 +354,12 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 /* Theme switch */
 .tile .hat, .tile .santa { display: none; }
 [data-theme="halloween"] .tile .hat, [data-theme="christmas"] .tile .santa { display: inline; }
-[data-theme] .card, [data-theme] .player { box-shadow: 0 2px 12px #0006; }
+[data-theme] .card, [data-theme] .player { box-shadow: 0 2px 12px var(--shadow-heavy); }
 
 /* Holiday decorations: pumpkins, presents and hatted kittens, only in the holiday themes, never in the way of a tap */
 .deco { display: none; pointer-events: none; }
-[data-theme] .deco { display: block; }
-.deco svg { display: block; filter: drop-shadow(0 3px 3px #0006); }
+:is([data-theme="halloween"], [data-theme="christmas"]) .deco { display: block; }
+.deco svg { display: block; filter: drop-shadow(0 3px 3px var(--shadow-heavy)); }
 .deco .glow { animation: flicker 2.6s infinite; }
 @keyframes flicker { 0%, 100% { opacity: 1; } 40% { opacity: .75; } 45% { opacity: .95; } 70% { opacity: .82; } }
 @media (prefers-reduced-motion: reduce) { .deco .glow { animation: none; } }
@@ -239,7 +372,7 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 
 #handBar { position: relative; }
 .deco-rack { position: absolute; right: 18px; bottom: -14px; }
-[data-theme] .deco-rack { display: flex; align-items: flex-end; gap: 2px; }
+:is([data-theme="halloween"], [data-theme="christmas"]) .deco-rack { display: flex; align-items: flex-end; gap: 2px; }
 
 .card { position: relative; }
 .deco-card .patch { position: absolute; left: -14px; bottom: -12px; display: flex; align-items: flex-end; }
@@ -248,13 +381,13 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 .lobby-cats { position: relative; z-index: 1; display: flex; justify-content: center; align-items: flex-end; gap: 6px; max-width: 420px; margin: 0 auto -7px; }
 .lobby-cats span { display: block; }
 .lobby-cats .flip { transform: scaleX(-1); }
-.lobby-cats svg { display: block; filter: drop-shadow(0 2px 2px #0003); }
+.lobby-cats svg { display: block; filter: drop-shadow(0 2px 2px var(--shadow-medium)); }
 .lobby-cats .kitten { cursor: pointer; transform-origin: 50% 100%; }
 .lobby-cats .kithat { display: none; }
-[data-theme] .lobby-cats .kithat { display: inline; }
+:is([data-theme="halloween"], [data-theme="christmas"]) .lobby-cats .kithat { display: inline; }
 
 .deco-side { position: fixed; bottom: 12px; z-index: 0; }
-[data-theme] .deco-side { display: flex; align-items: flex-end; gap: 4px; }
+:is([data-theme="halloween"], [data-theme="christmas"]) .deco-side { display: flex; align-items: flex-end; gap: 4px; }
 .deco-side.left { left: 14px; }
 .deco-side.right { right: 14px; }
 @media (max-width: 1440px) { [data-theme] .deco-side { display: none; } }
@@ -295,13 +428,13 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
   55% { transform: rotate(-6deg); }
   75% { transform: rotate(3deg); }
 }
-@keyframes flare { 0% { fill: #fffbe0; } 30% { fill: #fff3a0; } 100% { fill: #ffcf4a; } }
+@keyframes flare { 0% { fill: var(--flare-light); } 30% { fill: var(--flare-mid); } 100% { fill: var(--flare-deep); } }
 
 .bubble, .sparkle { position: fixed; z-index: 20; pointer-events: none; }
-.bubble { transform: translate(-50%, -100%); background: var(--surface); color: var(--ink); border: 1px solid var(--line); padding: 3px 9px; border-radius: 12px; font-size: .8rem; font-weight: 600; white-space: nowrap; box-shadow: 0 3px 8px #0006; animation: bubble 1.5s ease-out forwards; }
-.sparkle { color: #ffd84a; font-size: 13px; transform: translate(-50%, -50%); animation: sparkle .8s ease-out forwards; }
-.sparkle.ember { color: #ff9a3c; }
-.sparkle.flake { color: #fff; }
+.bubble { transform: translate(-50%, -100%); background: var(--surface); color: var(--ink); border: 1px solid var(--line); padding: 3px 9px; border-radius: 12px; font-size: .8rem; font-weight: 600; white-space: nowrap; box-shadow: 0 3px 8px var(--shadow-heavy); animation: bubble 1.5s ease-out forwards; }
+.sparkle { color: var(--cat-eye); font-size: 13px; transform: translate(-50%, -50%); animation: sparkle .8s ease-out forwards; }
+.sparkle.ember { color: var(--spark-ember); }
+.sparkle.flake { color: var(--on-accent); }
 @keyframes bubble {
   0% { opacity: 0; transform: translate(-50%, -80%) scale(.6); }
   15% { opacity: 1; transform: translate(-50%, -100%) scale(1.05); }
@@ -334,13 +467,13 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 [data-theme="christmas"] .deco-snow { display: block; position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; }
 
 /* A wild cat swapped off the table: it has to go back out this turn */
-.tile.borrowed { box-shadow: 0 0 0 3px #a77bff, 0 0 14px #a77bffaa; }
-.tile.borrowed.selected { box-shadow: 0 0 0 3px var(--ginger), 0 0 0 6px #a77bff, 0 6px 14px #0006; }
+.tile.borrowed { box-shadow: 0 0 0 3px var(--borrowed), 0 0 14px var(--borrowed-glow); }
+.tile.borrowed.selected { box-shadow: 0 0 0 3px var(--ginger), 0 0 0 6px var(--borrowed), 0 6px 14px var(--shadow-heavy); }
 
 /* Winner popup with confetti */
-#winPop { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; background: #0007; animation: winFade .25s ease-out; }
+#winPop { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; background: var(--shadow-overlay); animation: winFade .25s ease-out; }
 #confetti { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; }
-.winCard { position: relative; background: var(--surface); color: var(--ink); border-radius: 18px; padding: 24px 28px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 10px 40px #0006; animation: winPop .45s cubic-bezier(.2, 1.6, .4, 1); }
+.winCard { position: relative; background: var(--surface); color: var(--ink); border-radius: 18px; padding: 24px 28px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 10px 40px var(--shadow-heavy); animation: winPop .45s cubic-bezier(.2, 1.6, .4, 1); }
 .winCard .trophy { font-size: 3.2rem; line-height: 1; animation: winBob 1.6s ease-in-out infinite; }
 .winCard h2 { margin: 10px 0 4px; font-size: 1.6rem; }
 .winCard .why { margin: 0 0 12px; color: var(--muted); }
@@ -360,16 +493,16 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 :root { --chat-w: 320px; }
 /* Your turn: a small yellow dot in the top corner of the screen. It sits over the page without taking space or
    catching taps, pulses a few times when your turn starts, then stays still. */
-#turnDot { position: fixed; top: 10px; right: 10px; z-index: 35; width: 14px; height: 14px; border-radius: 50%; background: #ffd54a; box-shadow: 0 0 0 2px #0007, 0 0 10px 2px #ffd54aaa; pointer-events: none; animation: turnDot 1.4s ease-in-out 3; }
-@keyframes turnDot { 50% { transform: scale(1.35); box-shadow: 0 0 0 2px #0007, 0 0 16px 6px #ffd54acc; } }
+#turnDot { position: fixed; top: 10px; right: 10px; z-index: 35; width: 14px; height: 14px; border-radius: 50%; background: var(--last-played); box-shadow: 0 0 0 2px var(--shadow-overlay), 0 0 10px 2px var(--turn-indicator-glow); pointer-events: none; animation: turnDot 1.4s ease-in-out 3; }
+@keyframes turnDot { 50% { transform: scale(1.35); box-shadow: 0 0 0 2px var(--shadow-overlay), 0 0 16px 6px var(--last-played-glow); } }
 @media (min-width: 901px) { body.chatOpen #turnDot { right: calc(var(--chat-w) + 10px); } }
 @media (prefers-reduced-motion: reduce) { #turnDot { animation: none; } }
-#chatTab { position: fixed; right: 0; top: 40vh; z-index: 30; border-radius: 10px 0 0 10px; border-right: 0; padding: 10px 10px 10px 12px; box-shadow: 0 2px 10px #0003; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+#chatTab { position: fixed; right: 0; top: 40vh; z-index: 30; border-radius: 10px 0 0 10px; border-right: 0; padding: 10px 10px 10px 12px; box-shadow: 0 2px 10px var(--shadow-medium); font-weight: 600; display: flex; align-items: center; gap: 6px; }
 #chatTab.unread { border-color: var(--ginger); animation: chatNudge 2.4s ease-in-out infinite; }
-#chatBadge { background: var(--ginger); color: #fff; border-radius: 999px; min-width: 1.4em; padding: 0 5px; font-size: .75rem; line-height: 1.4em; text-align: center; }
+#chatBadge { background: var(--ginger); color: var(--on-accent); border-radius: 999px; min-width: 1.4em; padding: 0 5px; font-size: .75rem; line-height: 1.4em; text-align: center; }
 @keyframes chatNudge { 0%, 80%, 100% { transform: none; } 88% { transform: translateX(-4px); } }
 
-#chat { position: fixed; top: 0; right: 0; bottom: 0; z-index: 40; width: var(--chat-w); max-width: calc(100vw - 32px); display: flex; flex-direction: column; background: var(--surface); border-left: 1px solid var(--line); box-shadow: -4px 0 18px #0002; transform: translateX(100%); visibility: hidden; transition: transform .2s ease-out, visibility .2s; }
+#chat { position: fixed; top: 0; right: 0; bottom: 0; z-index: 40; width: var(--chat-w); max-width: calc(100vw - 32px); display: flex; flex-direction: column; background: var(--surface); border-left: 1px solid var(--line); box-shadow: -4px 0 18px var(--shadow-light); transform: translateX(100%); visibility: hidden; transition: transform .2s ease-out, visibility .2s; }
 body.chatOpen #chat { transform: none; visibility: visible; }
 body.chatOpen #chatTab { display: none; }
 @media (min-width: 901px) { body.chatOpen:has(#game:not(.hidden)) { padding-right: var(--chat-w); } }
@@ -382,14 +515,14 @@ body.chatOpen #chatTab { display: none; }
 .msg.mine { align-self: flex-end; text-align: right; }
 .msg .who { font-size: .72rem; color: var(--muted); margin: 8px 4px 2px; }
 .msg .text { display: inline-block; text-align: left; background: var(--bg); border: 1px solid var(--line); padding: 6px 10px; border-radius: 14px; line-height: 1.35; overflow-wrap: anywhere; white-space: pre-wrap; }
-.msg.mine .text { background: var(--ginger); border-color: var(--ginger); color: #fff; }
+.msg.mine .text { background: var(--ginger); border-color: var(--ginger); color: var(--on-accent); }
 .msg.big .text, .msg.mine.big .text { background: none; border: 0; padding: 0 2px; font-size: 2.2rem; line-height: 1.15; }
 
 #emojiGrid button, #emojiTabs button, #emojiBtn { border: 0; background: none; padding: 4px; font-size: 1.25rem; line-height: 1; border-radius: 8px; }
 #emojiGrid button:hover, #emojiTabs button:hover, #emojiTabs button.on, #emojiBtn:hover, #emojiBtn[aria-expanded="true"] { background: var(--bg); }
 #emojiGrid button:hover { transform: scale(1.18); }
 
-#emojiPicker { margin: 6px 10px 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 0 4px 14px #0003; }
+#emojiPicker { margin: 6px 10px 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 0 4px 14px var(--shadow-medium); }
 #emojiTabs { display: flex; gap: 2px; padding: 4px 6px; border-bottom: 1px solid var(--line); }
 #emojiGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); max-height: 176px; overflow-y: auto; padding: 6px; }
 #emojiGrid button { font-size: 1.45rem; padding: 5px 0; }
@@ -415,11 +548,12 @@ body.chatResizing #chat { transition: none; }
 #timer .low { color: var(--err); }
 
 /* Room rules: a dropdown next to the invite link, with the timers the host picked */
+#roomCode { font-family: monospace; font-size: 1.2rem; letter-spacing: .06em; }
 .roomInfo { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; position: relative; }
 #rulesBox summary { list-style: none; cursor: pointer; padding: 3px 8px; font-size: .8rem; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
 #rulesBox summary::-webkit-details-marker { display: none; }
 #rulesBox[open] summary { border-color: var(--ginger); }
-#rulesBody { position: absolute; left: 0; top: calc(100% + 6px); z-index: 25; width: min(420px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; box-shadow: 0 6px 22px #0004; font-size: .88rem; line-height: 1.45; }
+#rulesBody { position: absolute; left: 0; top: calc(100% + 6px); z-index: 25; width: min(420px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; box-shadow: 0 6px 22px var(--shadow-strong); font-size: .88rem; line-height: 1.45; }
 #rulesBody h3 { margin: 4px 0 6px; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 #rulesBody h3 + ul { margin-top: 0; }
 #rulesBody ul { margin: 0 0 10px; padding-left: 18px; }
@@ -460,10 +594,10 @@ body.chatResizing #chat { transition: none; }
 .nameRow { display: flex; gap: 8px; align-items: center; }
 .nameRow input { flex: 1; min-width: 0; }
 #avatarBtn { position: relative; padding: 2px; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex: none; }
-#avatarBtn .pencil { position: absolute; right: -4px; bottom: -4px; background: var(--ginger); color: #fff; border-radius: 50%; width: 20px; height: 20px; font-size: .75rem; display: flex; align-items: center; justify-content: center; }
+#avatarBtn .pencil { position: absolute; right: -4px; bottom: -4px; background: var(--ginger); color: var(--on-accent); border-radius: 50%; width: 20px; height: 20px; font-size: .75rem; display: flex; align-items: center; justify-content: center; }
 
-#avatarPop { padding: 0; border: 0; overflow: auto; border-radius: 18px; background: var(--surface); color: var(--ink); max-width: min(560px, calc(100vw - 32px)); width: 100%; max-height: calc(100dvh - 32px); box-shadow: 0 10px 40px #0006; }
-#avatarPop::backdrop { background: #0007; }
+#avatarPop { padding: 0; border: 0; overflow: auto; border-radius: 18px; background: var(--surface); color: var(--ink); max-width: min(560px, calc(100vw - 32px)); width: 100%; max-height: calc(100dvh - 32px); box-shadow: 0 10px 40px var(--shadow-heavy); }
+#avatarPop::backdrop { background: var(--shadow-overlay); }
 .avCard { padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; }
 .avHead { display: flex; gap: 16px; align-items: center; }
 .avHead h2 { margin: 0 0 2px; font-size: 1.3rem; }
@@ -475,7 +609,7 @@ body.chatResizing #chat { transition: none; }
 .avRow { display: grid; grid-template-columns: 110px 1fr; gap: 8px; align-items: start; margin: 6px 0; }
 .avLabel { font-size: .85rem; padding-top: 4px; }
 .avOpts { display: flex; flex-wrap: wrap; gap: 5px; }
-.chip[aria-pressed="true"] { background: var(--ginger); border-color: var(--ginger); color: #fff; }
+.chip[aria-pressed="true"] { background: var(--ginger); border-color: var(--ginger); color: var(--on-accent); }
 .swatch { width: 26px; height: 26px; padding: 0; border-radius: 50%; background: var(--sw); border: 2px solid var(--line); }
 .swatch[aria-pressed="true"] { outline: 3px solid var(--ginger); outline-offset: 2px; }
 .avBtns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; position: sticky; bottom: 0; background: var(--surface); padding-top: 8px; }
@@ -498,14 +632,14 @@ body.chatResizing #chat { transition: none; }
 #game.screen { max-width: 1280px; }
 #turnCat { display: none; }
 @container (min-width: 1000px) {
-  #turnCat:not(:empty) { flex: none; width: 150px; align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; padding: 18px 8px 12px; text-align: center; color: #fffffff0; border-right: 2px dashed #ffffff30; }
-  #turnCat .tcAv { background: #ffffff22; border-radius: 50%; padding: 6px; box-shadow: 0 0 0 3px #ffffff40; }
+  #turnCat:not(:empty) { flex: none; width: 150px; align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; padding: 18px 8px 12px; text-align: center; color: var(--board-text-strong); border-right: 2px dashed var(--board-divider); }
+  #turnCat .tcAv { background: var(--board-overlay-avatar); border-radius: 50%; padding: 6px; box-shadow: 0 0 0 3px var(--board-avatar-border); }
   #turnCat.mine .tcAv { box-shadow: 0 0 0 4px var(--ginger), 0 0 18px var(--ginger); }
-  #turnCat.won .tcAv { box-shadow: 0 0 0 4px #ffd84a, 0 0 18px #ffd84a; }
+  #turnCat.won .tcAv { box-shadow: 0 0 0 4px var(--cat-eye), 0 0 18px var(--cat-eye); }
   #turnCat.off .tcAv { opacity: .55; }
   #turnCat .tcName { font-weight: 700; margin-top: 6px; overflow-wrap: anywhere; }
-  #turnCat .tcSub { font-size: .85rem; color: #ffffffb0; }
-  #turnCat.mine .tcSub { color: #fff; font-weight: 600; }
+  #turnCat .tcSub { font-size: .85rem; color: var(--board-text-muted); }
+  #turnCat.mine .tcSub { color: var(--on-accent); font-weight: 600; }
   #turnCat.hop .avatar { animation: turnHop .5s cubic-bezier(.2, 1.6, .4, 1); }
   /* The holiday decorations at the bottom left move over so they don't sit under the cat */
   .deco-table:has(~ #turnCat:not(:empty)) .left { left: 160px; }
