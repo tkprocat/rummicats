@@ -71,7 +71,6 @@
   --invalid-overlay: #ff7a7a22;
   --last-played: var(--gold);
   --last-played-glow: #ffd54acc;
-  --turn-indicator-glow: #ffd54aaa;
   --borrowed: var(--violet);
   --borrowed-glow: #a77bffaa;
   --hat-violet: var(--hat-violet-base);
@@ -167,6 +166,11 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 #status { font-weight: 600; margin: 6px 0; }
 #tableArea { background: var(--felt); border-radius: 14px; display: flex; align-items: flex-start; margin-top: 8px; }
 #tableArea.watching { background: var(--felt-dark); }
+/* Use the surfaces and their existing 12px gutter: no extra row, slot or tile overlay. */
+#tableArea.myTurn { box-shadow: inset 0 0 0 3px var(--ginger); }
+#tableArea > .turnEdge, #hand > .turnEdge { position: absolute; inset: 8px auto 8px 0; width: 12px; z-index: 2; pointer-events: none; }
+.turnEdge span { display: block; position: sticky; top: 8px; writing-mode: vertical-rl; max-height: min(100%, calc(100dvh - 16px)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 10px; line-height: 12px; color: var(--board-text-strong); background: var(--felt); border-radius: 3px; }
+.myTurn > .turnEdge span { font-weight: 800; }
 #table { flex: 1; min-width: 0; padding: 12px; min-height: 260px; display: flex; flex-wrap: wrap; gap: 12px; align-content: flex-start; }
 .boardGroup { max-width: 100%; position: relative; align-self: flex-start; }
 .boardGroup.reorderable { cursor: grab; }
@@ -198,6 +202,8 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 #controls button, #handBar button, #handBar select { font: inherit; font-size: .9rem; padding: 6px 10px; min-height: 34px; text-align: center; }
 #handBar select { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; }
 .controlLabel { flex: 0 0 3em; color: var(--muted); font-size: .8rem; font-weight: 600; }
+#controls #turnLabel { flex: 0 0 11em; width: 11em; min-width: 0; height: 1.4em; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
+#turnLabel.myTurn { font-weight: 800; }
 @media (max-width: 600px) {
   #controls, #handBar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 8px; }
   #controls .controlLabel, #handBar .controlLabel { grid-column: 1 / -1; }
@@ -207,7 +213,10 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 #meldInfo { color: var(--muted); font-size: .9rem; }
 #meldInfo:not(:empty) { margin-top: 8px; }
 /* The rack: dark wood tiers, like a real Rummikub rack */
-#hand { background: var(--rack); border-radius: 12px; padding: 10px 10px 6px; display: flex; flex-direction: column; gap: 8px; margin-top: 6px; box-shadow: inset 0 2px 6px var(--shadow-overlay), 0 3px 8px var(--shadow-medium); }
+#hand { position: relative; background: var(--rack); border-radius: 12px; padding: 10px 10px 6px; display: flex; flex-direction: column; gap: 8px; margin-top: 6px; box-shadow: inset 0 2px 6px var(--shadow-overlay), 0 3px 8px var(--shadow-medium); }
+#hand > .turnEdge { width: 10px; }
+#hand .turnEdge span { line-height: 10px; background: var(--rack); }
+#hand.myTurn { outline: 3px solid var(--ginger); outline-offset: 0; }
 #hand.returning { outline: 3px dashed var(--ginger); cursor: pointer; }
 .tier { display: flex; gap: 4px; padding-bottom: 4px; border-bottom: 7px solid var(--rack-ledge); box-shadow: 0 2px 0 var(--board-overlay-subtle); }
 .slot { width: var(--tile-w); height: var(--tile-h); flex: none; border-radius: 8px; }
@@ -319,7 +328,7 @@ select.small { padding: 3px 6px; font-size: .8rem; cursor: pointer; }
 body { isolation: isolate; }
 header, .screen { position: relative; z-index: 0; background: var(--bg); }
 #tableArea { position: relative; isolation: isolate; }
-#tableArea > :not(.deco) { position: relative; z-index: 1; }
+#tableArea > :not(.deco, .turnEdge) { position: relative; z-index: 1; }
 .deco-table { position: absolute; inset: 0; z-index: 0; }
 .gameDecorations { display: none; }
 :is([data-theme="halloween"], [data-theme="christmas"]) #game:has(#tableArea:not(.hidden)) .gameDecorations { display: flex; align-items: flex-end; justify-content: flex-end; min-height: 100px; padding: 24px 10px 0; }
@@ -448,12 +457,6 @@ header, .screen { position: relative; z-index: 0; background: var(--bg); }
 /* Room chat: a panel on the right, collapsed to a tab on the edge. On wide screens the game makes room for it;
    on narrow ones it slides over the game. */
 :root { --chat-w: 320px; }
-/* Your turn: a small yellow dot in the top corner of the screen. It sits over the page without taking space or
-   catching taps, pulses a few times when your turn starts, then stays still. */
-#turnDot { position: fixed; top: 10px; right: 10px; z-index: 35; width: 14px; height: 14px; border-radius: 50%; background: var(--last-played); box-shadow: 0 0 0 2px var(--shadow-overlay), 0 0 10px 2px var(--turn-indicator-glow); pointer-events: none; animation: turnDot 1.4s ease-in-out 3; }
-@keyframes turnDot { 50% { transform: scale(1.35); box-shadow: 0 0 0 2px var(--shadow-overlay), 0 0 16px 6px var(--last-played-glow); } }
-@media (min-width: 901px) { body.chatOpen #turnDot { right: calc(var(--chat-w) + 10px); } }
-@media (prefers-reduced-motion: reduce) { #turnDot { animation: none; } }
 #chatTab { position: fixed; right: 0; top: 96px; z-index: 30; border-radius: 10px 0 0 10px; border-right: 0; padding: 10px 10px 10px 12px; box-shadow: 0 2px 10px var(--shadow-medium); font-weight: 600; display: flex; align-items: center; gap: 6px; }
 #chatTab.unread { border-color: var(--ginger); animation: chatNudge 2.4s ease-in-out infinite; }
 #chatBadge { background: var(--ginger); color: var(--on-accent); border-radius: 999px; min-width: 1.4em; padding: 0 5px; font-size: .75rem; line-height: 1.4em; text-align: center; }
@@ -595,6 +598,7 @@ body.chatResizing #chat { transition: none; }
   .playControls { grid-column: 2; grid-row: 1 / 3; padding-top: 8px; }
   #controls, #handBar { flex-direction: column; align-items: stretch; }
   #controls .controlLabel, #handBar .controlLabel { flex: none; }
+  #controls #turnLabel { flex: none; }
   #handBar { margin-top: 20px; }
 }
 #turnCat { display: none; }

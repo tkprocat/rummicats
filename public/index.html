@@ -58,8 +58,6 @@
       <div><span id="timer"></span></div>
     </div>
     <div id="players"></div>
-    <!-- Pinned to the corner of the screen during your turn, so you can tell wherever you've scrolled to. -->
-    <div id="turnDot" class="hidden" aria-hidden="true"></div>
     <p id="spectators" class="hidden"></p>
 
     <div id="waiting" class="card hidden">
@@ -98,6 +96,7 @@
     <div class="playArea">
       <div id="tableArea" class="hidden">
         <div class="deco deco-table" aria-hidden="true"></div>
+        <div class="turnEdge"><span id="turnStatus" role="status" aria-live="polite" aria-atomic="true"></span></div>
         <div id="turnCat" aria-hidden="true"></div>
         <div id="table"></div>
         <div id="pile" title="Draw a cat"><div class="heap"></div><div class="pileCount"></div></div>
@@ -106,7 +105,7 @@
       <div id="hand" class="hidden"></div>
       <div class="playControls">
         <div id="controls" class="hidden" role="group" aria-label="Turn controls">
-          <span class="controlLabel">Turn</span>
+          <span id="turnLabel" class="controlLabel"></span>
           <button id="doneBtn" class="primary">Done</button>
           <button id="drawBtn">Draw a cat</button>
           <button id="undoMoveBtn" title="Undo your last move (Ctrl+Z)">Undo move</button>

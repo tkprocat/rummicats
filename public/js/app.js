@@ -21,6 +21,7 @@ import { initNotify, notifyTurn } from './notify.js';
 import { initChat, renderChat } from './chat.js';
 import { renderRules } from './roomRules.js';
 import { initCompact } from './compact.js';
+import { renderTurnStatus } from './turnStatus.js';
 
 let events = null;
 let clockSkew = 0; // server time minus local time
@@ -81,6 +82,7 @@ function holdScroll() {
 
 function render() {
   if (!S) return;
+  renderTurnStatus(S);
   if (isDragging()) return; // redrawn on drop
   const restoreScroll = holdScroll();
   $('roomCode').textContent = S.code;
@@ -93,7 +95,6 @@ function render() {
   $('tableArea').classList.toggle('hidden', !S.started);
   $('status').classList.toggle('hidden', !S.over);
   for (const id of ['controls', 'handBar', 'hand']) $(id).classList.toggle('hidden', !S.started || !seated);
-  $('turnDot').classList.toggle('hidden', !myTurn());
 
   renderWin();
   renderBoard();

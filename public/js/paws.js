@@ -35,6 +35,14 @@ export function renderPaws() {
   if (SORTS[autoSort]) SORTS[autoSort](shown);
   fitRack(shown);
   hd.innerHTML = '';
+  // The label uses the rack's existing edge padding, and follows a tall rack as it scrolls.
+  const edge = document.createElement('div');
+  edge.className = 'turnEdge';
+  edge.setAttribute('aria-hidden', 'true');
+  const turnLabel = document.createElement('span');
+  turnLabel.textContent = hd.dataset.turnLabel;
+  edge.appendChild(turnLabel);
+  hd.appendChild(edge);
   hd.classList.toggle('picking', mine && selected.length > 0);
   hd.classList.toggle('returning', mine && selected.some((id) => !work.hand.includes(id)));
   for (let r = 0; r < rack.length / cols; r++) {
