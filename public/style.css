@@ -197,8 +197,6 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 #controls button, #handBar button, #handBar select { font: inherit; font-size: .9rem; padding: 6px 10px; min-height: 34px; text-align: center; }
 #handBar select { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; }
 .controlLabel { flex: 0 0 3em; color: var(--muted); font-size: .8rem; font-weight: 600; }
-#controls #turnLabel { flex: 0 0 11em; width: 11em; min-width: 0; height: 1.4em; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
-#turnLabel.myTurn { font-weight: 800; }
 @media (max-width: 600px) {
   #controls, #handBar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 8px; }
   #controls .controlLabel, #handBar .controlLabel { grid-column: 1 / -1; }
@@ -592,7 +590,6 @@ body.chatResizing #chat { transition: none; }
   .playControls { grid-column: 2; grid-row: 1 / 3; padding-top: 8px; }
   #controls, #handBar { flex-direction: column; align-items: stretch; }
   #controls .controlLabel, #handBar .controlLabel { flex: none; }
-  #controls #turnLabel { flex: none; }
   #handBar { margin-top: 20px; }
 }
 #turnCat { display: none; }
