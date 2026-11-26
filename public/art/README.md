@@ -12,6 +12,7 @@ or a text editor) and reload the game to see the change. No build step.
 | `present.svg` | Christmas presents |
 | `tree.svg` | Christmas tree |
 | `avatar.svg` | Player avatars: every ear, eye, mouth, pattern and extra option (see below) |
+| `turn-paw.svg` | The local-turn paw ornament on the rack; rendered as a CSS background with fixed colors |
 | `favicon.svg` | The browser tab icon. Shown as a plain image, so it has no class names and isn't recolored: edit its colors directly |
 
 ## Keep these class names
