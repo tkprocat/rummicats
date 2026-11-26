@@ -21,14 +21,16 @@ export function renderWin() {
   }
 }
 
-// over: the server's { winner, why, scores: [{ name, penalty }] }. youWon picks the headline.
+// over: the server's { winner, why, scores: [{ name, penalty }] }. youWon picks the wording.
 // isHost decides between the New game button and a note that the host can start one.
 export function showWin(over, youWon, isHost) {
   const box = $('winPop');
   $('winAgain').classList.toggle('hidden', !isHost);
   box.querySelector('.againNote').classList.toggle('hidden', isHost);
   $('winTitle').textContent = youWon ? 'You win! 🎉' : `${over.winner} wins!`;
-  box.querySelector('.why').textContent = over.why || '';
+  box.querySelector('.why').textContent = over.why === 'Their paws are empty.'
+    ? (youWon ? 'Your paws are empty.' : `${over.winner}'s paws are empty.`)
+    : over.why || '';
   // The winner's cat holds up the trophy
   const champ = over.scores.find((x) => x.name === over.winner);
   box.querySelector('.trophy').innerHTML = champ?.avatar ? `${avatarSvg(champ.avatar, 96)}<span>🏆</span>` : '🏆';
