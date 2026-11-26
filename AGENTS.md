@@ -21,6 +21,14 @@
 
 - Avoid introducing unexpected layout shifts when changing the interface, including as content loads or game state changes.
 - Preserve a clear overview of the board and players' paws. Do not add interface elements that obscure them or make them harder to see or use.
+- Treat the available playing viewport as a scarce resource, especially on mobile. Prefer existing surfaces and controls over additional status rows, fixed bars, or reserved indicator space.
+- Design important gameplay feedback for players returning their attention to the game, including use on a secondary monitor. The current state must remain understandable without witnessing its transition.
+- Place gameplay feedback where players look while playing: the board, paws, and relevant controls. Evaluate its visibility at realistic scroll positions.
+- Evaluate mobile independently: player cards may be offscreen and desktop artwork may be hidden.
+- Prefer static gameplay indicators. Avoid repeating attention animations; any necessary motion should be brief and respect reduced-motion preferences.
+- Preserve the game's soft, cat-themed visual character. Reuse established colors, materials, artwork, and components when introducing feedback.
+- Keep visual meanings distinct for turn ownership, selection, recent changes, placement targets, and keyboard focus. Review related indicators together before adding another highlight treatment.
+- Keep feedback restrained. Prefer improving an existing element over accumulating redundant labels, decorations, outlines, or glows.
 
 # Validation
 
@@ -38,3 +46,4 @@
 # Pull requests
 
 - Keep each pull request focused on its intended change. Describe the behavior changed and why, and note any user-visible or deployment impact.
+- Describe the final implemented changes, their purpose, and relevant design constraints. Omit abandoned approaches and unchanged features. Keep the title and description aligned with the final diff as the implementation evolves.
