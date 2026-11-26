@@ -209,13 +209,8 @@ button.small { padding: 3px 8px; font-size: .8rem; }
 #meldInfo:not(:empty) { margin-top: 8px; }
 /* The rack: dark wood tiers, like a real Rummikub rack */
 #hand { background: var(--rack); border-radius: 12px; padding: 10px 10px 6px; display: flex; flex-direction: column; gap: 8px; margin-top: 6px; box-shadow: inset 0 2px 6px var(--shadow-overlay), 0 3px 8px var(--shadow-medium); }
-/* A still pool of warm light rests on the wood beneath the cats throughout your turn. */
-#hand.myTurn {
-  background-image: linear-gradient(105deg, transparent 32%, color-mix(in srgb, var(--flare-cream) 34%, transparent) 50%, transparent 68%);
-  background-size: 300% 100%;
-  background-repeat: no-repeat;
-  background-position: 50% 0;
-}
+/* The existing wooden ledges carry the active-player accent without changing the rack's size. */
+#hand.myTurn { --rack-ledge: color-mix(in srgb, var(--ginger) 72%, var(--rack)); }
 #hand.returning { outline: 3px dashed var(--ginger); cursor: pointer; }
 .tier { display: flex; gap: 4px; padding-bottom: 4px; border-bottom: 7px solid var(--rack-ledge); box-shadow: 0 2px 0 var(--board-overlay-subtle); }
 .slot { width: var(--tile-w); height: var(--tile-h); flex: none; border-radius: 8px; }
