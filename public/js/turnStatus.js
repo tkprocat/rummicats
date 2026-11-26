@@ -10,4 +10,5 @@ export function renderTurnStatus(state) {
   if (el.textContent !== text) el.textContent = text;
   el.title = text;
   el.classList.toggle('myTurn', mine);
+  $('hand').classList.toggle('myTurn', mine);
 }

@@ -11,7 +11,7 @@ const moduleUrl = dataModule(fs.readFileSync(path.join(__dirname, '../public/js/
 
 test('turn feedback follows local, opponent, spectator, rejoined and finished states without notifications', async (t) => {
   const { renderTurnStatus } = await import(moduleUrl);
-  const elements = Object.fromEntries(['turnLabel'].map((id) => [id, {
+  const elements = Object.fromEntries(['turnLabel', 'hand'].map((id) => [id, {
     textContent: '', title: '', classes: new Set(),
     classList: { toggle(name, on) { elements[id].classes[on ? 'add' : 'delete'](name); } },
   }]));
@@ -24,6 +24,7 @@ test('turn feedback follows local, opponent, spectator, rejoined and finished st
     assert.equal(elements.turnLabel.textContent, text);
     assert.equal(elements.turnLabel.title, text);
     assert.equal(elements.turnLabel.classes.has('myTurn'), mine);
+    assert.equal(elements.hand.classes.has('myTurn'), mine);
   };
   renderTurnStatus(null);
   expect('Waiting to start', false);
