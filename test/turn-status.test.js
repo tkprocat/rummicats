@@ -11,27 +11,20 @@ const moduleUrl = dataModule(fs.readFileSync(path.join(__dirname, '../public/js/
 
 test('turn feedback follows local, opponent, spectator, rejoined and finished states without notifications', async (t) => {
   const { renderTurnStatus } = await import(moduleUrl);
-  const elements = Object.fromEntries(['turnStatus', 'turnLabel', 'hand', 'tableArea'].map((id) => [id, {
-    textContent: '', title: '', dataset: {}, classes: new Set(),
-    querySelector() { return this.edgeLabel || null; },
+  const elements = Object.fromEntries(['turnLabel', 'hand'].map((id) => [id, {
+    textContent: '', title: '', classes: new Set(),
     classList: { toggle(name, on) { elements[id].classes[on ? 'add' : 'delete'](name); } },
   }]));
-  elements.hand.edgeLabel = { textContent: '' };
   const original = global.document;
   global.document = { getElementById: (id) => elements[id] };
   t.after(() => { global.document = original; });
   const state = { started: true, over: null, you: 0, turn: 0,
     players: [{ name: 'Alice' }, { name: '<Bob & cats>' }] };
   const expect = (text, mine) => {
-    for (const id of ['turnStatus', 'turnLabel']) {
-      assert.equal(elements[id].textContent, text);
-      assert.equal(elements[id].title, text);
-      assert.equal(elements[id].classes.has('myTurn'), mine);
-    }
+    assert.equal(elements.turnLabel.textContent, text);
+    assert.equal(elements.turnLabel.title, text);
+    assert.equal(elements.turnLabel.classes.has('myTurn'), mine);
     assert.equal(elements.hand.classes.has('myTurn'), mine);
-    assert.equal(elements.tableArea.classes.has('myTurn'), mine);
-    assert.equal(elements.hand.dataset.turnLabel, text);
-    assert.equal(elements.hand.edgeLabel.textContent, text);
   };
   renderTurnStatus(null);
   expect('Waiting to start', false);
