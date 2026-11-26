@@ -160,5 +160,5 @@ function renderPile(mine) {
   }
   document.querySelector('#pile .pileCount').textContent = S.pool ? `${S.pool} left` : 'pile empty';
   $('pile').classList.toggle('can', mine);
-  $('pile').title = mine ? $('drawBtn').textContent : `${S.pool} cats left to draw`;
+  $('pile').title = mine ? $('drawBtn').textContent : `${S.pool} ${S.pool === 1 ? 'cat' : 'cats'} left to draw`;
 }
