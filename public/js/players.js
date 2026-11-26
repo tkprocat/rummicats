@@ -19,7 +19,7 @@ export function renderPlayers() {
     d.className = 'player' + (S.started && S.turn === i && !S.over ? ' turn' : '') + (p.online ? '' : ' off');
     d.innerHTML = `<span class="pav">${avatarSvg(p.avatar, 36)}</span><div>` +
       `${p.bot ? '🤖 ' : ''}<span class="n"></span>${i === S.you ? ' (you)' : ''}<br>` +
-      (S.started ? `${p.count} cats${ownMeld ? ` · First meld: ${points} / 30` : p.melded ? '' : ' · not melded'}` : p.host ? 'host' : p.bot ? 'bot' : '') + '</div>';
+      (S.started ? `${p.count} ${p.count === 1 ? 'cat' : 'cats'}${ownMeld ? ` · First meld: ${points} / 30` : p.melded ? '' : ' · not melded'}` : p.host ? 'host' : p.bot ? 'bot' : '') + '</div>';
     d.querySelector('.n').textContent = p.name;
     if (i === S.you) { // tap your own cat to change it
       const pav = d.querySelector('.pav');
