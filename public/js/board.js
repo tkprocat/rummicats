@@ -30,7 +30,7 @@ function renderStatus() {
     const scores = S.over.scores.map((x) => `${x.name}: ${x.penalty}`).join(' · ');
     $('status').innerHTML = '🏆 <span></span> wins! <small></small>';
     $('status').querySelector('span').textContent = S.over.winner;
-    $('status').querySelector('small').textContent = `(cats left in paws, lower is better: ${scores})`;
+    $('status').querySelector('small').textContent = `(points remaining in paws, lower is better: ${scores})`;
   }
 }
 
